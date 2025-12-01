@@ -1,0 +1,116 @@
+@page "/products"
+@attribute [Authorize]
+@inject IProductService ProductService
+@inject NavigationManager NavigationManager
+
+<h3>Products</h3>
+
+<div class="mb-3">
+    <button class="btn btn-success" @onclick="ShowCreateModal">Create New Product</button>
+</div>
+
+@if (products == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.Description</td>
+                    <td>@product.Price</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteProduct(product.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (showModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create Product</h5>
+                    <button type="button" class="close" @onclick="CloseModal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="@newProduct" OnValidSubmit="CreateProduct">
+                        <DataAnnotationsValidator />
+                        <div class="form-group">
+                            <label>Name</label>
+                            <InputText class="form-control" @bind-Value="newProduct.Name" />
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <InputText class="form-control" @bind-Value="newProduct.Description" />
+                        </div>
+                        <div class="form-group">
+                            <label>Price</label>
+                            <InputNumber class="form-control" @bind-Value="newProduct.Price" />
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Save</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    private List<ProductDto> products;
+    private CreateProductDto newProduct = new CreateProductDto();
+    private bool showModal = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts();
+    }
+
+    private async Task LoadProducts()
+    {
+        products = await ProductService.GetAllAsync();
+    }
+
+    private async Task DeleteProduct(Guid id)
+    {
+        await ProductService.DeleteAsync(id);
+        await LoadProducts();
+    }
+
+    private void ShowCreateModal()
+    {
+        newProduct = new CreateProductDto();
+        showModal = true;
+    }
+
+    private void CloseModal()
+    {
+        showModal = false;
+    }
+
+    private async Task CreateProduct()
+    {
+        await ProductService.CreateAsync(newProduct);
+        showModal = false;
+        await LoadProducts();
+    }
+}
