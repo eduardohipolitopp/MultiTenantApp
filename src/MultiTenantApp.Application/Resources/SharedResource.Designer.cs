@@ -51,7 +51,7 @@ namespace MultiTenantApp.Application.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Ações.
         /// </summary>
-        internal static string Actions {
+        public static string Actions {
             get {
                 return ResourceManager.GetString("Actions", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Cancelar.
         /// </summary>
-        internal static string Cancel {
+        public static string Cancel {
             get {
                 return ResourceManager.GetString("Cancel", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Criar.
         /// </summary>
-        internal static string Create {
+        public static string Create {
             get {
                 return ResourceManager.GetString("Create", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Excluir.
         /// </summary>
-        internal static string Delete {
+        public static string Delete {
             get {
                 return ResourceManager.GetString("Delete", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Descrição.
         /// </summary>
-        internal static string Description {
+        public static string Description {
             get {
                 return ResourceManager.GetString("Description", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Editar.
         /// </summary>
-        internal static string Edit {
+        public static string Edit {
             get {
                 return ResourceManager.GetString("Edit", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to E-mail.
         /// </summary>
-        internal static string Email {
+        public static string Email {
             get {
                 return ResourceManager.GetString("Email", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Entrar.
         /// </summary>
-        internal static string Login {
+        public static string Login {
             get {
                 return ResourceManager.GetString("Login", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Sair.
         /// </summary>
-        internal static string Logout {
+        public static string Logout {
             get {
                 return ResourceManager.GetString("Logout", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Nome.
         /// </summary>
-        internal static string Name {
+        public static string Name {
             get {
                 return ResourceManager.GetString("Name", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Senha.
         /// </summary>
-        internal static string Password {
+        public static string Password {
             get {
                 return ResourceManager.GetString("Password", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Preço.
         /// </summary>
-        internal static string Price {
+        public static string Price {
             get {
                 return ResourceManager.GetString("Price", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Registrar.
         /// </summary>
-        internal static string Register {
+        public static string Register {
             get {
                 return ResourceManager.GetString("Register", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to O campo {0} é obrigatório..
         /// </summary>
-        internal static string Required {
+        public static string Required {
             get {
                 return ResourceManager.GetString("Required", resourceCulture);
             }
@@ -189,7 +189,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Regra/Função.
         /// </summary>
-        internal static string Role {
+        public static string Role {
             get {
                 return ResourceManager.GetString("Role", resourceCulture);
             }
@@ -198,7 +198,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Salvar.
         /// </summary>
-        internal static string Save {
+        public static string Save {
             get {
                 return ResourceManager.GetString("Save", resourceCulture);
             }
@@ -207,7 +207,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to ID do Cliente.
         /// </summary>
-        internal static string TenantId {
+        public static string TenantId {
             get {
                 return ResourceManager.GetString("TenantId", resourceCulture);
             }

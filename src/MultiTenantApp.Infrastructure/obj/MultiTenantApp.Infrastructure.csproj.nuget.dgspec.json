@@ -265,6 +265,10 @@
             "OpenTelemetry.Extensions.Hosting": {
               "target": "Package",
               "version": "[1.14.0, )"
+            },
+            "StackExchange.Redis": {
+              "target": "Package",
+              "version": "[2.8.16, )"
             }
           },
           "imports": [

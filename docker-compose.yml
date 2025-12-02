@@ -10,6 +10,14 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     command: [ "--config=/etc/otel-collector-config.yaml" ]
@@ -85,10 +93,15 @@ services:
       - "5000:8080"
     environment:
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=multitenantdb;Username=postgres;Password=postgres
+      - Cache__Enabled=true
+      - Cache__Redis__ConnectionString=redis:6379
+      - "Cache__Redis__InstanceName=MultiTenantApp:"
+      - Cache__Defaults__DefaultExpirationMinutes=60
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
       - postgres
+      - redis
       - otel-collector
 
   web:
@@ -107,6 +120,7 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:
   prometheus_data:
   tempo_data:
   loki_data:

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "bMbguMwXiNg=",
+  "dgSpecHash": "CImJoc5UwXU=",
   "success": true,
   "projectFilePath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj",
   "expectedPackageFiles": [
@@ -70,6 +70,8 @@
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\opentelemetry.instrumentation.aspnetcore\\1.14.0\\opentelemetry.instrumentation.aspnetcore.1.14.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\opentelemetry.instrumentation.http\\1.14.0\\opentelemetry.instrumentation.http.1.14.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\opentelemetry.instrumentation.runtime\\1.14.0\\opentelemetry.instrumentation.runtime.1.14.0.nupkg.sha512",
+    "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\pipelines.sockets.unofficial\\2.2.8\\pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
+    "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\stackexchange.redis\\2.8.16\\stackexchange.redis.2.8.16.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\swashbuckle.aspnetcore\\6.6.2\\swashbuckle.aspnetcore.6.6.2.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.6.2\\swashbuckle.aspnetcore.swagger.6.6.2.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.6.2\\swashbuckle.aspnetcore.swaggergen.6.6.2.nupkg.sha512",

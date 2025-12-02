@@ -1,65 +1,68 @@
 @page "/register"
-
-@using Microsoft.Extensions.Localization
 @using MultiTenantApp.Web.Services
 @using Microsoft.Extensions.Configuration
+@using MultiTenantApp.Web.Resources.Pages
+@using MultiTenantApp.Web.Resources
+@using RegisterRes = MultiTenantApp.Web.Resources.Pages.Register
+
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 @inject IConfiguration Configuration
-@inject Microsoft.Extensions.Localization.IStringLocalizer<Register> Localizer
-@inject Microsoft.Extensions.Localization.IStringLocalizer<MultiTenantApp.Web.Resources.SharedResource> SharedLocalizer
 @attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
 
-@using MultiTenantApp.Web.Resources
-@inject IStringLocalizer<Register> Localizer
-@inject IStringLocalizer<SharedResource2> SharedLocalizer
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
+    <MudPaper Elevation="3" Class="pa-6">
+        <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true">@RegisterRes.RegisterTitle</MudText>
+        
+        @if (!EnableSelfRegistration)
+        {
+            <MudAlert Severity="Severity.Warning">@SharedResource.SelfRegistrationDisabled</MudAlert>
+        }
+        else
+        {
+            <MudForm @ref="form" @bind-IsValid="@success">
+                <MudTextField @bind-Value="registerModel.Email" 
+                             Label="@SharedResource.Email" 
+                             Variant="Variant.Outlined" 
+                             Required="true"
+                             Margin="Margin.Dense"
+                             Class="mb-3" />
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">@Localizer["RegisterTitle"]</div>
-                <div class="card-body">
-                    @if (!EnableSelfRegistration)
-                    {
-                        <div class="alert alert-warning">@SharedLocalizer["SelfRegistrationDisabled"]</div>
-                    }
-                    else
-                    {
-                        <EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
-                            <DataAnnotationsValidator />
-                            <ValidationSummary />
+                <MudTextField @bind-Value="registerModel.Password" 
+                             Label="@SharedResource.Password" 
+                             Variant="Variant.Outlined" 
+                             InputType="InputType.Password"
+                             Required="true"
+                             Margin="Margin.Dense"
+                             Class="mb-3" />
 
-                            <div class="form-group mb-3">
-                                <label>@SharedLocalizer["Email"]</label>
-                                <InputText class="form-control" @bind-Value="registerModel.Email" />
-                            </div>
+                <MudTextField @bind-Value="registerModel.TenantId" 
+                             Label="@SharedResource.TenantId" 
+                             Variant="Variant.Outlined" 
+                             Required="true"
+                             Margin="Margin.Dense"
+                             Class="mb-3" />
 
-                            <div class="form-group mb-3">
-                                <label>@SharedLocalizer["Password"]</label>
-                                <InputText type="password" class="form-control" @bind-Value="registerModel.Password" />
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label>@SharedLocalizer["TenantId"]</label>
-                                <InputText class="form-control" @bind-Value="registerModel.TenantId" />
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">@SharedLocalizer["Register"]</button>
-                        </EditForm>
-                        
-                        @if (!string.IsNullOrEmpty(errorMessage))
-                        {
-                            <div class="alert alert-danger mt-3">@errorMessage</div>
-                        }
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                <MudButton Variant="Variant.Filled" 
+                          Color="Color.Primary" 
+                          FullWidth="true"
+                          OnClick="HandleRegister"
+                          Class="mb-3">
+                    @SharedResource.Register
+                </MudButton>
+            </MudForm>
+            
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <MudAlert Severity="Severity.Error" Class="mt-3">@errorMessage</MudAlert>
+            }
+        }
+    </MudPaper>
+</MudContainer>
 
 @code {
+    private MudForm form;
+    private bool success;
     private RegisterDto registerModel = new RegisterDto();
     private string errorMessage;
     private bool EnableSelfRegistration => Configuration.GetValue<bool>("EnableSelfRegistration");
@@ -68,27 +71,18 @@
     {
         if (!EnableSelfRegistration)
         {
-            // Optional: Redirect if disabled
-            // NavigationManager.NavigateTo("/login");
+             // Optional logic
         }
     }
 
     private async Task HandleRegister()
     {
+        await form.Validate();
+        if (!success) return;
+
         try
         {
-            // We need to add Register method to IAuthService first!
-            // Wait, IAuthService interface might not have Register.
-            // Let's check IAuthService.
-            // If not, I'll add it.
-            // Actually, AuthService implementation has it, but interface?
-            // I'll assume I need to add it.
-            
-            // For now, let's assume IAuthService has Register(RegisterDto).
-            // I will verify and update IAuthService if needed.
-            await ((AuthService)AuthService).RegisterAsync(registerModel); // Cast to impl if interface missing? No, bad practice.
-            // I should update interface.
-            
+            await AuthService.RegisterAsync(registerModel);
             NavigationManager.NavigateTo("/login");
         }
         catch (Exception ex)

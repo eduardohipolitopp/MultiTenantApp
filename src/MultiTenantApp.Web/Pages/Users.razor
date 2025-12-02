@@ -1,29 +1,30 @@
 @page "/users"
-@using Microsoft.Extensions.Localization
 @using MultiTenantApp.Web.Services
+@using MultiTenantApp.Web.Resources.Pages
+@using MultiTenantApp.Web.Resources
+@using UsersRes = MultiTenantApp.Web.Resources.Pages.Users
+
 @inject IUserService UserService
 @inject IRuleService RuleService
-@inject IStringLocalizer<Users> Localizer
-@inject IStringLocalizer<MultiTenantApp.Web.Resources.SharedResource> SharedLocalizer
 @inject ISnackbar Snackbar
 @attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
 
-<MudText Typo="Typo.h4" Class="mb-4">@Localizer["UserManagementTitle"]</MudText>
+<MudText Typo="Typo.h4" Class="mb-4">@UsersRes.UserManagementTitle</MudText>
 
 <MudPaper Elevation="2" Class="pa-4 mb-4">
-    <MudText Typo="Typo.h6" Class="mb-3">@Localizer["CreateNewUserHeader"]</MudText>
+    <MudText Typo="Typo.h6" Class="mb-3">@UsersRes.CreateNewUserHeader</MudText>
     <MudForm @ref="createForm" @bind-IsValid="@createFormValid">
         <MudGrid>
             <MudItem xs="12" sm="6">
                 <MudTextField @bind-Value="newUser.Email" 
-                             Label="@SharedLocalizer["Email"]" 
+                             Label="@SharedResource.Email" 
                              Variant="Variant.Outlined"
                              Required="true"
                              Margin="Margin.Dense" />
             </MudItem>
             <MudItem xs="12" sm="6">
                 <MudTextField @bind-Value="newUser.Password" 
-                             Label="@SharedLocalizer["Password"]" 
+                             Label="@SharedResource.Password" 
                              Variant="Variant.Outlined"
                              InputType="InputType.Password"
                              Required="true"
@@ -31,7 +32,7 @@
             </MudItem>
             <MudItem xs="12" sm="6">
                 <MudTextField @bind-Value="newUser.TenantId" 
-                             Label="@SharedLocalizer["TenantId"]" 
+                             Label="@SharedResource.TenantId" 
                              Variant="Variant.Outlined"
                              Required="true"
                              Margin="Margin.Dense" />
@@ -40,20 +41,20 @@
                 <ServerSelect TItem="RuleDto" 
                              TValue="string"
                              @bind-Value="newUser.Role"
-                             Label="@SharedLocalizer["Role"]"
+                             Label="@SharedResource.Role"
                              ApiUrl="api/Rules"
                              DisplaySelector="@(r => r.Name)"
                              ValueSelector="@(r => r.Name)"
                              Required="true"
                              AllowNull="true"
-                             NullText="@Localizer["SelectRole"]" />
+                             NullText="@UsersRes.SelectRole" />
             </MudItem>
             <MudItem xs="12">
                 <MudButton Variant="Variant.Filled" 
                           Color="Color.Primary" 
                           OnClick="CreateUser"
                           StartIcon="@Icons.Material.Filled.Add">
-                    @Localizer["CreateUserButton"]
+                    @UsersRes.CreateUserButton
                 </MudButton>
             </MudItem>
         </MudGrid>
@@ -67,9 +68,9 @@
              SortMode="SortMode.Single"
              Elevation="2">
     <Columns>
-        <PropertyColumn Property="x => x.Email" Title="@SharedLocalizer["Email"]" />
-        <PropertyColumn Property="x => x.TenantId" Title="@SharedLocalizer["TenantId"]" />
-        <TemplateColumn Title="@SharedLocalizer["Actions"]" Sortable="false" Filterable="false">
+        <PropertyColumn Property="x => x.Email" Title="@SharedResource.Email" />
+        <PropertyColumn Property="x => x.TenantId" Title="@SharedResource.TenantId" />
+        <TemplateColumn Title="@SharedResource.Actions" Sortable="false" Filterable="false">
             <CellTemplate>
                 <MudIconButton Icon="@Icons.Material.Filled.Delete" 
                               Color="Color.Error" 

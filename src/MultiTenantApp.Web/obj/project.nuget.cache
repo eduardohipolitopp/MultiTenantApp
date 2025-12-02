@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "67RPCXU5Cxs=",
+  "dgSpecHash": "oFszCPRVXsg=",
   "success": true,
   "projectFilePath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Web\\MultiTenantApp.Web.csproj",
   "expectedPackageFiles": [
@@ -28,6 +28,7 @@
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.hosting.abstractions\\9.0.0\\microsoft.extensions.hosting.abstractions.9.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.identity.core\\10.0.0\\microsoft.extensions.identity.core.10.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.identity.stores\\10.0.0\\microsoft.extensions.identity.stores.10.0.0.nupkg.sha512",
+    "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.localization\\7.0.5\\microsoft.extensions.localization.7.0.5.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.localization.abstractions\\10.0.0\\microsoft.extensions.localization.abstractions.10.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.logging\\10.0.0\\microsoft.extensions.logging.10.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\10.0.0\\microsoft.extensions.logging.abstractions.10.0.0.nupkg.sha512",
@@ -40,6 +41,7 @@
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.identitymodel.logging\\8.15.0\\microsoft.identitymodel.logging.8.15.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.identitymodel.tokens\\8.15.0\\microsoft.identitymodel.tokens.8.15.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.jsinterop\\8.0.0\\microsoft.jsinterop.8.0.0.nupkg.sha512",
+    "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\mudblazor\\6.11.0\\mudblazor.6.11.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\opentelemetry\\1.14.0\\opentelemetry.1.14.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\opentelemetry.api\\1.14.0\\opentelemetry.api.1.14.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\opentelemetry.api.providerbuilderextensions\\1.14.0\\opentelemetry.api.providerbuilderextensions.1.14.0.nupkg.sha512",
@@ -54,5 +56,12 @@
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "No Authorization header detected"
+    }
+  ]
 }

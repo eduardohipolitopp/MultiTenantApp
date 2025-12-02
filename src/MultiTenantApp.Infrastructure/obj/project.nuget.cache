@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "VNhcHCK7gPE=",
+  "dgSpecHash": "xMWcaoRdYzY=",
   "success": true,
   "projectFilePath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj",
   "expectedPackageFiles": [
@@ -61,6 +61,8 @@
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\opentelemetry.api.providerbuilderextensions\\1.14.0\\opentelemetry.api.providerbuilderextensions.1.14.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\opentelemetry.exporter.opentelemetryprotocol\\1.14.0\\opentelemetry.exporter.opentelemetryprotocol.1.14.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\opentelemetry.extensions.hosting\\1.14.0\\opentelemetry.extensions.hosting.1.14.0.nupkg.sha512",
+    "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\pipelines.sockets.unofficial\\2.2.8\\pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
+    "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\stackexchange.redis\\2.8.16\\stackexchange.redis.2.8.16.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\system.codedom\\6.0.0\\system.codedom.6.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\system.collections.immutable\\7.0.0\\system.collections.immutable.7.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\system.componentmodel.annotations\\5.0.0\\system.componentmodel.annotations.5.0.0.nupkg.sha512",

@@ -1,20 +1,21 @@
 @page "/rules"
-@using Microsoft.Extensions.Localization
 @using MultiTenantApp.Web.Services
 @using MultiTenantApp.Web
+@using MultiTenantApp.Web.Resources.Pages
+@using MultiTenantApp.Web.Resources
+@using RulesRes = MultiTenantApp.Web.Resources.Pages.Rules
+
 @inject IRuleService RuleService
-@inject IStringLocalizer<Rules> Localizer
-@inject IStringLocalizer<SharedResource> SharedLocalizer
 @inject ISnackbar Snackbar
 @attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
 
-<MudText Typo="Typo.h4" Class="mb-4">@Localizer["RulesManagementTitle"]</MudText>
+<MudText Typo="Typo.h4" Class="mb-4">@RulesRes.RulesManagementTitle</MudText>
 
 <MudPaper Elevation="2" Class="pa-4 mb-4">
     <MudGrid>
         <MudItem xs="12" sm="8">
             <MudTextField @bind-Value="newRuleName" 
-                         Label="@Localizer["NewRuleNamePlaceholder"]" 
+                         Label="@RulesRes.NewRuleNamePlaceholder" 
                          Variant="Variant.Outlined"
                          Margin="Margin.Dense" />
         </MudItem>
@@ -24,7 +25,7 @@
                       FullWidth="true"
                       OnClick="CreateRule"
                       StartIcon="@Icons.Material.Filled.Add">
-                @Localizer["AddRuleButton"]
+                @RulesRes.AddRuleButton
             </MudButton>
         </MudItem>
     </MudGrid>
@@ -37,8 +38,8 @@
              SortMode="SortMode.Single"
              Elevation="2">
     <Columns>
-        <PropertyColumn Property="x => x.Name" Title="@SharedLocalizer["Name"]" />
-        <TemplateColumn Title="@SharedLocalizer["Actions"]" Sortable="false" Filterable="false">
+        <PropertyColumn Property="x => x.Name" Title="@SharedResource.Name" />
+        <TemplateColumn Title="@SharedResource.Actions" Sortable="false" Filterable="false">
             <CellTemplate>
                 <MudIconButton Icon="@Icons.Material.Filled.Delete" 
                               Color="Color.Error" 

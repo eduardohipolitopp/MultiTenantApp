@@ -715,9 +715,6 @@
         "resources": {
           "en-US/MultiTenantApp.Application.resources.dll": {
             "locale": "en-US"
-          },
-          "pt-BR/MultiTenantApp.Application.resources.dll": {
-            "locale": "pt-BR"
           }
         }
       },

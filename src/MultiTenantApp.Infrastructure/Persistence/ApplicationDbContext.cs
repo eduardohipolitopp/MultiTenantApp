@@ -24,9 +24,12 @@ namespace MultiTenantApp.Infrastructure.Persistence
         {
             base.OnModelCreating(builder);
             
-            builder.Entity<Product>().HasQueryFilter(e => e.TenantId == _tenantProvider.GetTenantId());
+            // Query filters - only apply if tenant is set
+            builder.Entity<Product>().HasQueryFilter(e => 
+                _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
             
-            builder.Entity<ApplicationUser>().HasQueryFilter(e => e.TenantId == _tenantProvider.GetTenantId());
+            builder.Entity<ApplicationUser>().HasQueryFilter(e => 
+                _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MultiTenantApp.Api.Middleware;
+using MultiTenantApp.Application.Configuration;
 using MultiTenantApp.Application.Interfaces;
 using MultiTenantApp.Application.Services;
 using MultiTenantApp.Domain.Entities;
@@ -15,6 +16,7 @@ using MultiTenantApp.Infrastructure.Services;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,12 +79,32 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Configuration Options
+builder.Services.Configure<CacheOptions>(builder.Configuration.GetSection(CacheOptions.SectionName));
+builder.Services.Configure<RateLimitOptions>(builder.Configuration.GetSection(RateLimitOptions.SectionName));
+
+// Redis Configuration
+var cacheOptions = builder.Configuration.GetSection(CacheOptions.SectionName).Get<CacheOptions>();
+if (cacheOptions?.Enabled == true)
+{
+    var redisConfig = ConfigurationOptions.Parse(cacheOptions.Redis.ConnectionString);
+    redisConfig.ConnectTimeout = cacheOptions.Redis.ConnectTimeout;
+    redisConfig.SyncTimeout = cacheOptions.Redis.SyncTimeout;
+    redisConfig.AbortOnConnectFail = cacheOptions.Redis.AbortOnConnectFail;
+    redisConfig.ConnectRetry = cacheOptions.Redis.ConnectRetry;
+    
+    builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfig));
+    builder.Services.AddSingleton<ICacheService, RedisCacheService>();
+    builder.Services.AddSingleton<IRateLimitService, RateLimitService>();
+}
+
 // Dependency Injection
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<CacheDecorator>();
 builder.Services.AddHttpContextAccessor();
 
 // OpenTelemetry
@@ -123,6 +145,7 @@ app.UseRequestLocalization(localizationOptions);
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseMiddleware<RateLimitMiddleware>();
 app.UseMiddleware<TenantMiddleware>();
 
 app.MapControllers();

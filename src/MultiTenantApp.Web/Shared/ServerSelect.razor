@@ -1,0 +1,72 @@
+@typeparam TItem
+@typeparam TValue
+@using System.Net.Http.Json
+
+<MudSelect T="TValue" 
+           Value="@Value" 
+           ValueChanged="@ValueChanged"
+           Label="@Label"
+           Variant="Variant.Outlined"
+           Margin="Margin.Dense"
+           Required="@Required"
+           Disabled="@(_isLoading || Disabled)"
+           Class="@Class">
+    @if (_isLoading)
+    {
+        <MudSelectItem T="TValue" Value="default(TValue)" Disabled="true">@LoadingText</MudSelectItem>
+    }
+    else if (_items != null)
+    {
+        @if (AllowNull && !string.IsNullOrEmpty(NullText))
+        {
+            <MudSelectItem T="TValue" Value="default(TValue)">@NullText</MudSelectItem>
+        }
+        @foreach (var item in _items)
+        {
+            <MudSelectItem T="TValue" Value="@ValueSelector(item)">@DisplaySelector(item)</MudSelectItem>
+        }
+    }
+</MudSelect>
+
+@code {
+    [Parameter] public TValue Value { get; set; }
+    [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
+    [Parameter] public string Label { get; set; } = string.Empty;
+    [Parameter] public string ApiUrl { get; set; } = string.Empty;
+    [Parameter] public Func<TItem, string> DisplaySelector { get; set; }
+    [Parameter] public Func<TItem, TValue> ValueSelector { get; set; }
+    [Parameter] public bool Required { get; set; }
+    [Parameter] public bool AllowNull { get; set; }
+    [Parameter] public string NullText { get; set; } = "Select...";
+    [Parameter] public string LoadingText { get; set; } = "Loading...";
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public string Class { get; set; } = string.Empty;
+
+    [Inject] private HttpClient HttpClient { get; set; }
+
+    private List<TItem> _items;
+    private bool _isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadItemsAsync();
+    }
+
+    private async Task LoadItemsAsync()
+    {
+        try
+        {
+            _isLoading = true;
+            _items = await HttpClient.GetFromJsonAsync<List<TItem>>(ApiUrl);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading items: {ex.Message}");
+            _items = new List<TItem>();
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

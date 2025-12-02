@@ -51,7 +51,7 @@ namespace MultiTenantApp.Application.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Senha invalida.
         /// </summary>
-        internal static string InvalidCredentials {
+        public static string InvalidCredentials {
             get {
                 return ResourceManager.GetString("InvalidCredentials", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Tenant não encontrado.
         /// </summary>
-        internal static string InvalidTenant {
+        public static string InvalidTenant {
             get {
                 return ResourceManager.GetString("InvalidTenant", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Tenant não disponivel para esse usuario.
         /// </summary>
-        internal static string InvalidTenantForUser {
+        public static string InvalidTenantForUser {
             get {
                 return ResourceManager.GetString("InvalidTenantForUser", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Usuario ja existe.
         /// </summary>
-        internal static string UserAlreadyExists {
+        public static string UserAlreadyExists {
             get {
                 return ResourceManager.GetString("UserAlreadyExists", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace MultiTenantApp.Application.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Erro ao criar o usuario.
         /// </summary>
-        internal static string UserCreationFailed {
+        public static string UserCreationFailed {
             get {
                 return ResourceManager.GetString("UserCreationFailed", resourceCulture);
             }

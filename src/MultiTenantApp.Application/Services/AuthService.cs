@@ -38,7 +38,7 @@ namespace MultiTenantApp.Application.Services
             var tenant = await _tenantRepository.GetAsync(t => t.Identifier == model.TenantId);
             if (tenant == null)
             {
-                throw new Exception(AuthServiceResource.ResourceManager.GetString("InvalidTenant"));
+                throw new Exception(AuthServiceResource.InvalidTenant);
             }
 
             // 2. Set Tenant Context
@@ -49,13 +49,13 @@ namespace MultiTenantApp.Application.Services
             
             if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                throw new Exception(AuthServiceResource.ResourceManager.GetString("InvalidCredentials"));
+                throw new Exception(AuthServiceResource.InvalidCredentials);
             }
 
             // 4. Double check tenant (redundant if filter works, but safe)
             if (user.TenantId != tenant.Id)
             {
-                throw new Exception(AuthServiceResource.ResourceManager.GetString("InvalidTenantForUser"));
+                throw new Exception(AuthServiceResource.InvalidTenantForUser);
             }
 
             var authClaims = new List<Claim>
@@ -97,7 +97,7 @@ namespace MultiTenantApp.Application.Services
 
             var userExists = await _userManager.FindByEmailAsync(model.Email);
             if (userExists != null)
-                throw new Exception(AuthServiceResource.ResourceManager.GetString("UserAlreadyExists"));
+                throw new Exception(AuthServiceResource.UserAlreadyExists);
 
             ApplicationUser user = new ApplicationUser()
             {
@@ -107,13 +107,13 @@ namespace MultiTenantApp.Application.Services
             };
             // Look up tenant
             var tenant = await _tenantRepository.GetAsync(t => t.Identifier == model.TenantId);
-            if (tenant == null) throw new Exception(AuthServiceResource.ResourceManager.GetString("InvalidTenant"));
+            if (tenant == null) throw new Exception(AuthServiceResource.InvalidTenant);
             
             user.TenantId = tenant.Id;
             
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
-                throw new Exception(AuthServiceResource.ResourceManager.GetString("UserCreationFailed"));
+                throw new Exception(AuthServiceResource.UserCreationFailed);
         }
     }
 }

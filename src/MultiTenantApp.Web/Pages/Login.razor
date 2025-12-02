@@ -2,18 +2,17 @@
 @using Microsoft.AspNetCore.Authorization
 @attribute [AllowAnonymous]
 @inject IAuthService AuthService
-@inject ITenantService TenantService
 @inject NavigationManager NavigationManager
-@inject Microsoft.Extensions.Localization.IStringLocalizer<Login> Localizer
-@inject Microsoft.Extensions.Localization.IStringLocalizer<MultiTenantApp.Web.Resources.SharedResource> SharedLocalizer
+@using LoginRes = MultiTenantApp.Web.Resources.Pages.Login
+@using MultiTenantApp.Web.Resources
 
 <MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
     <MudPaper Elevation="3" Class="pa-6">
-        <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true">@Localizer["LoginTitle"]</MudText>
+        <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true">@LoginRes.LoginTitle</MudText>
         
         <MudForm @ref="form" @bind-IsValid="@success">
             <MudTextField @bind-Value="loginModel.Email" 
-                         Label="@Localizer["EmailLabel"]" 
+                         Label="@LoginRes.EmailLabel" 
                          Variant="Variant.Outlined" 
                          Required="true"
                          RequiredError="Email is required"
@@ -21,7 +20,7 @@
                          Class="mb-3" />
 
             <MudTextField @bind-Value="loginModel.Password" 
-                         Label="@Localizer["PasswordLabel"]" 
+                         Label="@LoginRes.PasswordLabel" 
                          Variant="Variant.Outlined" 
                          InputType="InputType.Password"
                          Required="true"
@@ -32,7 +31,7 @@
             <ServerSelect TItem="TenantDto" 
                          TValue="string"
                          @bind-Value="loginModel.TenantId"
-                         Label="@Localizer["TenantLabel"]"
+                         Label="@LoginRes.TenantLabel"
                          ApiUrl="api/Tenants/list"
                          DisplaySelector="@(t => t.Name)"
                          ValueSelector="@(t => t.Identifier)"
@@ -45,7 +44,7 @@
                       FullWidth="true"
                       OnClick="HandleLogin"
                       Class="mb-3">
-                @Localizer["LoginButton"]
+                @LoginRes.LoginButton
             </MudButton>
         </MudForm>
 

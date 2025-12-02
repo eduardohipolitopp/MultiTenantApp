@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MultiTenantApp.Api.Attributes;
 using MultiTenantApp.Application.DTOs;
 using MultiTenantApp.Application.Interfaces;
 
@@ -20,6 +21,7 @@ namespace MultiTenantApp.Api.Controllers
         }
 
         [HttpGet]
+        [Cached(durationMinutes: 10, varyByTenant: true)] // Cache por 10 minutos, variando por tenant
         public async Task<IActionResult> GetAll()
         {
             var products = await _productService.GetAllAsync();
@@ -27,6 +29,7 @@ namespace MultiTenantApp.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Cached(durationMinutes: 30, varyByTenant: true)] // Cache por 30 minutos
         public async Task<IActionResult> GetById(Guid id)
         {
             var product = await _productService.GetByIdAsync(id);

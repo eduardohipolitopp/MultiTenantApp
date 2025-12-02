@@ -433,6 +433,25 @@
           }
         }
       },
+      "Microsoft.Extensions.Localization/7.0.5": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
+          "Microsoft.Extensions.Localization.Abstractions": "7.0.5",
+          "Microsoft.Extensions.Logging.Abstractions": "7.0.0",
+          "Microsoft.Extensions.Options": "7.0.1"
+        },
+        "compile": {
+          "lib/net7.0/Microsoft.Extensions.Localization.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net7.0/Microsoft.Extensions.Localization.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Microsoft.Extensions.Localization.Abstractions/10.0.0": {
         "type": "package",
         "compile": {
@@ -645,6 +664,30 @@
           "lib/net8.0/Microsoft.JSInterop.dll": {
             "related": ".xml"
           }
+        }
+      },
+      "MudBlazor/6.11.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.AspNetCore.Components": "7.0.5",
+          "Microsoft.AspNetCore.Components.Web": "7.0.5",
+          "Microsoft.Extensions.Localization": "7.0.5"
+        },
+        "compile": {
+          "lib/net7.0/MudBlazor.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net7.0/MudBlazor.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/MudBlazor.props": {}
+        },
+        "buildMultiTargeting": {
+          "buildMultiTargeting/MudBlazor.props": {}
         }
       },
       "OpenTelemetry/1.14.0": {
@@ -1484,6 +1527,25 @@
         "microsoft.extensions.identity.stores.nuspec"
       ]
     },
+    "Microsoft.Extensions.Localization/7.0.5": {
+      "sha512": "F5aAQlf29mSTEl13OnJ3f3mBOyjYQ4P9RVC0lIVyhqP2pP7ZdjyWpaGrHjx1rR0g8IRaeM1I8fDYI0nnkanksA==",
+      "type": "package",
+      "path": "microsoft.extensions.localization/7.0.5",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net462/Microsoft.Extensions.Localization.dll",
+        "lib/net462/Microsoft.Extensions.Localization.xml",
+        "lib/net7.0/Microsoft.Extensions.Localization.dll",
+        "lib/net7.0/Microsoft.Extensions.Localization.xml",
+        "lib/netstandard2.0/Microsoft.Extensions.Localization.dll",
+        "lib/netstandard2.0/Microsoft.Extensions.Localization.xml",
+        "microsoft.extensions.localization.7.0.5.nupkg.sha512",
+        "microsoft.extensions.localization.nuspec"
+      ]
+    },
     "Microsoft.Extensions.Localization.Abstractions/10.0.0": {
       "sha512": "+gopxHC5+vWE61Qq2i+aFblxjSiS4UyjUG5kpfXodWbeBVwXPeP66s8uAi0LPAwnhS5jInmYJNRFYUMn+sdtKg==",
       "type": "package",
@@ -1853,6 +1915,29 @@
         "lib/net8.0/Microsoft.JSInterop.xml",
         "microsoft.jsinterop.8.0.0.nupkg.sha512",
         "microsoft.jsinterop.nuspec"
+      ]
+    },
+    "MudBlazor/6.11.0": {
+      "sha512": "gP97w+oP0G0slw2P+EKfHfhN126GBHJpL61haQJy3iAo9JSWMkzlcEQ1yFlHSWJQeI9jOZ6pb1IK9XggFOI7lA==",
+      "type": "package",
+      "path": "mudblazor/6.11.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "Nuget.png",
+        "build/Microsoft.AspNetCore.StaticWebAssets.props",
+        "build/MudBlazor.props",
+        "buildMultiTargeting/MudBlazor.props",
+        "buildTransitive/MudBlazor.props",
+        "lib/net6.0/MudBlazor.dll",
+        "lib/net6.0/MudBlazor.xml",
+        "lib/net7.0/MudBlazor.dll",
+        "lib/net7.0/MudBlazor.xml",
+        "mudblazor.6.11.0.nupkg.sha512",
+        "mudblazor.nuspec",
+        "staticwebassets/MudBlazor.min.css",
+        "staticwebassets/MudBlazor.min.js"
       ]
     },
     "OpenTelemetry/1.14.0": {
@@ -2347,6 +2432,7 @@
   "projectFileDependencyGroups": {
     "net9.0": [
       "Blazored.LocalStorage >= 4.5.0",
+      "MudBlazor >= 6.11.0",
       "MultiTenantApp.Application >= 1.0.0",
       "OpenTelemetry.Exporter.OpenTelemetryProtocol >= 1.14.0",
       "OpenTelemetry.Extensions.Hosting >= 1.14.0",
@@ -2412,6 +2498,10 @@
             "target": "Package",
             "version": "[4.5.0, )"
           },
+          "MudBlazor": {
+            "target": "Package",
+            "version": "[6.11.0, )"
+          },
           "OpenTelemetry.Exporter.OpenTelemetryProtocol": {
             "target": "Package",
             "version": "[1.14.0, )"
@@ -2447,5 +2537,13 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "No Authorization header detected"
+    }
+  ]
 }

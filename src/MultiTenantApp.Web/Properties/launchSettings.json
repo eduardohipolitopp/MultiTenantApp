@@ -4,7 +4,7 @@
     "anonymousAuthentication": true,
     "iisExpress": {
       "applicationUrl": "http://localhost:11931",
-      "sslPort": 44352
+      "sslPort": 7139
     }
   },
   "profiles": {
@@ -13,7 +13,7 @@
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
       "environmentVariables": {
         "ASPNETCORE_HTTP_PORTS": "5002",
-        "ASPNETCORE_HTTPS_PORTS": "5003",
+        "ASPNETCORE_HTTPS_PORTS": "7139",
         "DOTNET_USE_POLLING_FILE_WATCHER": "1",
         "ApiBaseUrl": "http://api:8080",
         "OTEL_EXPORTER_OTLP_ENDPOINT": "http://otel-collector:4317",
@@ -22,7 +22,7 @@
       "publishAllPorts": true,
       "useSSL": true,
       "httpPort": 5002,
-      "sslPort": 5003
+      "sslPort": 7139
     },
     "http": {
       "commandName": "Project",
@@ -37,7 +37,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:7139;http://localhost:5175",
+      "applicationUrl": "https://localhost:7139;http://localhost:5002",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

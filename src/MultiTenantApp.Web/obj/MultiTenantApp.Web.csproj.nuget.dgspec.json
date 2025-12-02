@@ -235,6 +235,10 @@
               "target": "Package",
               "version": "[4.5.0, )"
             },
+            "MudBlazor": {
+              "target": "Package",
+              "version": "[6.11.0, )"
+            },
             "OpenTelemetry.Exporter.OpenTelemetryProtocol": {
               "target": "Package",
               "version": "[1.14.0, )"
