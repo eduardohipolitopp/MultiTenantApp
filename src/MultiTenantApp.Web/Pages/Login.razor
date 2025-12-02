@@ -1,55 +1,74 @@
 @page "/login"
+@using Microsoft.AspNetCore.Authorization
+@attribute [AllowAnonymous]
 @inject IAuthService AuthService
+@inject ITenantService TenantService
 @inject NavigationManager NavigationManager
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Login> Localizer
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MultiTenantApp.Web.Resources.SharedResource> SharedLocalizer
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">Login</div>
-                <div class="card-body">
-                    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
-                        <DataAnnotationsValidator />
-                        <ValidationSummary />
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
+    <MudPaper Elevation="3" Class="pa-6">
+        <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true">@Localizer["LoginTitle"]</MudText>
+        
+        <MudForm @ref="form" @bind-IsValid="@success">
+            <MudTextField @bind-Value="loginModel.Email" 
+                         Label="@Localizer["EmailLabel"]" 
+                         Variant="Variant.Outlined" 
+                         Required="true"
+                         RequiredError="Email is required"
+                         Margin="Margin.Dense"
+                         Class="mb-3" />
 
-                        <div class="form-group mb-3">
-                            <label>Email</label>
-                            <InputText class="form-control" @bind-Value="loginModel.Email" />
-                        </div>
+            <MudTextField @bind-Value="loginModel.Password" 
+                         Label="@Localizer["PasswordLabel"]" 
+                         Variant="Variant.Outlined" 
+                         InputType="InputType.Password"
+                         Required="true"
+                         RequiredError="Password is required"
+                         Margin="Margin.Dense"
+                         Class="mb-3" />
 
-                        <div class="form-group mb-3">
-                            <label>Password</label>
-                            <InputText type="password" class="form-control" @bind-Value="loginModel.Password" />
-                        </div>
+            <ServerSelect TItem="TenantDto" 
+                         TValue="string"
+                         @bind-Value="loginModel.TenantId"
+                         Label="@Localizer["TenantLabel"]"
+                         ApiUrl="api/Tenants/list"
+                         DisplaySelector="@(t => t.Name)"
+                         ValueSelector="@(t => t.Identifier)"
+                         Required="true"
+                         AllowNull="false"
+                         Class="mb-4" />
 
-                        <div class="form-group mb-3">
-                            <label>Tenant ID</label>
-                            <InputSelect class="form-control" @bind-Value="loginModel.TenantId">
-                                <option value="">Select Tenant</option>
-                                <option value="tenant-a">Tenant A</option>
-                                <option value="tenant-b">Tenant B</option>
-                            </InputSelect>
-                        </div>
+            <MudButton Variant="Variant.Filled" 
+                      Color="Color.Primary" 
+                      FullWidth="true"
+                      OnClick="HandleLogin"
+                      Class="mb-3">
+                @Localizer["LoginButton"]
+            </MudButton>
+        </MudForm>
 
-                        <button type="submit" class="btn btn-primary">Login</button>
-                    </EditForm>
-                    
-                    @if (!string.IsNullOrEmpty(errorMessage))
-                    {
-                        <div class="alert alert-danger mt-3">@errorMessage</div>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-3">@errorMessage</MudAlert>
+        }
+    </MudPaper>
+</MudContainer>
 
 @code {
+    private MudForm form;
+    private bool success;
     private LoginDto loginModel = new LoginDto();
     private string errorMessage;
 
     private async Task HandleLogin()
     {
+        await form.Validate();
+        
+        if (!success)
+            return;
+
         try
         {
             await AuthService.Login(loginModel);

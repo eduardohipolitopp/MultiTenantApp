@@ -1,116 +1,91 @@
 @page "/products"
 @attribute [Authorize]
 @inject IProductService ProductService
-@inject NavigationManager NavigationManager
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
 
-<h3>Products</h3>
+<MudText Typo="Typo.h4" Class="mb-4">Products</MudText>
 
-<div class="mb-3">
-    <button class="btn btn-success" @onclick="ShowCreateModal">Create New Product</button>
-</div>
+<MudButton Variant="Variant.Filled" 
+          Color="Color.Success" 
+          StartIcon="@Icons.Material.Filled.Add"
+          OnClick="OpenCreateDialog"
+          Class="mb-4">
+    Create New Product
+</MudButton>
 
-@if (products == null)
-{
-    <p>Loading...</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in products)
-            {
-                <tr>
-                    <td>@product.Name</td>
-                    <td>@product.Description</td>
-                    <td>@product.Price</td>
-                    <td>
-                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteProduct(product.Id)">Delete</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-
-@if (showModal)
-{
-    <div class="modal fade show d-block" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Create Product</h5>
-                    <button type="button" class="close" @onclick="CloseModal">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <EditForm Model="@newProduct" OnValidSubmit="CreateProduct">
-                        <DataAnnotationsValidator />
-                        <div class="form-group">
-                            <label>Name</label>
-                            <InputText class="form-control" @bind-Value="newProduct.Name" />
-                        </div>
-                        <div class="form-group">
-                            <label>Description</label>
-                            <InputText class="form-control" @bind-Value="newProduct.Description" />
-                        </div>
-                        <div class="form-group">
-                            <label>Price</label>
-                            <InputNumber class="form-control" @bind-Value="newProduct.Price" />
-                        </div>
-                        <button type="submit" class="btn btn-primary mt-2">Save</button>
-                    </EditForm>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal-backdrop fade show"></div>
-}
+<MudDataGrid T="ProductDto" 
+             ServerData="LoadServerData" 
+             @ref="dataGrid"
+             Filterable="true"
+             SortMode="SortMode.Single"
+             Elevation="2">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Title="Name" />
+        <PropertyColumn Property="x => x.Description" Title="Description" />
+        <PropertyColumn Property="x => x.Price" Title="Price" Format="C2" />
+        <TemplateColumn Title="Actions" Sortable="false" Filterable="false">
+            <CellTemplate>
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                              Color="Color.Error" 
+                              Size="Size.Small"
+                              OnClick="@(() => DeleteProduct(context.Item.Id))" />
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="ProductDto" />
+    </PagerContent>
+</MudDataGrid>
 
 @code {
-    private List<ProductDto> products;
-    private CreateProductDto newProduct = new CreateProductDto();
-    private bool showModal = false;
+    private MudDataGrid<ProductDto> dataGrid;
 
-    protected override async Task OnInitializedAsync()
+    private async Task<GridData<ProductDto>> LoadServerData(GridState<ProductDto> state)
     {
-        await LoadProducts();
+        var request = new PagedRequest
+        {
+            Page = state.Page + 1,
+            PageSize = state.PageSize,
+            SortBy = state.SortDefinitions.FirstOrDefault()?.SortBy ?? "Name",
+            SortDescending = state.SortDefinitions.FirstOrDefault()?.Descending ?? false,
+            SearchTerm = state.FilterDefinitions.FirstOrDefault()?.Value?.ToString()
+        };
+
+        var response = await ProductService.GetPagedAsync(request);
+
+        return new GridData<ProductDto>
+        {
+            Items = response.Items,
+            TotalItems = response.TotalCount
+        };
     }
 
-    private async Task LoadProducts()
+    private async Task OpenCreateDialog()
     {
-        products = await ProductService.GetAllAsync();
+        var parameters = new DialogParameters();
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        
+        var dialog = await DialogService.ShowAsync<ProductCreateDialog>("Create Product", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await dataGrid.ReloadServerData();
+        }
     }
 
     private async Task DeleteProduct(Guid id)
     {
-        await ProductService.DeleteAsync(id);
-        await LoadProducts();
-    }
-
-    private void ShowCreateModal()
-    {
-        newProduct = new CreateProductDto();
-        showModal = true;
-    }
-
-    private void CloseModal()
-    {
-        showModal = false;
-    }
-
-    private async Task CreateProduct()
-    {
-        await ProductService.CreateAsync(newProduct);
-        showModal = false;
-        await LoadProducts();
+        try
+        {
+            await ProductService.DeleteAsync(id);
+            await dataGrid.ReloadServerData();
+            Snackbar.Add("Product deleted successfully", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
     }
 }

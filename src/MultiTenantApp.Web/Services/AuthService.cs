@@ -47,5 +47,15 @@ namespace MultiTenantApp.Web.Services
             await _localStorage.RemoveItemAsync("tenantId");
             ((CustomAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
         }
+
+        public async Task RegisterAsync(RegisterDto registerModel)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/Auth/register", registerModel);
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new System.Exception(error);
+            }
+        }
     }
 }

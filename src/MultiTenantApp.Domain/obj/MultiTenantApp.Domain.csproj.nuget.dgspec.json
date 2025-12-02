@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {}
+    "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {}
   },
   "projects": {
-    "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
+    "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
         "projectName": "MultiTenantApp.Domain",
-        "projectPath": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
+        "projectPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
         "packagesPath": "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Domain\\obj\\",
+        "outputPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj": {}
+    "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj": {
+    "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj",
+        "projectUniqueName": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj",
         "projectName": "MultiTenantApp.Api",
-        "projectPath": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj",
+        "projectPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj",
         "packagesPath": "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Api\\obj\\",
+        "outputPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Api\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -33,11 +33,11 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj": {
-                "projectPath": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj"
+              "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj": {
+                "projectPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj"
               },
-              "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj": {
-                "projectPath": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj"
+              "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj"
               }
             }
           }
@@ -58,9 +58,25 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[9.0.11, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[9.0.3, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "target": "Package",
+              "version": "[9.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "target": "Package",
+              "version": "[9.0.11, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[9.0.4, )"
             },
             "OpenTelemetry.Exporter.OpenTelemetryProtocol": {
               "target": "Package",
@@ -73,6 +89,18 @@
             "OpenTelemetry.Instrumentation.AspNetCore": {
               "target": "Package",
               "version": "[1.14.0, )"
+            },
+            "OpenTelemetry.Instrumentation.Http": {
+              "target": "Package",
+              "version": "[1.14.0, )"
+            },
+            "OpenTelemetry.Instrumentation.Runtime": {
+              "target": "Package",
+              "version": "[1.14.0, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.6.2, )"
             }
           },
           "imports": [
@@ -98,14 +126,14 @@
         }
       }
     },
-    "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj": {
+    "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj",
+        "projectUniqueName": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj",
         "projectName": "MultiTenantApp.Application",
-        "projectPath": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj",
+        "projectPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj",
         "packagesPath": "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Application\\obj\\",
+        "outputPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -127,8 +155,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
-                "projectPath": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj"
+              "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
+                "projectPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj"
               }
             }
           }
@@ -149,9 +177,37 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "Microsoft.Extensions.Configuration": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.Extensions.Configuration.Abstractions": {
+              "target": "Package",
+              "version": "[10.0.0, )"
+            },
+            "Microsoft.Extensions.Configuration.Binder": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.Extensions.Configuration.Json": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
             "Microsoft.Extensions.Identity.Core": {
               "target": "Package",
               "version": "[10.0.0, )"
+            },
+            "Microsoft.Extensions.Identity.Stores": {
+              "target": "Package",
+              "version": "[10.0.0, )"
+            },
+            "Microsoft.Extensions.Localization.Abstractions": {
+              "target": "Package",
+              "version": "[10.0.0, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.15.0, )"
             }
           },
           "imports": [
@@ -174,14 +230,14 @@
         }
       }
     },
-    "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
+    "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
         "projectName": "MultiTenantApp.Domain",
-        "projectPath": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
+        "projectPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
         "packagesPath": "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Domain\\obj\\",
+        "outputPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -246,14 +302,14 @@
         }
       }
     },
-    "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj": {
+    "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj",
         "projectName": "MultiTenantApp.Infrastructure",
-        "projectPath": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj",
+        "projectPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\obj\\",
+        "outputPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -275,11 +331,11 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj": {
-                "projectPath": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj"
+              "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj": {
+                "projectPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj"
               },
-              "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
-                "projectPath": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj"
+              "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
+                "projectPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj"
               }
             }
           }
@@ -300,6 +356,30 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Http.Abstractions": {
+              "target": "Package",
+              "version": "[2.3.0, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "target": "Package",
+              "version": "[9.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "target": "Package",
+              "version": "[9.0.11, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            },
             "OpenTelemetry.Exporter.OpenTelemetryProtocol": {
               "target": "Package",
               "version": "[1.14.0, )"

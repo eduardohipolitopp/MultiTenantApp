@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
@@ -20,25 +19,33 @@ namespace MultiTenantApp.Web.Services
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var savedToken = await _localStorage.GetItemAsync<string>("authToken");
-
-            if (string.IsNullOrWhiteSpace(savedToken))
+            try
             {
+                var savedToken = await _localStorage.GetItemAsync<string>("authToken");
+
+                if (string.IsNullOrWhiteSpace(savedToken))
+                {
+                    return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+                }
+
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", savedToken);
+                
+                // Also set Tenant ID header if we stored it, to ensure it's sent with every request
+                var tenantId = await _localStorage.GetItemAsync<string>("tenantId");
+                if (!string.IsNullOrEmpty(tenantId))
+                {
+                    if (_httpClient.DefaultRequestHeaders.Contains("X-Tenant-ID"))
+                        _httpClient.DefaultRequestHeaders.Remove("X-Tenant-ID");
+                    _httpClient.DefaultRequestHeaders.Add("X-Tenant-ID", tenantId);
+                }
+
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt")));
+            }
+            catch (InvalidOperationException)
+            {
+                // JavaScript interop not available during prerendering
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
-
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", savedToken);
-            
-            // Also set Tenant ID header if we stored it, to ensure it's sent with every request
-            var tenantId = await _localStorage.GetItemAsync<string>("tenantId");
-            if (!string.IsNullOrEmpty(tenantId))
-            {
-                if (_httpClient.DefaultRequestHeaders.Contains("X-Tenant-ID"))
-                    _httpClient.DefaultRequestHeaders.Remove("X-Tenant-ID");
-                _httpClient.DefaultRequestHeaders.Add("X-Tenant-ID", tenantId);
-            }
-
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt")));
         }
 
         public void MarkUserAsAuthenticated(string token)

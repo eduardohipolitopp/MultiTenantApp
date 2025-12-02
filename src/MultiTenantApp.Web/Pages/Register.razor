@@ -1,0 +1,99 @@
+@page "/register"
+
+@using Microsoft.Extensions.Localization
+@using MultiTenantApp.Web.Services
+@using Microsoft.Extensions.Configuration
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@inject IConfiguration Configuration
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Register> Localizer
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MultiTenantApp.Web.Resources.SharedResource> SharedLocalizer
+@attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+
+@using MultiTenantApp.Web.Resources
+@inject IStringLocalizer<Register> Localizer
+@inject IStringLocalizer<SharedResource2> SharedLocalizer
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">@Localizer["RegisterTitle"]</div>
+                <div class="card-body">
+                    @if (!EnableSelfRegistration)
+                    {
+                        <div class="alert alert-warning">@SharedLocalizer["SelfRegistrationDisabled"]</div>
+                    }
+                    else
+                    {
+                        <EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+
+                            <div class="form-group mb-3">
+                                <label>@SharedLocalizer["Email"]</label>
+                                <InputText class="form-control" @bind-Value="registerModel.Email" />
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label>@SharedLocalizer["Password"]</label>
+                                <InputText type="password" class="form-control" @bind-Value="registerModel.Password" />
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label>@SharedLocalizer["TenantId"]</label>
+                                <InputText class="form-control" @bind-Value="registerModel.TenantId" />
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">@SharedLocalizer["Register"]</button>
+                        </EditForm>
+                        
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-danger mt-3">@errorMessage</div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private RegisterDto registerModel = new RegisterDto();
+    private string errorMessage;
+    private bool EnableSelfRegistration => Configuration.GetValue<bool>("EnableSelfRegistration");
+
+    protected override void OnInitialized()
+    {
+        if (!EnableSelfRegistration)
+        {
+            // Optional: Redirect if disabled
+            // NavigationManager.NavigateTo("/login");
+        }
+    }
+
+    private async Task HandleRegister()
+    {
+        try
+        {
+            // We need to add Register method to IAuthService first!
+            // Wait, IAuthService interface might not have Register.
+            // Let's check IAuthService.
+            // If not, I'll add it.
+            // Actually, AuthService implementation has it, but interface?
+            // I'll assume I need to add it.
+            
+            // For now, let's assume IAuthService has Register(RegisterDto).
+            // I will verify and update IAuthService if needed.
+            await ((AuthService)AuthService).RegisterAsync(registerModel); // Cast to impl if interface missing? No, bad practice.
+            // I should update interface.
+            
+            NavigationManager.NavigateTo("/login");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}

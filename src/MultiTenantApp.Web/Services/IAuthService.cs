@@ -7,5 +7,6 @@ namespace MultiTenantApp.Web.Services
     {
         Task<LoginResponseDto> Login(LoginDto loginModel);
         Task Logout();
+        Task RegisterAsync(RegisterDto registerModel);
     }
 }

@@ -18,8 +18,6 @@ using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -80,6 +78,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 // Dependency Injection
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -93,7 +92,7 @@ builder.Services.AddOpenTelemetry()
         tracerProviderBuilder
             .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("MultiTenantApp.Api"))
             .AddAspNetCoreInstrumentation()
-            .AddEntityFrameworkCoreInstrumentation()
+            //.AddEntityFrameworkCoreInstrumentation()
             .AddOtlpExporter();
     })
     .WithMetrics(metricsProviderBuilder =>
@@ -113,7 +112,13 @@ var app = builder.Build();
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection(); // Disable for docker simplicity if needed, but good to have.
+var supportedCultures = new[] { "en-US", "pt-BR" };
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture(supportedCultures[0])
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+
+app.UseRequestLocalization(localizationOptions);
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -122,7 +127,6 @@ app.UseMiddleware<TenantMiddleware>();
 
 app.MapControllers();
 
-// Apply Migrations
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -141,15 +145,42 @@ using (var scope = app.Services.CreateScope())
         if (!await roleManager.RoleExistsAsync("User"))
             await roleManager.CreateAsync(new IdentityRole("User"));
 
+        // Seed Tenants first
+        if (!await context.Tenants.AnyAsync(t => t.Identifier == "tenant-a"))
+        {
+            await context.Tenants.AddAsync(new Tenant
+            {
+                Id = Guid.NewGuid(),
+                Name = "Tenant A",
+                Identifier = "tenant-a",
+                CreatedAt = DateTime.UtcNow
+            });
+        }
+        
+        if (!await context.Tenants.AnyAsync(t => t.Identifier == "tenant-b"))
+        {
+            await context.Tenants.AddAsync(new Tenant
+            {
+                Id = Guid.NewGuid(),
+                Name = "Tenant B",
+                Identifier = "tenant-b",
+                CreatedAt = DateTime.UtcNow
+            });
+        }
+        
+        await context.SaveChangesAsync();
+
         // Seed Tenants and Users
         // Tenant A
         if (await userManager.FindByEmailAsync("admin@tenant-a.com") == null)
         {
+            var tenatnA = await context.Tenants.FirstAsync(t => t.Identifier == "tenant-a");
+
             var user = new ApplicationUser
             {
                 UserName = "admin@tenant-a.com",
                 Email = "admin@tenant-a.com",
-                TenantId = "tenant-a",
+                TenantId = tenatnA.Id,
                 EmailConfirmed = true
             };
             await userManager.CreateAsync(user, "Password123!");
@@ -159,11 +190,13 @@ using (var scope = app.Services.CreateScope())
         // Tenant B
         if (await userManager.FindByEmailAsync("admin@tenant-b.com") == null)
         {
+            var tenatnB = await context.Tenants.FirstAsync(t => t.Identifier == "tenant-b");
+
             var user = new ApplicationUser
             {
                 UserName = "admin@tenant-b.com",
                 Email = "admin@tenant-b.com",
-                TenantId = "tenant-b",
+                TenantId = tenatnB.Id,
                 EmailConfirmed = true
             };
             await userManager.CreateAsync(user, "Password123!");

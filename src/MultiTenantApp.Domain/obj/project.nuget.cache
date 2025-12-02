@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "5rXNXvjamIA=",
+  "dgSpecHash": "WUllnmq60rk=",
   "success": true,
-  "projectFilePath": "C:\\Users\\eduardo.hipolito\\.gemini\\antigravity\\scratch\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
+  "projectFilePath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\10.0.0\\microsoft.aspnetcore.cryptography.internal.10.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\10.0.0\\microsoft.aspnetcore.cryptography.keyderivation.10.0.0.nupkg.sha512",

@@ -26,6 +26,11 @@ namespace MultiTenantApp.Infrastructure.Repositories
             return await _dbSet.ToListAsync();
         }
 
+        public async Task<T?> GetAsync(System.Linq.Expressions.Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.FirstOrDefaultAsync(predicate);
+        }
+
         public async Task<T> AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);

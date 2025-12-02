@@ -8,11 +8,27 @@
     }
   },
   "profiles": {
+    "Container (Dockerfile)": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "environmentVariables": {
+        "ASPNETCORE_HTTP_PORTS": "5002",
+        "ASPNETCORE_HTTPS_PORTS": "5003",
+        "DOTNET_USE_POLLING_FILE_WATCHER": "1",
+        "ApiBaseUrl": "http://api:8080",
+        "OTEL_EXPORTER_OTLP_ENDPOINT": "http://otel-collector:4317",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "publishAllPorts": true,
+      "useSSL": true,
+      "httpPort": 5002,
+      "sslPort": 5003
+    },
     "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:5175",
+      "applicationUrl": "http://localhost:5002",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

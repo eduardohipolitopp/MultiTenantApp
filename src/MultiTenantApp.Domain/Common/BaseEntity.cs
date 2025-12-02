@@ -1,10 +1,13 @@
+using MultiTenantApp.Domain.Entities;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MultiTenantApp.Domain.Common
 {
     public interface ITenantEntity
     {
-        string TenantId { get; set; }
+        Guid TenantId { get; set; }
+        public Tenant? Tenant { get; set; }
     }
 
     public abstract class BaseEntity
@@ -15,6 +18,8 @@ namespace MultiTenantApp.Domain.Common
 
     public abstract class BaseTenantEntity : BaseEntity, ITenantEntity
     {
-        public string TenantId { get; set; } = string.Empty;
+        [ForeignKey(nameof(Tenant))]
+        public Guid TenantId { get; set; }
+        public Tenant? Tenant { get; set; }
     }
 }

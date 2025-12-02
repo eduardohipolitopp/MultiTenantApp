@@ -1,0 +1,145 @@
+@page "/users"
+@using Microsoft.Extensions.Localization
+@using MultiTenantApp.Web.Services
+@inject IUserService UserService
+@inject IRuleService RuleService
+@inject IStringLocalizer<Users> Localizer
+@inject IStringLocalizer<MultiTenantApp.Web.Resources.SharedResource> SharedLocalizer
+@inject ISnackbar Snackbar
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
+
+<MudText Typo="Typo.h4" Class="mb-4">@Localizer["UserManagementTitle"]</MudText>
+
+<MudPaper Elevation="2" Class="pa-4 mb-4">
+    <MudText Typo="Typo.h6" Class="mb-3">@Localizer["CreateNewUserHeader"]</MudText>
+    <MudForm @ref="createForm" @bind-IsValid="@createFormValid">
+        <MudGrid>
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="newUser.Email" 
+                             Label="@SharedLocalizer["Email"]" 
+                             Variant="Variant.Outlined"
+                             Required="true"
+                             Margin="Margin.Dense" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="newUser.Password" 
+                             Label="@SharedLocalizer["Password"]" 
+                             Variant="Variant.Outlined"
+                             InputType="InputType.Password"
+                             Required="true"
+                             Margin="Margin.Dense" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="newUser.TenantId" 
+                             Label="@SharedLocalizer["TenantId"]" 
+                             Variant="Variant.Outlined"
+                             Required="true"
+                             Margin="Margin.Dense" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <ServerSelect TItem="RuleDto" 
+                             TValue="string"
+                             @bind-Value="newUser.Role"
+                             Label="@SharedLocalizer["Role"]"
+                             ApiUrl="api/Rules"
+                             DisplaySelector="@(r => r.Name)"
+                             ValueSelector="@(r => r.Name)"
+                             Required="true"
+                             AllowNull="true"
+                             NullText="@Localizer["SelectRole"]" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudButton Variant="Variant.Filled" 
+                          Color="Color.Primary" 
+                          OnClick="CreateUser"
+                          StartIcon="@Icons.Material.Filled.Add">
+                    @Localizer["CreateUserButton"]
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudForm>
+</MudPaper>
+
+<MudDataGrid T="UserDto" 
+             ServerData="LoadServerData" 
+             @ref="dataGrid"
+             Filterable="true"
+             SortMode="SortMode.Single"
+             Elevation="2">
+    <Columns>
+        <PropertyColumn Property="x => x.Email" Title="@SharedLocalizer["Email"]" />
+        <PropertyColumn Property="x => x.TenantId" Title="@SharedLocalizer["TenantId"]" />
+        <TemplateColumn Title="@SharedLocalizer["Actions"]" Sortable="false" Filterable="false">
+            <CellTemplate>
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                              Color="Color.Error" 
+                              Size="Size.Small"
+                              OnClick="@(() => DeleteUser(context.Item.Id))" />
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="UserDto" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    private MudForm createForm;
+    private bool createFormValid;
+    private MudDataGrid<UserDto> dataGrid;
+    private CreateUserDto newUser = new CreateUserDto();
+
+    private async Task<GridData<UserDto>> LoadServerData(GridState<UserDto> state)
+    {
+        var request = new PagedRequest
+        {
+            Page = state.Page + 1, // MudBlazor uses 0-based indexing
+            PageSize = state.PageSize,
+            SortBy = state.SortDefinitions.FirstOrDefault()?.SortBy ?? "Email",
+            SortDescending = state.SortDefinitions.FirstOrDefault()?.Descending ?? false,
+            SearchTerm = state.FilterDefinitions.FirstOrDefault()?.Value?.ToString()
+        };
+
+        var response = await UserService.GetUsersPaged(request);
+
+        return new GridData<UserDto>
+        {
+            Items = response.Items,
+            TotalItems = response.TotalCount
+        };
+    }
+
+    private async Task CreateUser()
+    {
+        await createForm.Validate();
+        if (!createFormValid)
+            return;
+
+        try
+        {
+            await UserService.CreateUser(newUser);
+            newUser = new CreateUserDto();
+            await createForm.ResetAsync();
+            await dataGrid.ReloadServerData();
+            Snackbar.Add("User created successfully", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task DeleteUser(string id)
+    {
+        try
+        {
+            await UserService.DeleteUser(id);
+            await dataGrid.ReloadServerData();
+            Snackbar.Add("User deleted successfully", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+}

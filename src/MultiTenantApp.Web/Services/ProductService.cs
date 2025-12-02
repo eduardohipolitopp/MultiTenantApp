@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using MultiTenantApp.Application.DTOs;
-using MultiTenantApp.Application.Interfaces;
+
 
 namespace MultiTenantApp.Web.Services
 {
@@ -36,6 +36,23 @@ namespace MultiTenantApp.Web.Services
         public async Task DeleteAsync(System.Guid id)
         {
             await _httpClient.DeleteAsync($"api/Products/{id}");
+        }
+
+        public async Task<PagedResponse<ProductDto>> GetPagedAsync(PagedRequest request)
+        {
+            var queryString = $"?Page={request.Page}&PageSize={request.PageSize}";
+            
+            if (!string.IsNullOrWhiteSpace(request.SortBy))
+            {
+                queryString += $"&SortBy={request.SortBy}&SortDescending={request.SortDescending}";
+            }
+            
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                queryString += $"&SearchTerm={Uri.EscapeDataString(request.SearchTerm)}";
+            }
+
+            return await _httpClient.GetFromJsonAsync<PagedResponse<ProductDto>>($"api/Products/paged{queryString}");
         }
     }
 }
