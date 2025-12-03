@@ -1,0 +1,39 @@
+@using MultiTenantApp.Application.DTOs
+@using MultiTenantApp.Web.Resources.Pages
+@using RulesRes = MultiTenantApp.Web.Resources.Pages.Rules
+
+<MudForm @ref="form" @bind-IsValid="@success">
+    <MudTextField @bind-Value="RoleName" 
+                  Label="@RulesRes.NewRuleNamePlaceholder" 
+                  Variant="Variant.Outlined"
+                  Required="true"
+                  Margin="Margin.Dense"
+                  Class="mb-3" />
+
+    <MudButton Variant="Variant.Filled" 
+               Color="Color.Primary" 
+               OnClick="OnSubmit"
+               Disabled="@(!success)"
+               Class="mt-4">
+        @ButtonText
+    </MudButton>
+</MudForm>
+
+@code {
+    [Parameter] public string RoleName { get; set; }
+    [Parameter] public EventCallback<string> RoleNameChanged { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+    private MudForm form;
+    private bool success;
+
+    private async Task OnSubmit()
+    {
+        await form.Validate();
+        if (success)
+        {
+            await OnValidSubmit.InvokeAsync();
+        }
+    }
+}

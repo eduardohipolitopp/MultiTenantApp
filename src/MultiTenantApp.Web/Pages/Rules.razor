@@ -11,25 +11,13 @@
 
 <MudText Typo="Typo.h4" Class="mb-4">@RulesRes.RulesManagementTitle</MudText>
 
-<MudPaper Elevation="2" Class="pa-4 mb-4">
-    <MudGrid>
-        <MudItem xs="12" sm="8">
-            <MudTextField @bind-Value="newRuleName"
-                          Label="@RulesRes.NewRuleNamePlaceholder"
-                          Variant="Variant.Outlined"
-                          Margin="Margin.Dense" />
-        </MudItem>
-        <MudItem xs="12" sm="4">
-            <MudButton Variant="Variant.Filled"
-                       Color="Color.Primary"
-                       FullWidth="true"
-                       OnClick="CreateRule"
-                       StartIcon="@Icons.Material.Filled.Add">
-                @RulesRes.AddRuleButton
-            </MudButton>
-        </MudItem>
-    </MudGrid>
-</MudPaper>
+<MudButton Variant="Variant.Filled" 
+          Color="Color.Primary" 
+          StartIcon="@Icons.Material.Filled.Add"
+          Href="/rules/create"
+          Class="mb-4">
+    @RulesRes.AddRuleButton
+</MudButton>
 
 <MudDataGrid T="RuleDto"
              ServerData="LoadServerData"
@@ -41,8 +29,12 @@
         <PropertyColumn Property="x => x.Name" Title="@SharedResource.Name" />
         <TemplateColumn Title="@SharedResource.Actions" Sortable="false" Filterable="false">
             <CellTemplate>
-                <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                               Color="Color.Error"
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" 
+                              Color="Color.Primary" 
+                              Size="Size.Small"
+                              Href="@($"/rules/edit/{context.Item.Id}")" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                               Color="Color.Error" 
                                Size="Size.Small"
                                OnClick="@(() => DeleteRule(context.Item.Id))" />
             </CellTemplate>
@@ -52,7 +44,6 @@
 
 @code {
     private MudDataGrid<RuleDto> dataGrid;
-    private string newRuleName;
 
     private async Task<GridData<RuleDto>> LoadServerData(GridState<RuleDto> state)
     {
@@ -65,26 +56,7 @@
             };
     }
 
-    private async Task CreateRule()
-    {
-        if (string.IsNullOrWhiteSpace(newRuleName))
-        {
-            Snackbar.Add("Rule name is required", Severity.Warning);
-            return;
-        }
 
-        try
-        {
-            await RuleService.CreateRule(newRuleName);
-            newRuleName = string.Empty;
-            await dataGrid.ReloadServerData();
-            Snackbar.Add("Rule created successfully", Severity.Success);
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
-        }
-    }
 
     private async Task DeleteRule(string id)
     {

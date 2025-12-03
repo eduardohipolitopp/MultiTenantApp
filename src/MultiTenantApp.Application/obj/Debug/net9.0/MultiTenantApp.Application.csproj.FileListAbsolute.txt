@@ -36,3 +36,4 @@ C:\Users\eduardo.hipolito\Documents\MyProjects\MultiTenantApp\src\MultiTenantApp
 C:\Users\eduardo.hipolito\Documents\MyProjects\MultiTenantApp\src\MultiTenantApp.Application\obj\Debug\net9.0\refint\MultiTenantApp.Application.dll
 C:\Users\eduardo.hipolito\Documents\MyProjects\MultiTenantApp\src\MultiTenantApp.Application\obj\Debug\net9.0\MultiTenantApp.Application.pdb
 C:\Users\eduardo.hipolito\Documents\MyProjects\MultiTenantApp\src\MultiTenantApp.Application\obj\Debug\net9.0\ref\MultiTenantApp.Application.dll
+C:\Users\eduardo.hipolito\Documents\MyProjects\MultiTenantApp\src\MultiTenantApp.Application\obj\Debug\net9.0\en-US\MultiTenantApp.Application.resources.cs

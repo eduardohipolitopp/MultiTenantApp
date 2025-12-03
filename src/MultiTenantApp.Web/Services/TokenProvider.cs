@@ -1,4 +1,6 @@
-﻿namespace MultiTenantApp.Web.Services
+﻿using MultiTenantApp.Web.Interfaces;
+
+namespace MultiTenantApp.Web.Services
 {
     public class TokenProvider : ITokenProvider
     {

@@ -17,8 +17,25 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using StackExchange.Redis;
+using Serilog;
+using Serilog.Sinks.Grafana.Loki;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Serilog
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .Enrich.FromLogContext()
+        .WriteTo.Console();
+        
+    var lokiUrl = context.Configuration["Loki:Url"];
+    if (!string.IsNullOrEmpty(lokiUrl))
+    {
+        configuration.WriteTo.GrafanaLoki(lokiUrl);
+    }
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -107,6 +124,12 @@ if (cacheOptions?.Enabled == true)
     builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfig));
     builder.Services.AddSingleton<ICacheService, RedisCacheService>();
     builder.Services.AddSingleton<IRateLimitService, RateLimitService>();
+    builder.Services.AddScoped<CacheDecorator>();
+}
+else
+{
+    // Register a no-op CacheDecorator when cache is disabled
+    builder.Services.AddScoped<CacheDecorator>();
 }
 
 // Dependency Injection
@@ -115,7 +138,6 @@ builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<CacheDecorator>();
 builder.Services.AddHttpContextAccessor();
 
 // OpenTelemetry
@@ -157,6 +179,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllowAll");
 
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseMiddleware<RateLimitMiddleware>();
 app.UseMiddleware<TenantMiddleware>();
 

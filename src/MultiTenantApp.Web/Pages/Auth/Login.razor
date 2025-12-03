@@ -1,0 +1,82 @@
+@page "/login"
+@layout LoginLayout
+@using Microsoft.AspNetCore.Authorization
+@attribute [AllowAnonymous]
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@using LoginRes = MultiTenantApp.Web.Resources.Pages.Login
+@using MultiTenantApp.Web.Resources
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
+    <MudPaper Elevation="3" Class="pa-6">
+        <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true">@LoginRes.LoginTitle</MudText>
+        
+        <MudForm @ref="form" @bind-IsValid="@success">
+            <MudTextField @bind-Value="loginModel.Email" 
+                         Label="@LoginRes.EmailLabel" 
+                         Variant="Variant.Outlined" 
+                         Required="true"
+                         RequiredError="Email is required"
+                         Margin="Margin.Dense"
+                         Class="mb-3" />
+
+            <MudTextField @bind-Value="loginModel.Password" 
+                         Label="@LoginRes.PasswordLabel" 
+                         Variant="Variant.Outlined" 
+                         InputType="InputType.Password"
+                         Required="true"
+                         RequiredError="Password is required"
+                         Margin="Margin.Dense"
+                         Class="mb-3" />
+
+            <ServerSelect TItem="TenantDto" 
+                         TValue="string"
+                         @bind-Value="loginModel.TenantId"
+                         Label="@LoginRes.TenantLabel"
+                         ApiUrl="api/Tenants/list"
+                         DisplaySelector="@(t => t.Name)"
+                         ValueSelector="@(t => t.Identifier)"
+                         Required="true"
+                         AllowNull="false"
+                         Class="mb-4" />
+
+            <MudButton Variant="Variant.Filled" 
+                      Color="Color.Primary" 
+                      FullWidth="true"
+                      OnClick="HandleLogin"
+                      Class="mb-3">
+                @LoginRes.LoginButton
+            </MudButton>
+        </MudForm>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-3">@errorMessage</MudAlert>
+        }
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private MudForm form;
+    private bool success;
+    private LoginDto loginModel = new LoginDto();
+    private string errorMessage;
+
+    private async Task HandleLogin()
+    {
+        await form.Validate();
+        
+        if (!success)
+            return;
+
+        try
+        {
+            await AuthService.Login(loginModel);
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}

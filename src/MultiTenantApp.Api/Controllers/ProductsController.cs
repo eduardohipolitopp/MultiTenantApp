@@ -43,16 +43,28 @@ namespace MultiTenantApp.Api.Controllers
         [HttpPost("create")]
         [Authorize(Roles = "Admin")]
         [Idempotent]
+        [InvalidateCache("action:Products:*")]
         public async Task<IActionResult> Create([FromBody] CreateProductDto model)
         {
             var product = await _productService.CreateAsync(model);
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
         }
 
+        // PUT api/products/update/{id}
+        [HttpPut("update/{id}")]
+        [Authorize(Roles = "Admin")]
+        [InvalidateCache("action:Products:*")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductDto model)
+        {
+            await _productService.UpdateAsync(id, model);
+            return NoContent();
+        }
+
         // DELETE api/products/delete/{id}
         [HttpDelete("delete/{id}")]
         [Authorize(Roles = "Admin")]
         [Idempotent]
+        [InvalidateCache("action:Products:*")]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _productService.DeleteAsync(id);

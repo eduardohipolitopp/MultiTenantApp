@@ -11,67 +11,13 @@
 
 <MudText Typo="Typo.h4" Class="mb-4">@UsersRes.UserManagementTitle</MudText>
 
-<MudPaper Elevation="2" Class="pa-4 mb-4">
-    <MudText Typo="Typo.h6" Class="mb-3">@UsersRes.CreateNewUserHeader</MudText>
-    <MudForm @ref="createForm" @bind-IsValid="@createFormValid">
-        <MudGrid>
-            <MudItem xs="12" sm="12">
-                <MudTextField @bind-Value="newUser.UserName"
-                              Label="@SharedResource.UserName"
-                              Variant="Variant.Outlined"
-                              Required="true"
-                              Margin="Margin.Dense" />
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="newUser.Email" 
-                             Label="@SharedResource.Email" 
-                             Variant="Variant.Outlined"
-                             Required="true"
-                             Margin="Margin.Dense" />
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="newUser.Password" 
-                             Label="@SharedResource.Password" 
-                             Variant="Variant.Outlined"
-                             InputType="InputType.Password"
-                             Required="true"
-                             Margin="Margin.Dense" />
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <ServerSelect TItem="TenantDto"
-                              TValue="string"
-                              @bind-Value="newUser.TenantId"
-                              Label="@SharedResource.TenantId"
-                              ApiUrl="api/Tenants/list"
-                              DisplaySelector="@(t => t.Name)"
-                              ValueSelector="@(t => t.Identifier)"
-                              Required="true"
-                              AllowNull="false"
-                              Class="mb-4" />
-            </MudItem>
-            <MudItem xs="12" sm="6">
-                <ServerSelect TItem="RuleDto" 
-                             TValue="string"
-                             @bind-Value="newUser.Role"
-                             Label="@SharedResource.Role"
-                             ApiUrl="api/Rules/list"
-                             DisplaySelector="@(r => r.Name)"
-                             ValueSelector="@(r => r.Name)"
-                             Required="true"
-                             AllowNull="true"
-                             NullText="@UsersRes.SelectRole" />
-            </MudItem>
-            <MudItem xs="12">
-                <MudButton Variant="Variant.Filled" 
-                          Color="Color.Primary" 
-                          OnClick="CreateUser"
-                          StartIcon="@Icons.Material.Filled.Add">
-                    @UsersRes.CreateUserButton
-                </MudButton>
-            </MudItem>
-        </MudGrid>
-    </MudForm>
-</MudPaper>
+<MudButton Variant="Variant.Filled" 
+          Color="Color.Primary" 
+          StartIcon="@Icons.Material.Filled.Add"
+          Href="/users/create"
+          Class="mb-4">
+    @UsersRes.CreateUserButton
+</MudButton>
 
 <MudDataGrid T="UserDto" 
              ServerData="LoadServerData" 
@@ -84,6 +30,10 @@
         <PropertyColumn Property="x => x.TenantId" Title="@SharedResource.TenantId" />
         <TemplateColumn Title="@SharedResource.Actions" Sortable="false" Filterable="false">
             <CellTemplate>
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" 
+                              Color="Color.Primary" 
+                              Size="Size.Small"
+                              Href="@($"/users/edit/{context.Item.Id}")" />
                 <MudIconButton Icon="@Icons.Material.Filled.Delete" 
                               Color="Color.Error" 
                               Size="Size.Small"
@@ -97,10 +47,7 @@
 </MudDataGrid>
 
 @code {
-    private MudForm createForm;
-    private bool createFormValid;
     private MudDataGrid<UserDto> dataGrid;
-    private CreateUserDto newUser = new CreateUserDto();
 
     private async Task<GridData<UserDto>> LoadServerData(GridState<UserDto> state)
     {
@@ -122,25 +69,7 @@
         };
     }
 
-    private async Task CreateUser()
-    {
-        await createForm.Validate();
-        if (!createFormValid)
-            return;
 
-        try
-        {
-            await UserService.CreateUser(newUser);
-            newUser = new CreateUserDto();
-            await createForm.ResetAsync();
-            await dataGrid.ReloadServerData();
-            Snackbar.Add("User created successfully", Severity.Success);
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
-        }
-    }
 
     private async Task DeleteUser(string id)
     {

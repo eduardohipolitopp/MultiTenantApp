@@ -28,6 +28,7 @@ namespace MultiTenantApp.Api.Controllers
         }
 
         [HttpPost]
+        [InvalidateCache("action:Rules:*")]
         public async Task<IActionResult> Create([FromBody] string roleName)
         {
             if (string.IsNullOrWhiteSpace(roleName))
@@ -42,7 +43,23 @@ namespace MultiTenantApp.Api.Controllers
             return BadRequest(result.Errors);
         }
 
+        [HttpPut("{id}")]
+        [InvalidateCache("action:Rules:*")]
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateRuleDto model)
+        {
+            var role = await _roleManager.FindByIdAsync(id);
+            if (role == null) return NotFound();
+
+            role.Name = model.Name;
+            var result = await _roleManager.UpdateAsync(role);
+
+            if (result.Succeeded) return Ok();
+
+            return BadRequest(result.Errors);
+        }
+
         [HttpDelete("{id}")]
+        [InvalidateCache("action:Rules:*")]
         public async Task<IActionResult> Delete(string id)
         {
             var role = await _roleManager.FindByIdAsync(id);

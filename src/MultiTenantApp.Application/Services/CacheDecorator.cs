@@ -7,9 +7,9 @@ namespace MultiTenantApp.Application.Services
     /// </summary>
     public class CacheDecorator
     {
-        private readonly ICacheService _cacheService;
+        private readonly ICacheService? _cacheService;
 
-        public CacheDecorator(ICacheService cacheService)
+        public CacheDecorator(ICacheService? cacheService = null)
         {
             _cacheService = cacheService;
         }
@@ -29,6 +29,11 @@ namespace MultiTenantApp.Application.Services
             int expirationMinutes = 60,
             CancellationToken cancellationToken = default)
         {
+            if (_cacheService == null)
+            {
+                return await factory();
+            }
+
             return await _cacheService.GetOrSetAsync(
                 cacheKey,
                 factory,
@@ -41,7 +46,10 @@ namespace MultiTenantApp.Application.Services
         /// </summary>
         public async Task InvalidateCacheAsync(string cacheKey, CancellationToken cancellationToken = default)
         {
-            await _cacheService.RemoveAsync(cacheKey, cancellationToken);
+            if (_cacheService != null)
+            {
+                await _cacheService.RemoveAsync(cacheKey, cancellationToken);
+            }
         }
 
         /// <summary>
@@ -49,7 +57,10 @@ namespace MultiTenantApp.Application.Services
         /// </summary>
         public async Task InvalidateCacheByPatternAsync(string pattern, CancellationToken cancellationToken = default)
         {
-            await _cacheService.RemoveByPatternAsync(pattern, cancellationToken);
+            if (_cacheService != null)
+            {
+                await _cacheService.RemoveByPatternAsync(pattern, cancellationToken);
+            }
         }
     }
 }

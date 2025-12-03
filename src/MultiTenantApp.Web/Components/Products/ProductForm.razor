@@ -1,0 +1,53 @@
+@using MultiTenantApp.Application.DTOs
+@using MultiTenantApp.Web.Resources
+
+<MudForm @ref="form" @bind-IsValid="@success">
+    <MudTextField @bind-Value="Model.Name" 
+                  Label="@SharedResource.Name" 
+                  Variant="Variant.Outlined"
+                  Required="true"
+                  Margin="Margin.Dense"
+                  Class="mb-3" />
+
+    <MudTextField @bind-Value="Model.Description" 
+                  Label="@SharedResource.Description" 
+                  Variant="Variant.Outlined"
+                  Lines="3"
+                  Margin="Margin.Dense"
+                  Class="mb-3" />
+
+    <MudNumericField @bind-Value="Model.Price" 
+                     Label="@SharedResource.Price" 
+                     Variant="Variant.Outlined"
+                     Required="true"
+                     Min="0m"
+                     Format="C2"
+                     Margin="Margin.Dense"
+                     Class="mb-3" />
+
+    <MudButton Variant="Variant.Filled" 
+               Color="Color.Primary" 
+               OnClick="OnSubmit"
+               Disabled="@(!success)"
+               Class="mt-4">
+        @ButtonText
+    </MudButton>
+</MudForm>
+
+@code {
+    [Parameter] public CreateProductDto Model { get; set; } = new();
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+    private MudForm form;
+    private bool success;
+
+    private async Task OnSubmit()
+    {
+        await form.Validate();
+        if (success)
+        {
+            await OnValidSubmit.InvokeAsync();
+        }
+    }
+}

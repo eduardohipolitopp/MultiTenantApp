@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using MultiTenantApp.Application.DTOs;
-
+using MultiTenantApp.Web.Interfaces;
 
 namespace MultiTenantApp.Web.Services
 {
@@ -18,7 +18,7 @@ namespace MultiTenantApp.Web.Services
 
         public async Task<ProductDto> GetByIdAsync(System.Guid id)
         {
-            return await _httpClient.GetFromJsonAsync<ProductDto>($"api/Products/{id}");
+            return await _httpClient.GetFromJsonAsync<ProductDto>($"api/Products/details/{id}");
         }
 
         public async Task<ProductDto> CreateAsync(CreateProductDto model)
@@ -28,9 +28,16 @@ namespace MultiTenantApp.Web.Services
             return await response.Content.ReadFromJsonAsync<ProductDto>();
         }
 
+        public async Task UpdateAsync(System.Guid id, UpdateProductDto model)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/Products/update/{id}", model);
+            response.EnsureSuccessStatusCode();
+        }
+
         public async Task DeleteAsync(System.Guid id)
         {
-            await _httpClient.DeleteAsync($"api/Products/{id}");
+            var response = await _httpClient.DeleteAsync($"api/Products/delete/{id}");
+            response.EnsureSuccessStatusCode();
         }
 
         public async Task<PagedResponse<ProductDto>> GetPagedAsync(PagedRequest request)

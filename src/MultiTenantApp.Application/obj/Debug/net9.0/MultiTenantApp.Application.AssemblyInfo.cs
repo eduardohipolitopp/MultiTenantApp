@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MultiTenantApp.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a5ff9eed8eeeffc98c0efea9340f84731ecf3821")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a8575e51f281c3efb368402936ee57845215831d")]
 [assembly: System.Reflection.AssemblyProductAttribute("MultiTenantApp.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MultiTenantApp.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

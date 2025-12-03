@@ -72,6 +72,7 @@ namespace MultiTenantApp.Api.Controllers
         }
 
         [HttpPost]
+        [InvalidateCache("action:Users:*")]
         public async Task<IActionResult> Create([FromBody] CreateUserDto model)
         {
             var user = new ApplicationUser
@@ -96,6 +97,7 @@ namespace MultiTenantApp.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [InvalidateCache("action:Users:*")]
         public async Task<IActionResult> Update(string id, [FromBody] UpdateUserDto model)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -116,6 +118,7 @@ namespace MultiTenantApp.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [InvalidateCache("action:Users:*")]
         public async Task<IActionResult> Delete(string id)
         {
             var user = await _userManager.FindByIdAsync(id);

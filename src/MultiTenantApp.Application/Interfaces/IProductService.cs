@@ -10,6 +10,7 @@ namespace MultiTenantApp.Application.Interfaces
         Task<PagedResponse<ProductDto>> GetAllAsync(PagedRequest request);
         Task<ProductDto> GetByIdAsync(Guid id);
         Task<ProductDto> CreateAsync(CreateProductDto model);
+        Task UpdateAsync(Guid id, UpdateProductDto model);
         Task DeleteAsync(Guid id);
     }
 }

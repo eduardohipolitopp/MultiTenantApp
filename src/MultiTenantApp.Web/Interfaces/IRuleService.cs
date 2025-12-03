@@ -2,13 +2,14 @@ using MultiTenantApp.Application.DTOs;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MultiTenantApp.Web.Services
+namespace MultiTenantApp.Web.Interfaces
 {
     public interface IRuleService
     {
         Task<List<RuleDto>> GetRules();
         Task<PagedResponse<RuleDto>> GetRulesPaged(PagedRequest request);
         Task CreateRule(string roleName);
+        Task UpdateRule(string id, UpdateRuleDto model);
         Task DeleteRule(string id);
     }
 }

@@ -2,7 +2,7 @@ using MultiTenantApp.Application.DTOs;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MultiTenantApp.Web.Services
+namespace MultiTenantApp.Web.Interfaces
 {
     public interface IUserService
     {

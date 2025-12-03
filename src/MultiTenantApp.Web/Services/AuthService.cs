@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using MultiTenantApp.Application.DTOs;
+using MultiTenantApp.Web.Interfaces;
 
 namespace MultiTenantApp.Web.Services
 {

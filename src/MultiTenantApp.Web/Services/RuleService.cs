@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using MultiTenantApp.Web.Interfaces;
 
 namespace MultiTenantApp.Web.Services
 {
@@ -40,6 +41,11 @@ namespace MultiTenantApp.Web.Services
         public async Task CreateRule(string roleName)
         {
             await _httpClient.PostAsJsonAsync("api/Rules", roleName);
+        }
+
+        public async Task UpdateRule(string id, UpdateRuleDto model)
+        {
+            await _httpClient.PutAsJsonAsync($"api/Rules/{id}", model);
         }
 
         public async Task DeleteRule(string id)

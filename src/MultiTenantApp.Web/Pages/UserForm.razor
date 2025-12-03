@@ -1,0 +1,94 @@
+@using MultiTenantApp.Application.DTOs
+@using MultiTenantApp.Web.Resources
+@using MultiTenantApp.Web.Resources.Pages
+@using UsersRes = MultiTenantApp.Web.Resources.Pages.Users
+
+<MudForm @ref="form" @bind-IsValid="@success">
+    <MudGrid>
+        @if (IsCreate)
+        {
+            <MudItem xs="12" sm="12">
+                <MudTextField @bind-Value="CreateModel.UserName"
+                              Label="@SharedResource.UserName"
+                              Variant="Variant.Outlined"
+                              Required="true"
+                              Margin="Margin.Dense" />
+            </MudItem>
+        }
+        
+        <MudItem xs="12" sm="6">
+            <MudTextField Value="@(IsCreate ? CreateModel.Email : UpdateModel.Email)"
+                         ValueChanged="@(EventCallback.Factory.Create<string>(this, v => { if(IsCreate) CreateModel.Email = v; else UpdateModel.Email = v; }))"
+                         Label="@SharedResource.Email" 
+                         Variant="Variant.Outlined"
+                         Required="true"
+                         Margin="Margin.Dense" />
+        </MudItem>
+
+        @if (IsCreate)
+        {
+            <MudItem xs="12" sm="6">
+                <MudTextField @bind-Value="CreateModel.Password" 
+                             Label="@SharedResource.Password" 
+                             Variant="Variant.Outlined"
+                             InputType="InputType.Password"
+                             Required="true"
+                             Margin="Margin.Dense" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <ServerSelect TItem="TenantDto"
+                              TValue="string"
+                              @bind-Value="CreateModel.TenantId"
+                              Label="@SharedResource.TenantId"
+                              ApiUrl="api/Tenants/list"
+                              DisplaySelector="@(t => t.Name)"
+                              ValueSelector="@(t => t.Identifier)"
+                              Required="true"
+                              AllowNull="false"
+                              Class="mb-4" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <ServerSelect TItem="RuleDto" 
+                             TValue="string"
+                             @bind-Value="CreateModel.Role"
+                             Label="@SharedResource.Role"
+                             ApiUrl="api/Rules/list"
+                             DisplaySelector="@(r => r.Name)"
+                             ValueSelector="@(r => r.Name)"
+                             Required="true"
+                             AllowNull="true"
+                             NullText="@UsersRes.SelectRole" />
+            </MudItem>
+        }
+
+        <MudItem xs="12">
+            <MudButton Variant="Variant.Filled" 
+                       Color="Color.Primary" 
+                       OnClick="OnSubmit"
+                       Disabled="@(!success)"
+                       Class="mt-4">
+                @ButtonText
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+</MudForm>
+
+@code {
+    [Parameter] public CreateUserDto CreateModel { get; set; }
+    [Parameter] public UpdateUserDto UpdateModel { get; set; }
+    [Parameter] public bool IsCreate { get; set; } = true;
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+    private MudForm form;
+    private bool success;
+
+    private async Task OnSubmit()
+    {
+        await form.Validate();
+        if (success)
+        {
+            await OnValidSubmit.InvokeAsync();
+        }
+    }
+}

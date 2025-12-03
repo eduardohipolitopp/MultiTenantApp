@@ -73,6 +73,21 @@ namespace MultiTenantApp.Application.Services
             };
         }
 
+        public async Task UpdateAsync(Guid id, UpdateProductDto model)
+        {
+            var product = await _repository.GetByIdAsync(id);
+            if (product == null)
+            {
+                throw new KeyNotFoundException($"Product with ID {id} not found.");
+            }
+
+            product.Name = model.Name;
+            product.Description = model.Description;
+            product.Price = model.Price;
+
+            await _repository.UpdateAsync(product);
+        }
+
         public async Task DeleteAsync(Guid id)
         {
             var product = await _repository.GetByIdAsync(id);

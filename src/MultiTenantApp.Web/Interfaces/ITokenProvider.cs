@@ -1,4 +1,4 @@
-﻿namespace MultiTenantApp.Web.Services
+namespace MultiTenantApp.Web.Interfaces
 {
     public interface ITokenProvider
     {
