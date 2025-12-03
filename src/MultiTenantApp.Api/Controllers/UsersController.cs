@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using MultiTenantApp.Api.Attributes;
 using MultiTenantApp.Application.DTOs;
 using MultiTenantApp.Domain.Entities;
 using System.Collections.Generic;
@@ -18,6 +21,38 @@ namespace MultiTenantApp.Api.Controllers
         public UsersController(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
+        }
+
+        [HttpPost("list")]
+        [Cached(durationMinutes: 10, varyByTenant: true)]
+        public async Task<IActionResult> GetAll([FromBody] PagedRequest request)
+        {
+            System.Linq.Expressions.Expression<Func<ApplicationUser, bool>> filter = null;
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                filter = p => p.Email.Contains(request.SearchTerm) || p.UserName.Contains(request.SearchTerm);
+            }
+
+            var query = _userManager.Users.AsQueryable();
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            var totalCount = await query.CountAsync();
+            var users = await query.Skip((request.Page - 1) * request.PageSize).Take(request.PageSize).ToListAsync();
+
+            var userDtos = users.Select(u => new UserDto
+            {
+                Id = u.Id,
+                Email = u.Email,
+                UserName = u.UserName,
+                TenantId = u.TenantId.ToString()
+            }).ToList();
+
+            var response = new PagedResponse<UserDto>(userDtos, request.Page, request.PageSize, totalCount);
+            return Ok(response);
         }
 
         [HttpGet]

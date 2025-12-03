@@ -113,16 +113,29 @@ namespace MultiTenantApp.Web.Resources {
                 return ResourceManager.GetString("Edit", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to E-mail.
         /// </summary>
-        public static string Email {
-            get {
+        public static string UserName
+        {
+            get
+            {
+                return ResourceManager.GetString("UserName", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to E-mail.
+        /// </summary>
+        public static string Email
+        {
+            get
+            {
                 return ResourceManager.GetString("Email", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Carregando...
         /// </summary>

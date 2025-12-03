@@ -14,43 +14,40 @@
 <MudPaper Elevation="2" Class="pa-4 mb-4">
     <MudGrid>
         <MudItem xs="12" sm="8">
-            <MudTextField @bind-Value="newRuleName" 
-                         Label="@RulesRes.NewRuleNamePlaceholder" 
-                         Variant="Variant.Outlined"
-                         Margin="Margin.Dense" />
+            <MudTextField @bind-Value="newRuleName"
+                          Label="@RulesRes.NewRuleNamePlaceholder"
+                          Variant="Variant.Outlined"
+                          Margin="Margin.Dense" />
         </MudItem>
         <MudItem xs="12" sm="4">
-            <MudButton Variant="Variant.Filled" 
-                      Color="Color.Primary" 
-                      FullWidth="true"
-                      OnClick="CreateRule"
-                      StartIcon="@Icons.Material.Filled.Add">
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       FullWidth="true"
+                       OnClick="CreateRule"
+                       StartIcon="@Icons.Material.Filled.Add">
                 @RulesRes.AddRuleButton
             </MudButton>
         </MudItem>
     </MudGrid>
 </MudPaper>
 
-<MudDataGrid T="RuleDto" 
-             ServerData="LoadServerData" 
+<MudDataGrid T="RuleDto"
+             ServerData="LoadServerData"
              @ref="dataGrid"
-             Filterable="true"
+             Filterable="false"
              SortMode="SortMode.Single"
              Elevation="2">
     <Columns>
         <PropertyColumn Property="x => x.Name" Title="@SharedResource.Name" />
         <TemplateColumn Title="@SharedResource.Actions" Sortable="false" Filterable="false">
             <CellTemplate>
-                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
-                              Color="Color.Error" 
-                              Size="Size.Small"
-                              OnClick="@(() => DeleteRule(context.Item.Id))" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                               Color="Color.Error"
+                               Size="Size.Small"
+                               OnClick="@(() => DeleteRule(context.Item.Id))" />
             </CellTemplate>
         </TemplateColumn>
     </Columns>
-    <PagerContent>
-        <MudDataGridPager T="RuleDto" />
-    </PagerContent>
 </MudDataGrid>
 
 @code {
@@ -59,22 +56,13 @@
 
     private async Task<GridData<RuleDto>> LoadServerData(GridState<RuleDto> state)
     {
-        var request = new PagedRequest
-        {
-            Page = state.Page + 1,
-            PageSize = state.PageSize,
-            SortBy = state.SortDefinitions.FirstOrDefault()?.SortBy ?? "Name",
-            SortDescending = state.SortDefinitions.FirstOrDefault()?.Descending ?? false,
-            SearchTerm = state.FilterDefinitions.FirstOrDefault()?.Value?.ToString()
-        };
 
-        var response = await RuleService.GetRulesPaged(request);
+        var response = await RuleService.GetRules();
 
         return new GridData<RuleDto>
-        {
-            Items = response.Items,
-            TotalItems = response.TotalCount
-        };
+            {
+                Items = response
+            };
     }
 
     private async Task CreateRule()

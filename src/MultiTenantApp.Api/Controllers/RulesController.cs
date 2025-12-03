@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MultiTenantApp.Api.Attributes;
+using MultiTenantApp.Application.DTOs;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,7 +20,7 @@ namespace MultiTenantApp.Api.Controllers
             _roleManager = roleManager;
         }
 
-        [HttpGet]
+        [HttpGet("list")]
         public IActionResult Get()
         {
             var roles = _roleManager.Roles.ToList();

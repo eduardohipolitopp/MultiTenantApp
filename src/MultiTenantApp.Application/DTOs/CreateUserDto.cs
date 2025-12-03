@@ -5,6 +5,10 @@ namespace MultiTenantApp.Application.DTOs
 {
     public class CreateUserDto
     {
+        [Display(Name = "UserName", ResourceType = typeof(SharedResource))]
+        [Required]
+        public string UserName { get; set; } = string.Empty;
+
         [Display(Name = "Email", ResourceType = typeof(SharedResource))]
         [Required]
         public string Email { get; set; } = string.Empty;

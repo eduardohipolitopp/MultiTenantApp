@@ -8,9 +8,9 @@ namespace MultiTenantApp.Web.Services
 {
     public class UserService : IUserService
     {
-        private readonly HttpClient _httpClient;
+        private readonly AuthenticatedHttpClient _httpClient;
 
-        public UserService(HttpClient httpClient)
+        public UserService(AuthenticatedHttpClient httpClient)
         {
             _httpClient = httpClient;
         }
@@ -22,19 +22,15 @@ namespace MultiTenantApp.Web.Services
 
         public async Task<PagedResponse<UserDto>> GetUsersPaged(PagedRequest request)
         {
-            var queryString = $"?Page={request.Page}&PageSize={request.PageSize}";
-            
-            if (!string.IsNullOrWhiteSpace(request.SortBy))
+            var response = await _httpClient.PostAsJsonAsync("api/Users/list", request);
+
+            if (!response.IsSuccessStatusCode)
             {
-                queryString += $"&SortBy={request.SortBy}&SortDescending={request.SortDescending}";
-            }
-            
-            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
-            {
-                queryString += $"&SearchTerm={Uri.EscapeDataString(request.SearchTerm)}";
+                var error = await response.Content.ReadAsStringAsync();
+                throw new System.Exception(error);
             }
 
-            return await _httpClient.GetFromJsonAsync<PagedResponse<UserDto>>($"api/Users/paged{queryString}");
+            return await response.Content.ReadFromJsonAsync<PagedResponse<UserDto>>();
         }
 
         public async Task CreateUser(CreateUserDto user)

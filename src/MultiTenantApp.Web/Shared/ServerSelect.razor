@@ -1,6 +1,7 @@
 @typeparam TItem
 @typeparam TValue
 @using System.Net.Http.Json
+@using Blazored.LocalStorage
 
 <MudSelect T="TValue" 
            Value="@Value" 
@@ -42,7 +43,8 @@
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public string Class { get; set; } = string.Empty;
 
-    [Inject] private HttpClient HttpClient { get; set; }
+    [Inject] private AuthenticatedHttpClient HttpClient { get; set; }
+    [Inject] private ILocalStorageService _localStorage { get; set; }
 
     private List<TItem> _items;
     private bool _isLoading = true;

@@ -9,16 +9,11 @@ namespace MultiTenantApp.Web.Services
 {
     public class ProductService : IProductService
     {
-        private readonly HttpClient _httpClient;
+        private readonly AuthenticatedHttpClient _httpClient;
 
-        public ProductService(HttpClient httpClient)
+        public ProductService(AuthenticatedHttpClient httpClient)
         {
             _httpClient = httpClient;
-        }
-
-        public async Task<List<ProductDto>> GetAllAsync()
-        {
-            return await _httpClient.GetFromJsonAsync<List<ProductDto>>("api/Products");
         }
 
         public async Task<ProductDto> GetByIdAsync(System.Guid id)
@@ -28,7 +23,7 @@ namespace MultiTenantApp.Web.Services
 
         public async Task<ProductDto> CreateAsync(CreateProductDto model)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/Products", model);
+            var response = await _httpClient.PostAsJsonAsync("api/Products/create", model);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<ProductDto>();
         }
@@ -40,19 +35,15 @@ namespace MultiTenantApp.Web.Services
 
         public async Task<PagedResponse<ProductDto>> GetPagedAsync(PagedRequest request)
         {
-            var queryString = $"?Page={request.Page}&PageSize={request.PageSize}";
-            
-            if (!string.IsNullOrWhiteSpace(request.SortBy))
+            var response = await _httpClient.PostAsJsonAsync("api/Products/list", request);
+
+            if (!response.IsSuccessStatusCode)
             {
-                queryString += $"&SortBy={request.SortBy}&SortDescending={request.SortDescending}";
-            }
-            
-            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
-            {
-                queryString += $"&SearchTerm={Uri.EscapeDataString(request.SearchTerm)}";
+                var error = await response.Content.ReadAsStringAsync();
+                throw new System.Exception(error);
             }
 
-            return await _httpClient.GetFromJsonAsync<PagedResponse<ProductDto>>($"api/Products/paged{queryString}");
+            return await response.Content.ReadFromJsonAsync<PagedResponse<ProductDto>>();
         }
     }
 }

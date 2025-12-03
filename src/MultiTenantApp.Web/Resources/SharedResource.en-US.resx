@@ -174,4 +174,7 @@
   <data name="Loading" xml:space="preserve">
     <value>Loading...</value>
   </data>
+  <data name="UserName" xml:space="preserve">
+    <value>Name</value>
+  </data>
 </root>

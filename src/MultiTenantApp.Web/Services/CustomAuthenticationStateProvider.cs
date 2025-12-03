@@ -9,12 +9,12 @@ namespace MultiTenantApp.Web.Services
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly ILocalStorageService _localStorage;
-        private readonly HttpClient _httpClient;
+        private readonly ITokenProvider _tokenProvider;
 
-        public CustomAuthenticationStateProvider(ILocalStorageService localStorage, HttpClient httpClient)
+        public CustomAuthenticationStateProvider(ILocalStorageService localStorage, ITokenProvider tokenProvider)
         {
             _localStorage = localStorage;
-            _httpClient = httpClient;
+            _tokenProvider = tokenProvider;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -28,22 +28,18 @@ namespace MultiTenantApp.Web.Services
                     return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
                 }
 
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", savedToken);
-                
-                // Also set Tenant ID header if we stored it, to ensure it's sent with every request
-                var tenantId = await _localStorage.GetItemAsync<string>("tenantId");
-                if (!string.IsNullOrEmpty(tenantId))
-                {
-                    if (_httpClient.DefaultRequestHeaders.Contains("X-Tenant-ID"))
-                        _httpClient.DefaultRequestHeaders.Remove("X-Tenant-ID");
-                    _httpClient.DefaultRequestHeaders.Add("X-Tenant-ID", tenantId);
-                }
+                // Set the token in the TokenProvider so AuthenticatedHttpClient can use it
+                await _tokenProvider.SetTokenAsync(savedToken);
 
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt")));
             }
             catch (InvalidOperationException)
             {
                 // JavaScript interop not available during prerendering
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+            }
+            catch (Exception)
+            {
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
         }

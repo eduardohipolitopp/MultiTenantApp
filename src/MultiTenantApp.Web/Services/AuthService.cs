@@ -9,23 +9,26 @@ namespace MultiTenantApp.Web.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly HttpClient _httpClient;
+        private readonly AuthenticatedHttpClient _httpClient;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly ILocalStorageService _localStorage;
+        private readonly ITokenProvider _tokenProvider;
 
-        public AuthService(HttpClient httpClient,
+        public AuthService(AuthenticatedHttpClient httpClient,
                            AuthenticationStateProvider authenticationStateProvider,
-                           ILocalStorageService localStorage)
+                           ILocalStorageService localStorage,
+                           ITokenProvider tokenProvider)
         {
             _httpClient = httpClient;
             _authenticationStateProvider = authenticationStateProvider;
             _localStorage = localStorage;
+            _tokenProvider = tokenProvider;
         }
 
         public async Task<LoginResponseDto> Login(LoginDto loginModel)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Auth/login", loginModel);
-            
+
             if (!response.IsSuccessStatusCode)
             {
                 var error = await response.Content.ReadAsStringAsync();
@@ -33,11 +36,12 @@ namespace MultiTenantApp.Web.Services
             }
 
             var loginResult = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
+            await _tokenProvider.SetTokenAsync(loginResult.Token);
             await _localStorage.SetItemAsync("authToken", loginResult.Token);
             await _localStorage.SetItemAsync("tenantId", loginModel.TenantId); // Store tenant for future requests if needed
-            
+
             ((CustomAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginResult.Token);
-            
+
             return loginResult;
         }
 

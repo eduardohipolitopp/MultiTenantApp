@@ -18,16 +18,25 @@ namespace MultiTenantApp.Application.Services
             _repository = repository;
         }
 
-        public async Task<List<ProductDto>> GetAllAsync()
+        public async Task<PagedResponse<ProductDto>> GetAllAsync(PagedRequest request)
         {
-            var products = await _repository.GetAllAsync();
-            return products.Select(p => new ProductDto
+            System.Linq.Expressions.Expression<Func<Product, bool>> filter = null;
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                filter = p => p.Name.Contains(request.SearchTerm) || p.Description.Contains(request.SearchTerm);
+            }
+
+            var (products, totalCount) = await _repository.GetPagedAsync(request.Page, request.PageSize, filter);
+            
+            var productDtos = products.Select(p => new ProductDto
             {
                 Id = p.Id,
                 Name = p.Name,
                 Description = p.Description,
                 Price = p.Price
             }).ToList();
+
+            return new PagedResponse<ProductDto>(productDtos, request.Page, request.PageSize, totalCount);
         }
 
         public async Task<ProductDto> GetByIdAsync(Guid id)

@@ -7,7 +7,7 @@ namespace MultiTenantApp.Application.Interfaces
 {
     public interface IProductService
     {
-        Task<List<ProductDto>> GetAllAsync();
+        Task<PagedResponse<ProductDto>> GetAllAsync(PagedRequest request);
         Task<ProductDto> GetByIdAsync(Guid id);
         Task<ProductDto> CreateAsync(CreateProductDto model);
         Task DeleteAsync(Guid id);

@@ -26,6 +26,20 @@ namespace MultiTenantApp.Infrastructure.Repositories
             return await _dbSet.ToListAsync();
         }
 
+        public async Task<(List<T> Items, int TotalCount)> GetPagedAsync(int page, int pageSize, System.Linq.Expressions.Expression<Func<T, bool>>? filter = null)
+        {
+            var query = _dbSet.AsQueryable();
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            return (items, totalCount);
+        }
+
         public async Task<T?> GetAsync(System.Linq.Expressions.Expression<Func<T, bool>> predicate)
         {
             return await _dbSet.FirstOrDefaultAsync(predicate);

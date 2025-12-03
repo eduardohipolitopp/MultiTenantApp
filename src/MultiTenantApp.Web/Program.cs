@@ -1,48 +1,66 @@
-using Blazored.LocalStorage;
+﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
-using MultiTenantApp.Web.Services;
-
 using MudBlazor.Services;
-using Microsoft.Extensions.Http;
+using MultiTenantApp.Web.Services;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddMudServices();
 
-builder.Services.AddScoped<TokenAuthorizationMessageHandler>();
-builder.Services.AddTransient<IHttpMessageHandlerBuilderFilter, AuthorizationHandlerFilter>();
+// Localization
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+// TokenProvider
+builder.Services.AddScoped<ITokenProvider, TokenProvider>();
+
+// HttpClient base configurado
 var apiBaseUrl = builder.Configuration["ApiBaseUrl"] ?? "http://localhost:5000";
 builder.Services.AddHttpClient("ApiClient", client =>
 {
-    client.BaseAddress = new Uri(apiBaseUrl); 
+    client.BaseAddress = new Uri(apiBaseUrl);
 });
-builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("ApiClient"));
 
+// AuthenticatedHttpClient que usa o HttpClient configurado
+builder.Services.AddScoped<AuthenticatedHttpClient>(sp =>
+{
+    var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+    var httpClient = httpClientFactory.CreateClient("ApiClient");
+    var tokenProvider = sp.GetRequiredService<ITokenProvider>();
+    return new AuthenticatedHttpClient(httpClient, tokenProvider);
+});
 
-builder.Services.AddAuthorizationCore();
+// Seus serviços
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddBlazoredLocalStorage();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IRuleService, RuleService>();
-builder.Services.AddScoped<IUserService, UserService>();
 
-//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(apiBaseUrl) });
-
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+// OpenTelemetry
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracerProviderBuilder =>
+    {
+        tracerProviderBuilder
+            .AddSource("MultiTenantApp.Web")
+            .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("MultiTenantApp.Web"))
+            .AddAspNetCoreInstrumentation()
+            .AddOtlpExporter(options =>
+            {
+                options.Endpoint = new Uri(builder.Configuration["OpenTelemetry:Endpoint"] ?? "http://localhost:4317");
+            });
+    });
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-}
 
 var supportedCultures = new[] { "en-US", "pt-BR" };
 var localizationOptions = new RequestLocalizationOptions()
@@ -50,11 +68,15 @@ var localizationOptions = new RequestLocalizationOptions()
     .AddSupportedCultures(supportedCultures)
     .AddSupportedUICultures(supportedCultures);
 
-app.UseRequestLocalization(localizationOptions);
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+}
 
 app.UseStaticFiles();
-
 app.UseRouting();
+app.UseRequestLocalization(localizationOptions);
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");

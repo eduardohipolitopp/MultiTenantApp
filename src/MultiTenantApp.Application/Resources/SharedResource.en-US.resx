@@ -168,4 +168,7 @@
   <data name="Logout" xml:space="preserve">
     <value>Logout</value>
   </data>
+  <data name="UserName" xml:space="preserve">
+    <value>Name</value>
+  </data>
 </root>

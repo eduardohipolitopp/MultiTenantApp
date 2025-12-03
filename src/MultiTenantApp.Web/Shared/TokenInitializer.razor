@@ -1,0 +1,30 @@
+﻿@using Blazored.LocalStorage
+@inject ILocalStorageService LocalStorage
+@inject ITokenProvider TokenProvider
+
+@code {
+    private bool _initialized;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_initialized)
+        {
+            _initialized = true;
+            try
+            {
+                // JS já disponível aqui
+                var token = await LocalStorage.GetItemAsync<string>("authToken");
+                if (!string.IsNullOrEmpty(token))
+                {
+                    await TokenProvider.SetTokenAsync(token);
+                }
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch
+            {
+            }
+        }
+    }
+}

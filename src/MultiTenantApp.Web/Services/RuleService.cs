@@ -8,16 +8,16 @@ namespace MultiTenantApp.Web.Services
 {
     public class RuleService : IRuleService
     {
-        private readonly HttpClient _httpClient;
+        private readonly AuthenticatedHttpClient _httpClient;
 
-        public RuleService(HttpClient httpClient)
+        public RuleService(AuthenticatedHttpClient httpClient)
         {
             _httpClient = httpClient;
         }
 
         public async Task<List<RuleDto>> GetRules()
         {
-            return await _httpClient.GetFromJsonAsync<List<RuleDto>>("api/Rules");
+            return await _httpClient.GetFromJsonAsync<List<RuleDto>>("api/Rules/list");
         }
 
         public async Task<PagedResponse<RuleDto>> GetRulesPaged(PagedRequest request)

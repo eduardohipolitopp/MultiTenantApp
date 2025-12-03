@@ -15,6 +15,13 @@
     <MudText Typo="Typo.h6" Class="mb-3">@UsersRes.CreateNewUserHeader</MudText>
     <MudForm @ref="createForm" @bind-IsValid="@createFormValid">
         <MudGrid>
+            <MudItem xs="12" sm="12">
+                <MudTextField @bind-Value="newUser.UserName"
+                              Label="@SharedResource.UserName"
+                              Variant="Variant.Outlined"
+                              Required="true"
+                              Margin="Margin.Dense" />
+            </MudItem>
             <MudItem xs="12" sm="6">
                 <MudTextField @bind-Value="newUser.Email" 
                              Label="@SharedResource.Email" 
@@ -31,18 +38,23 @@
                              Margin="Margin.Dense" />
             </MudItem>
             <MudItem xs="12" sm="6">
-                <MudTextField @bind-Value="newUser.TenantId" 
-                             Label="@SharedResource.TenantId" 
-                             Variant="Variant.Outlined"
-                             Required="true"
-                             Margin="Margin.Dense" />
+                <ServerSelect TItem="TenantDto"
+                              TValue="string"
+                              @bind-Value="newUser.TenantId"
+                              Label="@SharedResource.TenantId"
+                              ApiUrl="api/Tenants/list"
+                              DisplaySelector="@(t => t.Name)"
+                              ValueSelector="@(t => t.Identifier)"
+                              Required="true"
+                              AllowNull="false"
+                              Class="mb-4" />
             </MudItem>
             <MudItem xs="12" sm="6">
                 <ServerSelect TItem="RuleDto" 
                              TValue="string"
                              @bind-Value="newUser.Role"
                              Label="@SharedResource.Role"
-                             ApiUrl="api/Rules"
+                             ApiUrl="api/Rules/list"
                              DisplaySelector="@(r => r.Name)"
                              ValueSelector="@(r => r.Name)"
                              Required="true"

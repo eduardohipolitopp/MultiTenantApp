@@ -22,6 +22,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddMemoryCache();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "MultiTenantApp API", Version = "v1" });
@@ -144,6 +155,7 @@ app.UseRequestLocalization(localizationOptions);
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors("AllowAll");
 
 app.UseMiddleware<RateLimitMiddleware>();
 app.UseMiddleware<TenantMiddleware>();
@@ -155,16 +167,31 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
+        await DbInitializer.InitializeAsync(services);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred seeding the DB.");
+    }
+}
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
         var context = services.GetRequiredService<ApplicationDbContext>();
         context.Database.Migrate();
-        
+
         // Seed Data
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        
+
         if (!await roleManager.RoleExistsAsync("Admin"))
             await roleManager.CreateAsync(new IdentityRole("Admin"));
-            
+
         if (!await roleManager.RoleExistsAsync("User"))
             await roleManager.CreateAsync(new IdentityRole("User"));
 
@@ -179,7 +206,7 @@ using (var scope = app.Services.CreateScope())
                 CreatedAt = DateTime.UtcNow
             });
         }
-        
+
         if (!await context.Tenants.AnyAsync(t => t.Identifier == "tenant-b"))
         {
             await context.Tenants.AddAsync(new Tenant
@@ -190,7 +217,7 @@ using (var scope = app.Services.CreateScope())
                 CreatedAt = DateTime.UtcNow
             });
         }
-        
+
         await context.SaveChangesAsync();
 
         // Seed Tenants and Users
@@ -209,7 +236,7 @@ using (var scope = app.Services.CreateScope())
             await userManager.CreateAsync(user, "Password123!");
             await userManager.AddToRoleAsync(user, "Admin");
         }
-        
+
         // Tenant B
         if (await userManager.FindByEmailAsync("admin@tenant-b.com") == null)
         {
@@ -232,5 +259,6 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "An error occurred seeding the DB.");
     }
 }
+
 
 app.Run();

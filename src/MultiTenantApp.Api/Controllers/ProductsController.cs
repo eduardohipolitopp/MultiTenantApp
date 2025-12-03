@@ -20,16 +20,18 @@ namespace MultiTenantApp.Api.Controllers
             _productService = productService;
         }
 
-        [HttpGet]
-        [Cached(durationMinutes: 10, varyByTenant: true)] // Cache por 10 minutos, variando por tenant
-        public async Task<IActionResult> GetAll()
+        // POST api/products/list
+        [HttpPost("list")]
+        [Cached(durationMinutes: 10, varyByTenant: true)]
+        public async Task<IActionResult> GetAll([FromBody] PagedRequest request)
         {
-            var products = await _productService.GetAllAsync();
-            return Ok(products);
+            var response = await _productService.GetAllAsync(request);
+            return Ok(response);
         }
 
-        [HttpGet("{id}")]
-        [Cached(durationMinutes: 30, varyByTenant: true)] // Cache por 30 minutos
+        // GET api/products/details/{id}
+        [HttpGet("details/{id}")]
+        [Cached(durationMinutes: 30, varyByTenant: true)]
         public async Task<IActionResult> GetById(Guid id)
         {
             var product = await _productService.GetByIdAsync(id);
@@ -37,16 +39,20 @@ namespace MultiTenantApp.Api.Controllers
             return Ok(product);
         }
 
-        [HttpPost]
+        // POST api/products/create
+        [HttpPost("create")]
         [Authorize(Roles = "Admin")]
+        [Idempotent]
         public async Task<IActionResult> Create([FromBody] CreateProductDto model)
         {
             var product = await _productService.CreateAsync(model);
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
         }
 
-        [HttpDelete("{id}")]
+        // DELETE api/products/delete/{id}
+        [HttpDelete("delete/{id}")]
         [Authorize(Roles = "Admin")]
+        [Idempotent]
         public async Task<IActionResult> Delete(Guid id)
         {
             await _productService.DeleteAsync(id);

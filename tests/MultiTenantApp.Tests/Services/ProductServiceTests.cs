@@ -22,8 +22,7 @@ namespace MultiTenantApp.Tests.Services
             _service = new ProductService(_mockRepo.Object);
         }
 
-        [Fact]
-        public async Task GetAllAsync_ShouldReturnListOfProducts()
+        public async Task GetAllAsync_ShouldReturnPagedResponse()
         {
             // Arrange
             var products = new List<Product>
@@ -31,14 +30,19 @@ namespace MultiTenantApp.Tests.Services
                 new Product { Name = "P1", Price = 10 },
                 new Product { Name = "P2", Price = 20 }
             };
-            _mockRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(products);
+            var totalCount = 2;
+            _mockRepo.Setup(r => r.GetPagedAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<System.Linq.Expressions.Expression<Func<Product, bool>>>()))
+                .ReturnsAsync((products, totalCount));
+
+            var request = new PagedRequest { Page = 1, PageSize = 10 };
 
             // Act
-            var result = await _service.GetAllAsync();
+            var result = await _service.GetAllAsync(request);
 
             // Assert
-            result.Should().HaveCount(2);
-            result[0].Name.Should().Be("P1");
+            result.Items.Should().HaveCount(2);
+            result.Items[0].Name.Should().Be("P1");
+            result.TotalCount.Should().Be(2);
         }
 
         [Fact]

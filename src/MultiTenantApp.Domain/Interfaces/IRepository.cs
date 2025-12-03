@@ -9,6 +9,7 @@ namespace MultiTenantApp.Domain.Interfaces
     {
         Task<T?> GetByIdAsync(Guid id);
         Task<List<T>> GetAllAsync();
+        Task<(List<T> Items, int TotalCount)> GetPagedAsync(int page, int pageSize, System.Linq.Expressions.Expression<Func<T, bool>>? filter = null);
         Task<T?> GetAsync(System.Linq.Expressions.Expression<Func<T, bool>> predicate);
         Task<T> AddAsync(T entity);
         Task UpdateAsync(T entity);
