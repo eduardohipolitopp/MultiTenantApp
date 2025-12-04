@@ -9,11 +9,15 @@ namespace MultiTenantApp.Api.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthService _authService;
+        private readonly IAuthenticationService _authenticationService;
+        private readonly IUserRegistrationService _userRegistrationService;
 
-        public AuthController(IAuthService authService)
+        public AuthController(
+            IAuthenticationService authenticationService,
+            IUserRegistrationService userRegistrationService)
         {
-            _authService = authService;
+            _authenticationService = authenticationService;
+            _userRegistrationService = userRegistrationService;
         }
 
         [HttpPost("login")]
@@ -21,7 +25,7 @@ namespace MultiTenantApp.Api.Controllers
         {
             try
             {
-                var result = await _authService.LoginAsync(model);
+                var result = await _authenticationService.AuthenticateAsync(model);
                 return Ok(result);
             }
             catch (System.Exception ex)
@@ -35,7 +39,7 @@ namespace MultiTenantApp.Api.Controllers
         {
             try
             {
-                await _authService.RegisterAsync(model);
+                await _userRegistrationService.RegisterAsync(model);
                 return Ok(new { message = "User created successfully" });
             }
             catch (System.Exception ex)

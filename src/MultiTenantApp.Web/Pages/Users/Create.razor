@@ -1,0 +1,33 @@
+@page "/users/create"
+@using MultiTenantApp.Application.DTOs
+@using MultiTenantApp.Web.Services
+@using MultiTenantApp.Web.Resources.Pages
+@using MultiTenantApp.Web.Components.Users
+@using UsersRes = MultiTenantApp.Web.Resources.Pages.Users
+@inject IUserService UserService
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h4" Class="mb-4">@UsersRes.CreateNewUserHeader</MudText>
+
+<MudPaper Class="pa-4">
+    <UserForm CreateModel="model" IsCreate="true" ButtonText="@UsersRes.CreateUserButton" OnValidSubmit="New" />
+</MudPaper>
+
+@code {
+    private CreateUserDto model = new();
+
+    private async Task New()
+    {
+        try
+        {
+            await UserService.CreateUser(model);
+            Snackbar.Add("User created successfully", Severity.Success);
+            Navigation.NavigateTo("/users");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+}

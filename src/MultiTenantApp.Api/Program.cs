@@ -8,6 +8,9 @@ using MultiTenantApp.Api.Middleware;
 using MultiTenantApp.Application.Configuration;
 using MultiTenantApp.Application.Interfaces;
 using MultiTenantApp.Application.Services;
+using MultiTenantApp.Application.Services.Authentication;
+using MultiTenantApp.Application.Services.Tenants;
+using MultiTenantApp.Application.Services.Users;
 using MultiTenantApp.Domain.Entities;
 using MultiTenantApp.Domain.Interfaces;
 using MultiTenantApp.Infrastructure.Persistence;
@@ -136,7 +139,12 @@ else
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+builder.Services.AddScoped<IUserRegistrationService, UserRegistrationService>();
+builder.Services.AddScoped<ITenantValidationService, TenantValidationService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddHttpContextAccessor();
 

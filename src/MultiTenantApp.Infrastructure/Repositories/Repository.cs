@@ -48,20 +48,19 @@ namespace MultiTenantApp.Infrastructure.Repositories
         public async Task<T> AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
             return entity;
         }
 
         public async Task UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
-            await _context.SaveChangesAsync();
+            await Task.CompletedTask;
         }
 
         public async Task DeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
-            await _context.SaveChangesAsync();
+            await Task.CompletedTask;
         }
     }
 }

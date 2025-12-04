@@ -1,5 +1,5 @@
+using MultiTenantApp.Web.Interfaces;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 
 namespace MultiTenantApp.Web.Services
 {

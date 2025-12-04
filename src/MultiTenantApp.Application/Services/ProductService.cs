@@ -11,11 +11,11 @@ namespace MultiTenantApp.Application.Services
 {
     public class ProductService : IProductService
     {
-        private readonly IRepository<Product> _repository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ProductService(IRepository<Product> repository)
+        public ProductService(IUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<PagedResponse<ProductDto>> GetAllAsync(PagedRequest request)
@@ -26,7 +26,7 @@ namespace MultiTenantApp.Application.Services
                 filter = p => p.Name.Contains(request.SearchTerm) || p.Description.Contains(request.SearchTerm);
             }
 
-            var (products, totalCount) = await _repository.GetPagedAsync(request.Page, request.PageSize, filter);
+            var (products, totalCount) = await _unitOfWork.Repository<Product>().GetPagedAsync(request.Page, request.PageSize, filter);
             
             var productDtos = products.Select(p => new ProductDto
             {
@@ -41,7 +41,7 @@ namespace MultiTenantApp.Application.Services
 
         public async Task<ProductDto> GetByIdAsync(Guid id)
         {
-            var p = await _repository.GetByIdAsync(id);
+            var p = await _unitOfWork.Repository<Product>().GetByIdAsync(id);
             if (p == null) return null;
 
             return new ProductDto
@@ -62,7 +62,8 @@ namespace MultiTenantApp.Application.Services
                 Price = model.Price
             };
 
-            await _repository.AddAsync(product);
+            await _unitOfWork.Repository<Product>().AddAsync(product);
+            await _unitOfWork.SaveChangesAsync();
 
             return new ProductDto
             {
@@ -75,7 +76,8 @@ namespace MultiTenantApp.Application.Services
 
         public async Task UpdateAsync(Guid id, UpdateProductDto model)
         {
-            var product = await _repository.GetByIdAsync(id);
+            var repository = _unitOfWork.Repository<Product>();
+            var product = await repository.GetByIdAsync(id);
             if (product == null)
             {
                 throw new KeyNotFoundException($"Product with ID {id} not found.");
@@ -85,15 +87,18 @@ namespace MultiTenantApp.Application.Services
             product.Description = model.Description;
             product.Price = model.Price;
 
-            await _repository.UpdateAsync(product);
+            await repository.UpdateAsync(product);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            var product = await _repository.GetByIdAsync(id);
+            var repository = _unitOfWork.Repository<Product>();
+            var product = await repository.GetByIdAsync(id);
             if (product != null)
             {
-                await _repository.DeleteAsync(product);
+                await repository.DeleteAsync(product);
+                await _unitOfWork.SaveChangesAsync();
             }
         }
     }

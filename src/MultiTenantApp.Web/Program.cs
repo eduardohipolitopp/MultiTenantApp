@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
+using MultiTenantApp.Web.Interfaces;
 using MultiTenantApp.Web.Services;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;

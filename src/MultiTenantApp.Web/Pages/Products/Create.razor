@@ -9,13 +9,13 @@
 <MudText Typo="Typo.h4" Class="mb-4">Create Product</MudText>
 
 <MudPaper Class="pa-4">
-    <ProductForm Model="model" ButtonText="Create" OnValidSubmit="Create" />
+    <ProductForm Model="model" ButtonText="Create" OnValidSubmit="New" />
 </MudPaper>
 
 @code {
     private CreateProductDto model = new();
 
-    private async Task Create()
+    private async Task New()
     {
         try
         {

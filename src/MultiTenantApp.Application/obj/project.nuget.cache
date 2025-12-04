@@ -1,12 +1,16 @@
 {
   "version": 2,
-  "dgSpecHash": "XweLPz/71HY=",
+  "dgSpecHash": "8f4qK6Mr5Ms=",
   "success": true,
   "projectFilePath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\10.0.0\\microsoft.aspnetcore.cryptography.internal.10.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\10.0.0\\microsoft.aspnetcore.cryptography.keyderivation.10.0.0.nupkg.sha512",
+    "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.entityframeworkcore\\9.0.0\\microsoft.entityframeworkcore.9.0.0.nupkg.sha512",
+    "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\9.0.0\\microsoft.entityframeworkcore.abstractions.9.0.0.nupkg.sha512",
+    "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\9.0.0\\microsoft.entityframeworkcore.analyzers.9.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\10.0.0\\microsoft.extensions.caching.abstractions.10.0.0.nupkg.sha512",
+    "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.caching.memory\\9.0.0\\microsoft.extensions.caching.memory.9.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.configuration\\8.0.0\\microsoft.extensions.configuration.8.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\10.0.0\\microsoft.extensions.configuration.abstractions.10.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.configuration.binder\\8.0.0\\microsoft.extensions.configuration.binder.8.0.0.nupkg.sha512",
@@ -35,12 +39,5 @@
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "No Authorization header detected"
-    }
-  ]
+  "logs": []
 }
