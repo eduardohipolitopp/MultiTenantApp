@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using MultiTenantApp.Application.DTOs;
+using MultiTenantApp.Web.Models.DTOs;
 using MultiTenantApp.Web.Interfaces;
 
 namespace MultiTenantApp.Web.Services

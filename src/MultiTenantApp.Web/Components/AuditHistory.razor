@@ -1,0 +1,112 @@
+@using MultiTenantApp.Web.Models.DTOs
+@using MultiTenantApp.Web.Services
+@inject IAuditService AuditService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        @if (_loading)
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        }
+        else if (_auditLogs == null || !_auditLogs.Any())
+        {
+            <MudText>No history found for this record.</MudText>
+        }
+        else
+        {
+            <MudTimeline TimelinePosition="TimelinePosition.Start">
+                @foreach (var log in _auditLogs)
+                {
+                    <MudTimelineItem Color="@GetColorForAction(log.Action)" Size="Size.Small">
+                        <ItemOpposite>
+                            <MudText Typo="Typo.caption" Color="Color.Default">@log.Timestamp.ToLocalTime().ToString("g")</MudText>
+                            <MudText Typo="Typo.caption" Class="d-block">@log.UserName</MudText>
+                        </ItemOpposite>
+                        <ItemContent>
+                            <MudPaper Elevation="0" Class="mt-n1">
+                                <MudText Typo="Typo.body1" Color="@GetColorForAction(log.Action)">
+                                    <b>@log.Action</b>
+                                </MudText>
+                                @if (log.Changes != null && log.Changes.Any())
+                                {
+                                    <MudSimpleTable Style="overflow-x: auto;" Dense="true" Hover="true" Bordered="false" Striped="true">
+                                        <thead>
+                                            <tr>
+                                                <th>Field</th>
+                                                <th>Old</th>
+                                                <th>New</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var change in log.Changes)
+                                            {
+                                                <tr>
+                                                    <td>@change.Key</td>
+                                                    <td class="mud-text-secondary">@FormatValue(change.Value.OldValue)</td>
+                                                    <td><b>@FormatValue(change.Value.NewValue)</b></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </MudSimpleTable>
+                                }
+                            </MudPaper>
+                        </ItemContent>
+                    </MudTimelineItem>
+                }
+            </MudTimeline>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public string EntityType { get; set; }
+    [Parameter] public Guid EntityId { get; set; }
+
+    private List<AuditLogDto> _auditLogs;
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _auditLogs = await AuditService.GetEntityHistoryAsync(EntityType, EntityId);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading history: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private Color GetColorForAction(string action)
+    {
+        return action switch
+        {
+            "Create" => Color.Success,
+            "Update" => Color.Warning,
+            "Delete" => Color.Error,
+            _ => Color.Info
+        };
+    }
+
+    private string FormatValue(object? value)
+    {
+        if (value == null) return "-";
+        if (value is System.Text.Json.JsonElement element)
+        {
+             return element.ToString();
+        }
+        return value.ToString();
+    }
+}

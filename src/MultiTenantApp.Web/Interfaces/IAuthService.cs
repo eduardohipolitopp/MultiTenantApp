@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using MultiTenantApp.Application.DTOs;
+using MultiTenantApp.Web.Models.DTOs;
 
 namespace MultiTenantApp.Web.Interfaces
 {

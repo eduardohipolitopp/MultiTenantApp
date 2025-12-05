@@ -1,0 +1,174 @@
+@page "/audit-logs"
+@using MultiTenantApp.Web.Models.DTOs
+@using MultiTenantApp.Web.Services
+@inject IAuditService AuditService
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h5" Color="Color.Primary" Class="mb-4">System Audit Logs</MudText>
+
+<MudPaper Elevation="25" Class="pa-4 mb-4">
+    <MudGrid>
+        <MudItem xs="12" sm="6" md="3">
+            <MudDatePicker Label="Start Date" @bind-Date="_startDate" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudDatePicker Label="End Date" @bind-Date="_endDate" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudTextField @bind-Value="_entityType" Label="Entity Type" Placeholder="e.g. Product" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Category" />
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3" Class="d-flex align-center">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LoadData" StartIcon="@Icons.Material.Filled.Search" FullWidth="true">Search</MudButton>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+
+<MudTable ServerData="@(new Func<TableState, Task<TableData<AuditLogDto>>>(ServerReload))"
+          @ref="_table"
+          Dense="true" 
+          Hover="true" 
+          Striped="true"
+          Loading="@_loading">
+    <HeaderContent>
+        <MudTh>Timestamp</MudTh>
+        <MudTh>User</MudTh>
+        <MudTh>Action</MudTh>
+        <MudTh>Entity</MudTh>
+        <MudTh>Entity ID</MudTh>
+        <MudTh>Changes</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Timestamp">@context.Timestamp.ToLocalTime().ToString("g")</MudTd>
+        <MudTd DataLabel="User">@context.UserName</MudTd>
+        <MudTd DataLabel="Action">
+            <MudChip T="string" Color="@GetColorForAction(context.Action)" Size="Size.Small">@context.Action</MudChip>
+        </MudTd>
+        <MudTd DataLabel="Entity">@context.EntityType</MudTd>
+        <MudTd DataLabel="Entity ID">@context.EntityId</MudTd>
+        <MudTd DataLabel="Changes">
+            <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Info" OnClick="@(() => ShowDetails(context))">View Details</MudButton>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+<MudDialog @bind-IsVisible="_detailsVisible" Options="new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true }">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.History" Class="mr-3" /> Audit Details
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (_selectedLog != null)
+        {
+            <MudGrid>
+                <MudItem xs="6">
+                    <MudText><b>User:</b> @_selectedLog.UserName</MudText>
+                    <MudText><b>Action:</b> @_selectedLog.Action</MudText>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText><b>Date:</b> @_selectedLog.Timestamp.ToLocalTime()</MudText>
+                    <MudText><b>Entity:</b> @_selectedLog.EntityType (@_selectedLog.EntityId)</MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.subtitle1" Class="mt-4 mb-2"><b>Changes:</b></MudText>
+                    <MudSimpleTable Dense="true" Hover="true" Bordered="true" Striped="true">
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Old Value</th>
+                                <th>New Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var change in _selectedLog.Changes)
+                            {
+                                <tr>
+                                    <td>@change.Key</td>
+                                    <td class="mud-text-secondary">@FormatValue(change.Value.OldValue)</td>
+                                    <td><b>@FormatValue(change.Value.NewValue)</b></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </MudSimpleTable>
+                </MudItem>
+            </MudGrid>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="@(() => _detailsVisible = false)">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private MudTable<AuditLogDto> _table;
+    private bool _loading = false;
+    private DateTime? _startDate;
+    private DateTime? _endDate;
+    private string _entityType;
+    
+    private bool _detailsVisible;
+    private AuditLogDto _selectedLog;
+
+    private async Task<TableData<AuditLogDto>> ServerReload(TableState state)
+    {
+        _loading = true;
+        try
+        {
+            var filter = new AuditFilterDto
+            {
+                Page = state.Page + 1,
+                PageSize = state.PageSize,
+                StartDate = _startDate,
+                EndDate = _endDate,
+                EntityType = _entityType
+            };
+
+            var result = await AuditService.GetAuditLogsAsync(filter);
+            return new TableData<AuditLogDto> { TotalItems = (int)result.TotalCount, Items = result.Items };
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading logs: {ex.Message}", Severity.Error);
+            return new TableData<AuditLogDto> { TotalItems = 0, Items = new List<AuditLogDto>() };
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void LoadData()
+    {
+        _table.ReloadServerData();
+    }
+
+    private void ShowDetails(AuditLogDto log)
+    {
+        _selectedLog = log;
+        _detailsVisible = true;
+    }
+
+    private Color GetColorForAction(string action)
+    {
+        return action switch
+        {
+            "Create" => Color.Success,
+            "Update" => Color.Warning,
+            "Delete" => Color.Error,
+            _ => Color.Info
+        };
+    }
+
+    private string FormatValue(object? value)
+    {
+        if (value == null) return "-";
+        if (value is System.Text.Json.JsonElement element)
+        {
+             return element.ToString();
+        }
+        return value.ToString();
+    }
+}

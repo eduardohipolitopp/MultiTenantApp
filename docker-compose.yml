@@ -18,6 +18,16 @@ services:
       - redis_data:/data
     command: redis-server --appendonly yes
 
+  mongodb:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+    volumes:
+      - mongodb_data:/data/db
+
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     command: [ "--config=/etc/otel-collector-config.yaml" ]
@@ -93,6 +103,7 @@ services:
       - "5000:8080"
     environment:
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=multitenantdb;Username=postgres;Password=postgres
+      - ConnectionStrings__MongoDb=mongodb://admin:admin123@mongodb:27017
       - Cache__Enabled=true
       - Cache__Redis__ConnectionString=redis:6379
       - "Cache__Redis__InstanceName=MultiTenantApp:"
@@ -102,6 +113,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - mongodb
       - otel-collector
 
   web:
@@ -114,6 +126,10 @@ services:
       - ApiBaseUrl=http://api:8080
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
       - ASPNETCORE_ENVIRONMENT=Development
+      - Cache__Enabled=true
+      - Cache__Redis__ConnectionString=redis:6379
+      - "Cache__Redis__InstanceName=MultiTenantApp:"
+      - Cache__Defaults__DefaultExpirationMinutes=60
     depends_on:
       - api
       - otel-collector
@@ -134,6 +150,7 @@ services:
 volumes:
   postgres_data:
   redis_data:
+  mongodb_data:
   prometheus_data:
   tempo_data:
   loki_data:

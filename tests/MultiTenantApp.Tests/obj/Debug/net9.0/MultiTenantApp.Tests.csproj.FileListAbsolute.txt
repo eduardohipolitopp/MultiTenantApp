@@ -267,3 +267,4 @@ c:\Users\eduardo.hipolito\Documents\MyProjects\MultiTenantApp\tests\MultiTenantA
 c:\Users\eduardo.hipolito\Documents\MyProjects\MultiTenantApp\tests\MultiTenantApp.Tests\obj\Debug\net9.0\MultiTenantApp.Tests.pdb
 c:\Users\eduardo.hipolito\Documents\MyProjects\MultiTenantApp\tests\MultiTenantApp.Tests\obj\Debug\net9.0\MultiTenantApp.Tests.genruntimeconfig.cache
 c:\Users\eduardo.hipolito\Documents\MyProjects\MultiTenantApp\tests\MultiTenantApp.Tests\obj\Debug\net9.0\ref\MultiTenantApp.Tests.dll
+C:\Users\eduardo.hipolito\Documents\MyProjects\MultiTenantApp\tests\MultiTenantApp.Tests\bin\Debug\net9.0\MongoDB.Bson.dll

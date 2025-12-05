@@ -12,6 +12,9 @@ using OpenTelemetry.Logs;
 using Serilog;
 using Serilog.Exceptions;
 using Serilog.Sinks.OpenTelemetry;
+using Microsoft.AspNetCore.DataProtection;
+using MultiTenantApp.Web.Configuration;
+using StackExchange.Redis;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,9 +51,45 @@ builder.Host.UseSerilog((context, configuration) =>
         });
 });
 
+// Redis Configuration
+var cacheOptions = builder.Configuration.GetSection(CacheOptions.SectionName).Get<CacheOptions>();
+if (cacheOptions?.Enabled == true)
+{
+    var redisConfig = ConfigurationOptions.Parse(cacheOptions.Redis.ConnectionString);
+    redisConfig.ConnectTimeout = cacheOptions.Redis.ConnectTimeout;
+    redisConfig.SyncTimeout = cacheOptions.Redis.SyncTimeout;
+    redisConfig.AbortOnConnectFail = cacheOptions.Redis.AbortOnConnectFail;
+    redisConfig.ConnectRetry = cacheOptions.Redis.ConnectRetry;
+
+    var redis = ConnectionMultiplexer.Connect(redisConfig);
+    builder.Services.AddSingleton<IConnectionMultiplexer>(redis);
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = cacheOptions.Redis.ConnectionString;
+        options.InstanceName = "MultiTenantApp:";
+    });
+    builder.Services.AddScoped<CacheDecorator>();
+    builder.Services.AddDataProtection()
+        .PersistKeysToStackExchangeRedis(redis, "DataProtection-Keys");
+}
+else
+{
+    // Use in-memory distributed cache when Redis is disabled
+    builder.Services.AddDistributedMemoryCache();
+    builder.Services.AddScoped<CacheDecorator>();
+}
+
+
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
+builder.Services.AddServerSideBlazor()
+    .AddCircuitOptions(options => { options.DetailedErrors = true; })
+    .AddHubOptions(options =>
+    {
+        options.MaximumReceiveMessageSize = 64 * 1024; // 64KB
+        options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
+        options.HandshakeTimeout = TimeSpan.FromSeconds(30);
+    });
 builder.Services.AddMudServices();
 
 // Localization
@@ -86,6 +125,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IRuleService, RuleService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<ThemeService>();
 
 // OpenTelemetry

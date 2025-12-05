@@ -1,4 +1,4 @@
-using MultiTenantApp.Application.DTOs;
+using MultiTenantApp.Web.Models.DTOs;
 
 namespace MultiTenantApp.Web.Interfaces
 {

@@ -1,4 +1,4 @@
-using MultiTenantApp.Application.DTOs;
+using MultiTenantApp.Web.Models.DTOs;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

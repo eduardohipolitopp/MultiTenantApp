@@ -1,13 +1,18 @@
 @page "/products/edit/{Id:guid}"
-@using MultiTenantApp.Application.DTOs
+@using MultiTenantApp.Web.Models.DTOs
 @using MultiTenantApp.Web.Services
 @using MultiTenantApp.Web.Components.Products
+@using MultiTenantApp.Web.Components
 @using ProductsRes = MultiTenantApp.Web.Resources.Pages.Products
 @inject IProductService ProductService
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 
-<MudText Typo="Typo.h4" Class="mb-4">@ProductsRes.EditProduct</MudText>
+<div class="d-flex justify-space-between align-center mb-4">
+    <MudText Typo="Typo.h4">@ProductsRes.EditProduct</MudText>
+    <MudIconButton Icon="@Icons.Material.Filled.History" Color="Color.Info" OnClick="ShowHistory" Title="View History" />
+</div>
 
 <MudPaper Class="pa-4">
     @if (model == null)
@@ -37,7 +42,7 @@
                 Price = product.Price
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             Snackbar.Add(ProductsRes.LoadError, Severity.Error);
             Navigation.NavigateTo("/products");
@@ -63,5 +68,16 @@
         {
             Snackbar.Add($"Error: {ex.Message}", Severity.Error);
         }
+    }
+
+    private void ShowHistory()
+    {
+        var parameters = new DialogParameters
+        {
+            { "EntityType", "Product" },
+            { "EntityId", Id }
+        };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+        DialogService.Show<AuditHistory>("Audit History", parameters, options);
     }
 }
