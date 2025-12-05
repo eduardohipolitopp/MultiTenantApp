@@ -41,6 +41,18 @@ namespace MultiTenantApp.Web.Services
             await _localStorage.SetItemAsync("authToken", loginResult.Token);
             await _localStorage.SetItemAsync("tenantId", loginModel.TenantId); // Store tenant for future requests if needed
 
+            // Fetch and store permissions
+            try 
+            {
+                var permissions = await GetPermissionsAsync();
+                await _localStorage.SetItemAsync("userPermissions", permissions);
+            }
+            catch
+            {
+                // If fetching permissions fails, we might want to log it or handle it, 
+                // but for now we proceed with login. The user will just have no extra permissions.
+            }
+
             ((CustomAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginResult.Token);
 
             return loginResult;
@@ -50,6 +62,7 @@ namespace MultiTenantApp.Web.Services
         {
             await _localStorage.RemoveItemAsync("authToken");
             await _localStorage.RemoveItemAsync("tenantId");
+            await _localStorage.RemoveItemAsync("userPermissions");
             ((CustomAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
         }
 
@@ -61,6 +74,16 @@ namespace MultiTenantApp.Web.Services
                 var error = await response.Content.ReadAsStringAsync();
                 throw new System.Exception(error);
             }
+        }
+
+        public async Task<IEnumerable<string>> GetPermissionsAsync()
+        {
+            var response = await _httpClient.GetAsync("api/Profile/permissions");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<IEnumerable<string>>() ?? new List<string>();
+            }
+            return new List<string>();
         }
     }
 }

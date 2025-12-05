@@ -5,9 +5,19 @@
     <Authorized>
         <MudNavMenu>
             <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">@NavMenuRes.Home</MudNavLink>
-            <MudNavLink Href="products" Icon="@Icons.Material.Filled.Inventory">@NavMenuRes.Products</MudNavLink>
-            <MudNavLink Href="rules" Icon="@Icons.Material.Filled.Security">@NavMenuRes.Rules</MudNavLink>
-            <MudNavLink Href="users" Icon="@Icons.Material.Filled.People">@NavMenuRes.Users</MudNavLink>
+            
+            <AuthorizeView Roles="Admin, Products" Context="productsContext">
+                <MudNavLink Href="products" Icon="@Icons.Material.Filled.Inventory">@NavMenuRes.Products</MudNavLink>
+            </AuthorizeView>
+            
+            <AuthorizeView Roles="Admin, Rules" Context="rulesContext">
+                <MudNavLink Href="rules" Icon="@Icons.Material.Filled.Security">@NavMenuRes.Rules</MudNavLink>
+            </AuthorizeView>
+            
+            <AuthorizeView Roles="Admin, Users" Context="usersContext">
+                <MudNavLink Href="users" Icon="@Icons.Material.Filled.People">@NavMenuRes.Users</MudNavLink>
+            </AuthorizeView>
+            
             <MudDivider Class="my-2" />
             <MudNavLink Href="profile" Icon="@Icons.Material.Filled.Person">@NavMenuRes.Profile</MudNavLink>
         </MudNavMenu>

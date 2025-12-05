@@ -12,10 +12,25 @@ namespace MultiTenantApp.Api.Controllers
     public class ProfileController : ControllerBase
     {
         private readonly IProfileService _profileService;
+        private readonly IPermissionService _permissionService;
 
-        public ProfileController(IProfileService profileService)
+        public ProfileController(IProfileService profileService, IPermissionService permissionService)
         {
             _profileService = profileService;
+            _permissionService = permissionService;
+        }
+
+        [HttpGet("permissions")]
+        public async Task<IActionResult> GetMyPermissions()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var permissions = await _permissionService.GetAccessibleRulesAsync(userId);
+            return Ok(permissions);
         }
 
         [HttpGet("me")]

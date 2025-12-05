@@ -1,5 +1,5 @@
 @page "/rules"
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin, Rules")]
 @using MultiTenantApp.Web.Services
 @using MultiTenantApp.Web
 @using MultiTenantApp.Web.Resources.Pages

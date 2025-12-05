@@ -30,7 +30,25 @@ namespace MultiTenantApp.Web.Services
                 // Set the token in the TokenProvider so AuthenticatedHttpClient can use it
                 await _tokenProvider.SetTokenAsync(savedToken);
 
-                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt")));
+                var claims = ParseClaimsFromJwt(savedToken).ToList();
+                
+                // Add permissions as roles
+                var permissions = await _localStorage.GetItemAsync<IEnumerable<string>>("userPermissions");
+                if (permissions != null)
+                {
+                    foreach (var permission in permissions)
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, permission));
+                        
+                        // If user has Admin rule, ensure they have Admin role
+                        if (permission == "Admin")
+                        {
+                            // It's already added as a role above, but just to be explicit if we need special handling
+                        }
+                    }
+                }
+
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt")));
             }
             catch (InvalidOperationException)
             {
@@ -45,9 +63,17 @@ namespace MultiTenantApp.Web.Services
 
         public void MarkUserAsAuthenticated(string token)
         {
-            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
-            var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
-            NotifyAuthenticationStateChanged(authState);
+            // We can't easily get permissions here synchronously without making this async, 
+            // but NotifyAuthenticationStateChanged expects a Task<AuthenticationState>.
+            // Ideally, we should reload the state fully.
+            // However, for immediate UI update, we might miss permissions until a refresh if we don't handle it.
+            // Let's try to just trigger a re-fetch by calling GetAuthenticationStateAsync indirectly via a new state.
+            
+            // Actually, since we just logged in, we know we stored permissions. 
+            // But we can't access LocalStorage synchronously here if we wanted to build the principal manually.
+            // The best way is to let the app re-authorize.
+            
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
 
         public void MarkUserAsLoggedOut()

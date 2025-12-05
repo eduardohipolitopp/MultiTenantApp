@@ -8,5 +8,6 @@ namespace MultiTenantApp.Web.Interfaces
         Task<LoginResponseDto> Login(LoginDto loginModel);
         Task Logout();
         Task RegisterAsync(RegisterDto registerModel);
+        Task<IEnumerable<string>> GetPermissionsAsync();
     }
 }

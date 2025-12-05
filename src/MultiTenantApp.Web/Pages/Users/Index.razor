@@ -1,5 +1,5 @@
 @page "/users"
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin, Users")]
 @using MultiTenantApp.Web.Services
 @using MultiTenantApp.Web.Resources.Pages
 @using MultiTenantApp.Web.Resources

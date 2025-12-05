@@ -177,5 +177,19 @@ namespace MultiTenantApp.Infrastructure.Services
         {
             return await GetUserPermissionsAsync(userId);
         }
+
+        public async Task<IEnumerable<string>> GetAccessibleRulesAsync(string userId)
+        {
+            if (await HasAdminPermissionAsync(userId))
+            {
+                return await _context.Rules.Select(r => r.Name).ToListAsync();
+            }
+
+            return await _context.UserRules
+                .Include(ur => ur.Rule)
+                .Where(ur => ur.UserId == userId)
+                .Select(ur => ur.Rule!.Name)
+                .ToListAsync();
+        }
     }
 }

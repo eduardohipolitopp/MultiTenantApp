@@ -11,5 +11,6 @@ namespace MultiTenantApp.Application.Interfaces
         Task RemoveRuleFromUserAsync(string userId, Guid ruleId);
         Task UpdateUserRulePermissionAsync(Guid userRuleId, PermissionType permissionType);
         Task<IEnumerable<UserRuleDto>> GetUserRulesByUserIdAsync(string userId);
+        Task<IEnumerable<string>> GetAccessibleRulesAsync(string userId);
     }
 }
