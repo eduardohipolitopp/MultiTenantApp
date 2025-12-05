@@ -14,10 +14,10 @@ namespace MultiTenantApp.Infrastructure.Services
         public AuditService(IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("MongoDb");
-            var mongoClient = new MongoClient(connectionString);
+            var mongoClient = MongoDbConfiguration.CreateClient(connectionString);
             var mongoDatabase = mongoClient.GetDatabase("MultiTenantAuditDb");
             _auditLogs = mongoDatabase.GetCollection<AuditLog>("AuditLogs");
-            
+
             // Ensure indexes for performance
             CreateIndexes();
         }

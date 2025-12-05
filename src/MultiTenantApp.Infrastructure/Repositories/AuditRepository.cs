@@ -15,7 +15,7 @@ namespace MultiTenantApp.Infrastructure.Repositories
         public AuditRepository(IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("MongoDb");
-            var mongoClient = new MongoClient(connectionString);
+            var mongoClient = MongoDbConfiguration.CreateClient(connectionString);
             var mongoDatabase = mongoClient.GetDatabase("MultiTenantAuditDb");
             _auditLogs = mongoDatabase.GetCollection<AuditLog>("AuditLogs");
         }

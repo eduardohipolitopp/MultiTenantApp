@@ -15,6 +15,7 @@ using MultiTenantApp.Application.Services.Users;
 using MultiTenantApp.Infrastructure.Services;
 using MultiTenantApp.Domain.Entities;
 using MultiTenantApp.Domain.Interfaces;
+using MultiTenantApp.Infrastructure;
 using MultiTenantApp.Infrastructure.Persistence;
 using MultiTenantApp.Infrastructure.Repositories;
 using OpenTelemetry.Metrics;
@@ -29,6 +30,9 @@ using OpenTelemetry;
 using Serilog.Sinks.OpenTelemetry;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure MongoDB serialization conventions
+MongoDbConfiguration.Configure();
 
 // Serilog with OpenTelemetry
 var otlpEndpointHttp = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]?.Replace("4317", "4318") ?? "http://localhost:4318";
