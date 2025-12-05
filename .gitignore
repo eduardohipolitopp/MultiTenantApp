@@ -300,3 +300,6 @@ otel-collector/data/
 
 # File browser database
 filebrowser.db
+/src/MultiTenantApp.Application/bin/Debug/net9.0/MultiTenantApp.Application.dll
+/src/MultiTenantApp.Application/bin/Debug/net9.0/MultiTenantApp.Application.pdb
+/src/MultiTenantApp.Application/obj/Debug/net9.0/ref/MultiTenantApp.Application.dll
