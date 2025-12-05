@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 using MultiTenantApp.Api.Attributes;
 using MultiTenantApp.Application.DTOs;
 using MultiTenantApp.Application.Interfaces;
+using MultiTenantApp.Domain.Enums;
 
 namespace MultiTenantApp.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [RequirePermission("Products", PermissionType.View)]
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -41,7 +43,7 @@ namespace MultiTenantApp.Api.Controllers
 
         // POST api/products/create
         [HttpPost("create")]
-        [Authorize(Roles = "Admin")]
+        [RequirePermission("Products", PermissionType.Edit)]
         [Idempotent]
         [InvalidateCache("action:Products:*")]
         public async Task<IActionResult> Create([FromBody] CreateProductDto model)
@@ -52,7 +54,7 @@ namespace MultiTenantApp.Api.Controllers
 
         // PUT api/products/update/{id}
         [HttpPut("update/{id}")]
-        [Authorize(Roles = "Admin")]
+        [RequirePermission("Products", PermissionType.Edit)]
         [InvalidateCache("action:Products:*")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductDto model)
         {
@@ -62,7 +64,7 @@ namespace MultiTenantApp.Api.Controllers
 
         // DELETE api/products/delete/{id}
         [HttpDelete("delete/{id}")]
-        [Authorize(Roles = "Admin")]
+        [RequirePermission("Products", PermissionType.Edit)]
         [Idempotent]
         [InvalidateCache("action:Products:*")]
         public async Task<IActionResult> Delete(Guid id)

@@ -1,77 +1,152 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MultiTenantApp.Api.Attributes;
 using MultiTenantApp.Application.DTOs;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using MultiTenantApp.Application.Interfaces;
+using MultiTenantApp.Domain.Enums;
 
 namespace MultiTenantApp.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
+    [Microsoft.AspNetCore.Authorization.Authorize]
+    [RequirePermission("Rules", PermissionType.View)]
     public class RulesController : ControllerBase
     {
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IRuleService _ruleService;
+        private readonly IPermissionService _permissionService;
 
-        public RulesController(RoleManager<IdentityRole> roleManager)
+        public RulesController(IRuleService ruleService, IPermissionService permissionService)
         {
-            _roleManager = roleManager;
+            _ruleService = ruleService;
+            _permissionService = permissionService;
         }
 
         [HttpGet("list")]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
-            var roles = _roleManager.Roles.ToList();
-            return Ok(roles);
+            var rules = await _ruleService.GetAllRulesAsync();
+            return Ok(rules);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var rule = await _ruleService.GetRuleByIdAsync(id);
+            if (rule == null)
+                return NotFound();
+            return Ok(rule);
         }
 
         [HttpPost]
+        [RequirePermission("Rules", PermissionType.Edit)]
         [InvalidateCache("action:Rules:*")]
-        public async Task<IActionResult> Create([FromBody] string roleName)
+        public async Task<IActionResult> Create([FromBody] CreateRuleDto model)
         {
-            if (string.IsNullOrWhiteSpace(roleName))
-                return BadRequest("Role name is required");
-
-            var role = new IdentityRole(roleName);
-            var result = await _roleManager.CreateAsync(role);
-
-            if (result.Succeeded)
-                return Ok(role);
-
-            return BadRequest(result.Errors);
+            try
+            {
+                var rule = await _ruleService.CreateRuleAsync(model);
+                return Ok(rule);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPut("{id}")]
+        [RequirePermission("Rules", PermissionType.Edit)]
         [InvalidateCache("action:Rules:*")]
-        public async Task<IActionResult> Update(string id, [FromBody] UpdateRuleDto model)
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateRuleDto model)
         {
-            var role = await _roleManager.FindByIdAsync(id);
-            if (role == null) return NotFound();
-
-            role.Name = model.Name;
-            var result = await _roleManager.UpdateAsync(role);
-
-            if (result.Succeeded) return Ok();
-
-            return BadRequest(result.Errors);
+            try
+            {
+                await _ruleService.UpdateRuleAsync(id, model);
+                return Ok();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]
+        [RequirePermission("Rules", PermissionType.Edit)]
         [InvalidateCache("action:Rules:*")]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var role = await _roleManager.FindByIdAsync(id);
-            if (role == null)
-                return NotFound();
-
-            var result = await _roleManager.DeleteAsync(role);
-
-            if (result.Succeeded)
+            try
+            {
+                await _ruleService.DeleteRuleAsync(id);
                 return Ok();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
-            return BadRequest(result.Errors);
+        // User-Rule assignment endpoints
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetUserRules(string userId)
+        {
+            var userRules = await _permissionService.GetUserRulesByUserIdAsync(userId);
+            return Ok(userRules);
+        }
+
+        [HttpPost("assign")]
+        [RequirePermission("Rules", PermissionType.Edit)]
+        [InvalidateCache("action:Rules:*")]
+        public async Task<IActionResult> AssignRule([FromBody] AssignRuleDto model)
+        {
+            try
+            {
+                var userRule = await _permissionService.AssignRuleToUserAsync(model);
+                return Ok(userRule);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("user/{userId}/rule/{ruleId}")]
+        [RequirePermission("Rules", PermissionType.Edit)]
+        [InvalidateCache("action:Rules:*")]
+        public async Task<IActionResult> RemoveRule(string userId, Guid ruleId)
+        {
+            try
+            {
+                await _permissionService.RemoveRuleFromUserAsync(userId, ruleId);
+                return Ok();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPut("userrule/{userRuleId}/permission/{permissionType}")]
+        [RequirePermission("Rules", PermissionType.Edit)]
+        [InvalidateCache("action:Rules:*")]
+        public async Task<IActionResult> UpdatePermission(Guid userRuleId, int permissionType)
+        {
+            try
+            {
+                await _permissionService.UpdateUserRulePermissionAsync(userRuleId, (PermissionType)permissionType);
+                return Ok();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }

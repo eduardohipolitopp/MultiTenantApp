@@ -2,14 +2,15 @@
 @using MultiTenantApp.Application.DTOs
 @using MultiTenantApp.Web.Services
 @using MultiTenantApp.Web.Components.Products
+@using ProductsRes = MultiTenantApp.Web.Resources.Pages.Products
 @inject IProductService ProductService
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 
-<MudText Typo="Typo.h4" Class="mb-4">Create Product</MudText>
+<MudText Typo="Typo.h4" Class="mb-4">@ProductsRes.CreateProduct</MudText>
 
 <MudPaper Class="pa-4">
-    <ProductForm Model="model" ButtonText="Create" OnValidSubmit="New" />
+    <ProductForm Model="model" ButtonText="@ProductsRes.Create" OnValidSubmit="New" />
 </MudPaper>
 
 @code {
@@ -20,7 +21,7 @@
         try
         {
             await ProductService.CreateAsync(model);
-            Snackbar.Add("Product created successfully", Severity.Success);
+            Snackbar.Add(ProductsRes.ProductCreatedSuccess, Severity.Success);
             Navigation.NavigateTo("/products");
         }
         catch (Exception ex)

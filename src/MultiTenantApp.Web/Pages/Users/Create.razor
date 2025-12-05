@@ -22,7 +22,7 @@
         try
         {
             await UserService.CreateUser(model);
-            Snackbar.Add("User created successfully", Severity.Success);
+            Snackbar.Add(UsersRes.UserCreatedSuccess, Severity.Success);
             Navigation.NavigateTo("/users");
         }
         catch (Exception ex)

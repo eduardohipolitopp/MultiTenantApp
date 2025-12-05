@@ -221,5 +221,107 @@ namespace MultiTenantApp.Application.Resources {
                 return ResourceManager.GetString("UserName", resourceCulture);
             }
         }
+        
+        public static string EmailAddress {
+            get {
+                return ResourceManager.GetString("EmailAddress", resourceCulture);
+            }
+        }
+        
+        public static string StringLength {
+            get {
+                return ResourceManager.GetString("StringLength", resourceCulture);
+            }
+        }
+        
+        public static string Compare {
+            get {
+                return ResourceManager.GetString("Compare", resourceCulture);
+            }
+        }
+        
+        public static string UserNotFound {
+            get {
+                return ResourceManager.GetString("UserNotFound", resourceCulture);
+            }
+        }
+        
+        public static string ProductNotFound {
+            get {
+                return ResourceManager.GetString("ProductNotFound", resourceCulture);
+            }
+        }
+        
+        public static string RuleNotFound {
+            get {
+                return ResourceManager.GetString("RuleNotFound", resourceCulture);
+            }
+        }
+        
+        public static string UserRuleNotFound {
+            get {
+                return ResourceManager.GetString("UserRuleNotFound", resourceCulture);
+            }
+        }
+        
+        public static string RuleAlreadyAssigned {
+            get {
+                return ResourceManager.GetString("RuleAlreadyAssigned", resourceCulture);
+            }
+        }
+        
+        public static string RuleNameExists {
+            get {
+                return ResourceManager.GetString("RuleNameExists", resourceCulture);
+            }
+        }
+        
+        public static string CannotDeleteAssignedRule {
+            get {
+                return ResourceManager.GetString("CannotDeleteAssignedRule", resourceCulture);
+            }
+        }
+        
+        public static string SelfRegistrationDisabled {
+            get {
+                return ResourceManager.GetString("SelfRegistrationDisabled", resourceCulture);
+            }
+        }
+        
+        public static string FailedToUpdateProfile {
+            get {
+                return ResourceManager.GetString("FailedToUpdateProfile", resourceCulture);
+            }
+        }
+        
+        public static string FailedToUpdateAvatar {
+            get {
+                return ResourceManager.GetString("FailedToUpdateAvatar", resourceCulture);
+            }
+        }
+        
+        public static string FailedToChangePassword {
+            get {
+                return ResourceManager.GetString("FailedToChangePassword", resourceCulture);
+            }
+        }
+        
+        public static string FileSizeExceeded {
+            get {
+                return ResourceManager.GetString("FileSizeExceeded", resourceCulture);
+            }
+        }
+        
+        public static string FileTypeNotAllowed {
+            get {
+                return ResourceManager.GetString("FileTypeNotAllowed", resourceCulture);
+            }
+        }
+        
+        public static string FileNotFound {
+            get {
+                return ResourceManager.GetString("FileNotFound", resourceCulture);
+            }
+        }
     }
 }

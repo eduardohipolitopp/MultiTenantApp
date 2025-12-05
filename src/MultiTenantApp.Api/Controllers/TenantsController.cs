@@ -48,6 +48,35 @@ namespace MultiTenantApp.Api.Controllers
         }
 
         /// <summary>
+        /// Get tenants for authenticated user (admin sees all, non-admin sees only their tenant)
+        /// </summary>
+        [HttpGet("user-tenants")]
+        [Authorize]
+        public async Task<ActionResult<List<TenantDto>>> GetTenantsForUser()
+        {
+            try
+            {
+                // Query filters will automatically handle admin vs non-admin
+                var tenants = await _context.Tenants
+                    .Select(t => new TenantDto
+                    {
+                        Id = t.Id,
+                        Name = t.Name,
+                        Identifier = t.Identifier,
+                        CreatedAt = t.CreatedAt
+                    })
+                    .ToListAsync();
+
+                return Ok(tenants);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting tenants for user");
+                return StatusCode(500, "Error retrieving tenants");
+            }
+        }
+
+        /// <summary>
         /// Get tenant by ID
         /// </summary>
         [HttpGet("{id}")]

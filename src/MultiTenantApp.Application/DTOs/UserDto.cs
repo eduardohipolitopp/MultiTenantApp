@@ -15,5 +15,7 @@ namespace MultiTenantApp.Application.DTOs
 
         [Display(Name = "TenantId", ResourceType = typeof(SharedResource))]
         public string TenantId { get; set; } = string.Empty;
+        
+        public List<UserRuleDto> Rules { get; set; } = new List<UserRuleDto>();
     }
 }

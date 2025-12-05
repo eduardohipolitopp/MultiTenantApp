@@ -46,6 +46,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IRuleService, RuleService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
 // OpenTelemetry
 builder.Services.AddOpenTelemetry()

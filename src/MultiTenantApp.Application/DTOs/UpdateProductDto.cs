@@ -6,7 +6,7 @@ namespace MultiTenantApp.Application.DTOs
     public class UpdateProductDto
     {
         [Display(Name = "Name", ResourceType = typeof(SharedResource))]
-        [Required]
+        [Required(ErrorMessageResourceType = typeof(SharedResource), ErrorMessageResourceName = "Required")]
         public string Name { get; set; } = string.Empty;
 
         [Display(Name = "Description", ResourceType = typeof(SharedResource))]

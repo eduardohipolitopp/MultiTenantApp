@@ -9,13 +9,14 @@ using MultiTenantApp.Application.Configuration;
 using MultiTenantApp.Application.Interfaces;
 using MultiTenantApp.Application.Services;
 using MultiTenantApp.Application.Services.Authentication;
+using MultiTenantApp.Application.Services.Profile;
 using MultiTenantApp.Application.Services.Tenants;
 using MultiTenantApp.Application.Services.Users;
+using MultiTenantApp.Infrastructure.Services;
 using MultiTenantApp.Domain.Entities;
 using MultiTenantApp.Domain.Interfaces;
 using MultiTenantApp.Infrastructure.Persistence;
 using MultiTenantApp.Infrastructure.Repositories;
-using MultiTenantApp.Infrastructure.Services;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -32,7 +33,7 @@ builder.Host.UseSerilog((context, configuration) =>
         .ReadFrom.Configuration(context.Configuration)
         .Enrich.FromLogContext()
         .WriteTo.Console();
-        
+
     var lokiUrl = context.Configuration["Loki:Url"];
     if (!string.IsNullOrEmpty(lokiUrl))
     {
@@ -113,6 +114,7 @@ builder.Services.AddAuthentication(options =>
 // Configuration Options
 builder.Services.Configure<CacheOptions>(builder.Configuration.GetSection(CacheOptions.SectionName));
 builder.Services.Configure<RateLimitOptions>(builder.Configuration.GetSection(RateLimitOptions.SectionName));
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection(EmailSettings.SectionName));
 
 // Redis Configuration
 var cacheOptions = builder.Configuration.GetSection(CacheOptions.SectionName).Get<CacheOptions>();
@@ -123,15 +125,21 @@ if (cacheOptions?.Enabled == true)
     redisConfig.SyncTimeout = cacheOptions.Redis.SyncTimeout;
     redisConfig.AbortOnConnectFail = cacheOptions.Redis.AbortOnConnectFail;
     redisConfig.ConnectRetry = cacheOptions.Redis.ConnectRetry;
-    
+
     builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConfig));
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = cacheOptions.Redis.ConnectionString;
+        options.InstanceName = "MultiTenantApp:";
+    });
     builder.Services.AddSingleton<ICacheService, RedisCacheService>();
     builder.Services.AddSingleton<IRateLimitService, RateLimitService>();
     builder.Services.AddScoped<CacheDecorator>();
 }
 else
 {
-    // Register a no-op CacheDecorator when cache is disabled
+    // Use in-memory distributed cache when Redis is disabled
+    builder.Services.AddDistributedMemoryCache();
     builder.Services.AddScoped<CacheDecorator>();
 }
 
@@ -146,6 +154,11 @@ builder.Services.AddScoped<IUserRegistrationService, UserRegistrationService>();
 builder.Services.AddScoped<ITenantValidationService, TenantValidationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IRuleService, RuleService>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddHttpContextAccessor();
 
 // OpenTelemetry
@@ -187,6 +200,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllowAll");
 
+// Culture middleware must be after authentication to access user claims
+app.UseMiddleware<CultureMiddleware>();
+
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseMiddleware<RateLimitMiddleware>();
 app.UseMiddleware<TenantMiddleware>();
@@ -206,90 +222,5 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "An error occurred seeding the DB.");
     }
 }
-
-
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        context.Database.Migrate();
-
-        // Seed Data
-        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-
-        if (!await roleManager.RoleExistsAsync("Admin"))
-            await roleManager.CreateAsync(new IdentityRole("Admin"));
-
-        if (!await roleManager.RoleExistsAsync("User"))
-            await roleManager.CreateAsync(new IdentityRole("User"));
-
-        // Seed Tenants first
-        if (!await context.Tenants.AnyAsync(t => t.Identifier == "tenant-a"))
-        {
-            await context.Tenants.AddAsync(new Tenant
-            {
-                Id = Guid.NewGuid(),
-                Name = "Tenant A",
-                Identifier = "tenant-a",
-                CreatedAt = DateTime.UtcNow
-            });
-        }
-
-        if (!await context.Tenants.AnyAsync(t => t.Identifier == "tenant-b"))
-        {
-            await context.Tenants.AddAsync(new Tenant
-            {
-                Id = Guid.NewGuid(),
-                Name = "Tenant B",
-                Identifier = "tenant-b",
-                CreatedAt = DateTime.UtcNow
-            });
-        }
-
-        await context.SaveChangesAsync();
-
-        // Seed Tenants and Users
-        // Tenant A
-        if (await userManager.FindByEmailAsync("admin@tenant-a.com") == null)
-        {
-            var tenatnA = await context.Tenants.FirstAsync(t => t.Identifier == "tenant-a");
-
-            var user = new ApplicationUser
-            {
-                UserName = "admin@tenant-a.com",
-                Email = "admin@tenant-a.com",
-                TenantId = tenatnA.Id,
-                EmailConfirmed = true
-            };
-            await userManager.CreateAsync(user, "Password123!");
-            await userManager.AddToRoleAsync(user, "Admin");
-        }
-
-        // Tenant B
-        if (await userManager.FindByEmailAsync("admin@tenant-b.com") == null)
-        {
-            var tenatnB = await context.Tenants.FirstAsync(t => t.Identifier == "tenant-b");
-
-            var user = new ApplicationUser
-            {
-                UserName = "admin@tenant-b.com",
-                Email = "admin@tenant-b.com",
-                TenantId = tenatnB.Id,
-                EmailConfirmed = true
-            };
-            await userManager.CreateAsync(user, "Password123!");
-            await userManager.AddToRoleAsync(user, "Admin");
-        }
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred seeding the DB.");
-    }
-}
-
 
 app.Run();

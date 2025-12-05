@@ -14,14 +14,21 @@ namespace MultiTenantApp.Tests.Services
     public class ProductServiceTests
     {
         private readonly Mock<IRepository<Product>> _mockRepo;
+        private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly ProductService _service;
 
         public ProductServiceTests()
         {
             _mockRepo = new Mock<IRepository<Product>>();
-            _service = new ProductService(_mockRepo.Object);
+            _mockUnitOfWork = new Mock<IUnitOfWork>();
+            
+            // Setup UnitOfWork to return the mock repository
+            _mockUnitOfWork.Setup(u => u.Repository<Product>()).Returns(_mockRepo.Object);
+            
+            _service = new ProductService(_mockUnitOfWork.Object);
         }
 
+        [Fact]
         public async Task GetAllAsync_ShouldReturnPagedResponse()
         {
             // Arrange

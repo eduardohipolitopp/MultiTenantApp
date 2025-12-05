@@ -65,9 +65,30 @@
     <value>Criar Novo Usuário</value>
   </data>
   <data name="SelectRole" xml:space="preserve">
-    <value>Selecionar Regra</value>
+    <value>Selecionar Função</value>
   </data>
   <data name="CreateUserButton" xml:space="preserve">
     <value>Criar Usuário</value>
+  </data>
+  <data name="EditUser" xml:space="preserve">
+    <value>Editar Usuário</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Atualizar</value>
+  </data>
+  <data name="UserDeletedSuccess" xml:space="preserve">
+    <value>Usuário excluído com sucesso</value>
+  </data>
+  <data name="UserCreatedSuccess" xml:space="preserve">
+    <value>Usuário criado com sucesso</value>
+  </data>
+  <data name="UserUpdatedSuccess" xml:space="preserve">
+    <value>Usuário atualizado com sucesso</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>Usuário não encontrado</value>
+  </data>
+  <data name="LoadError" xml:space="preserve">
+    <value>Erro ao carregar usuário</value>
   </data>
 </root>

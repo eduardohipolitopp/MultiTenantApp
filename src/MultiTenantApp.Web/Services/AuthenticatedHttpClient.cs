@@ -51,10 +51,22 @@ namespace MultiTenantApp.Web.Services
             return await _httpClient.PostAsJsonAsync(requestUri, value, cancellationToken);
         }
 
+        public async Task<HttpResponseMessage> PostAsync(string requestUri, HttpContent? content, CancellationToken cancellationToken = default)
+        {
+            EnsureAuthorizationHeader();
+            return await _httpClient.PostAsync(requestUri, content, cancellationToken);
+        }
+
         public async Task<HttpResponseMessage> PutAsJsonAsync<T>(string requestUri, T value, CancellationToken cancellationToken = default)
         {
             EnsureAuthorizationHeader();
             return await _httpClient.PutAsJsonAsync(requestUri, value, cancellationToken);
+        }
+
+        public async Task<HttpResponseMessage> PutAsync(string requestUri, HttpContent? content, CancellationToken cancellationToken = default)
+        {
+            EnsureAuthorizationHeader();
+            return await _httpClient.PutAsync(requestUri, content, cancellationToken);
         }
 
         public async Task<HttpResponseMessage> DeleteAsync(string requestUri, CancellationToken cancellationToken = default)

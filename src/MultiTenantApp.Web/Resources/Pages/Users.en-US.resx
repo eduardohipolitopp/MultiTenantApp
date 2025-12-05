@@ -70,4 +70,25 @@
   <data name="CreateUserButton" xml:space="preserve">
     <value>Create User</value>
   </data>
+  <data name="EditUser" xml:space="preserve">
+    <value>Edit User</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="UserDeletedSuccess" xml:space="preserve">
+    <value>User deleted successfully</value>
+  </data>
+  <data name="UserCreatedSuccess" xml:space="preserve">
+    <value>User created successfully</value>
+  </data>
+  <data name="UserUpdatedSuccess" xml:space="preserve">
+    <value>User updated successfully</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User not found</value>
+  </data>
+  <data name="LoadError" xml:space="preserve">
+    <value>Error loading user</value>
+  </data>
 </root>

@@ -1,7 +1,7 @@
 @page "/rules/create"
+@using MultiTenantApp.Application.DTOs
 @using MultiTenantApp.Web.Services
 @using MultiTenantApp.Web.Resources.Pages
-@using MultiTenantApp.Web.Components.Rules
 @using RulesRes = MultiTenantApp.Web.Resources.Pages.Rules
 @inject IRuleService RuleService
 @inject NavigationManager Navigation
@@ -10,17 +10,43 @@
 <MudText Typo="Typo.h4" Class="mb-4">@RulesRes.RulesManagementTitle</MudText>
 
 <MudPaper Class="pa-4">
-    <RuleForm @bind-RoleName="roleName" ButtonText="@RulesRes.AddRuleButton" OnValidSubmit="New" />
+    <EditForm Model="@model" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+        
+        <MudTextField @bind-Value="model.Name" 
+                      Label="Name" 
+                      Required="true"
+                      Variant="Variant.Outlined"
+                      Class="mb-3" />
+        
+        <MudTextField @bind-Value="model.Description" 
+                      Label="Description" 
+                      Lines="3"
+                      Variant="Variant.Outlined"
+                      Class="mb-3" />
+        
+        <MudButton ButtonType="ButtonType.Submit" 
+                   Variant="Variant.Filled" 
+                   Color="Color.Primary">
+            @RulesRes.AddRuleButton
+        </MudButton>
+        <MudButton Variant="Variant.Outlined" 
+                   Color="Color.Secondary"
+                   Href="/rules"
+                   Class="ml-2">
+            Cancel
+        </MudButton>
+    </EditForm>
 </MudPaper>
 
 @code {
-    private string roleName;
+    private CreateRuleDto model = new CreateRuleDto();
 
-    private async Task New()
+    private async Task HandleSubmit()
     {
         try
         {
-            await RuleService.CreateRule(roleName);
+            await RuleService.CreateRule(model);
             Snackbar.Add("Rule created successfully", Severity.Success);
             Navigation.NavigateTo("/rules");
         }

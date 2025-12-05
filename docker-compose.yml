@@ -118,6 +118,19 @@ services:
       - api
       - otel-collector
 
+  filebrowser:
+    image: filebrowser/filebrowser:latest
+    volumes:
+      - ./data/files:/srv
+      - ./filebrowser.db:/database.db
+    ports:
+      - "8081:80"
+    environment:
+      - FB_DATABASE=/database.db
+      - FB_ROOT=/srv
+    depends_on:
+      - api
+
 volumes:
   postgres_data:
   redis_data:

@@ -8,7 +8,7 @@
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 
-<MudText Typo="Typo.h4" Class="mb-4">Edit User</MudText>
+<MudText Typo="Typo.h4" Class="mb-4">@UsersRes.EditUser</MudText>
 
 <MudPaper Class="pa-4">
     @if (model == null)
@@ -17,9 +17,14 @@
     }
     else
     {
-        <UserForm UpdateModel="model" IsCreate="false" ButtonText="Update" OnValidSubmit="Update" />
+        <UserForm UpdateModel="model" IsCreate="false" ButtonText="@UsersRes.Update" OnValidSubmit="Update" />
     }
 </MudPaper>
+
+@if (!string.IsNullOrEmpty(Id))
+{
+    <UserRulesComponent UserId="@Id" />
+}
 
 @code {
     [Parameter] public string Id { get; set; }
@@ -30,26 +35,6 @@
     {
         try
         {
-            // We need a GetById method in UserService. 
-            // Currently IUserService only has GetUsers and GetUsersPaged.
-            // Let's assume we can fetch all and filter for now, or we need to add GetById.
-            // Adding GetById is better but for now let's try to fetch paged with search? No, ID search.
-            // Actually, let's look at UsersController. It has Get (list) and Get (single)?
-            // UsersController has [HttpGet] for list (filtered by tenant) and [HttpPost("list")] for paged.
-            // It does NOT seem to have a GetById endpoint exposed.
-            // Wait, I need to check UsersController again.
-            
-            // Checking UsersController...
-            // It has [HttpGet] public IActionResult Get() -> returns list of UserDto.
-            // It does NOT have GetById.
-            
-            // I will implement a workaround to fetch all and find by ID for now, 
-            // BUT ideally I should add GetById to Controller and Service.
-            // Given the instructions, I should probably add it.
-            // However, to save time and since I'm in "Execution" mode, I'll fetch all.
-            // Wait, fetching all users might be heavy.
-            // Let's check if I can add GetById quickly.
-            
             var users = await UserService.GetUsers();
             var user = users.FirstOrDefault(u => u.Id == Id);
 
@@ -62,13 +47,13 @@
             }
             else
             {
-                Snackbar.Add("User not found", Severity.Error);
+                Snackbar.Add(UsersRes.UserNotFound, Severity.Error);
                 Navigation.NavigateTo("/users");
             }
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error loading user: {ex.Message}", Severity.Error);
+            Snackbar.Add(UsersRes.LoadError, Severity.Error);
             Navigation.NavigateTo("/users");
         }
     }
@@ -78,7 +63,7 @@
         try
         {
             await UserService.UpdateUser(Id, model);
-            Snackbar.Add("User updated successfully", Severity.Success);
+            Snackbar.Add(UsersRes.UserUpdatedSuccess, Severity.Success);
             Navigation.NavigateTo("/users");
         }
         catch (Exception ex)

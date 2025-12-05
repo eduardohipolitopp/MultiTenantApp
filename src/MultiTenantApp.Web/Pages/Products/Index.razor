@@ -1,17 +1,18 @@
 @page "/products"
 @attribute [Authorize]
+@using ProductsRes = MultiTenantApp.Web.Resources.Pages.Products
 @inject IProductService ProductService
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 
-<MudText Typo="Typo.h4" Class="mb-4">Products</MudText>
+<MudText Typo="Typo.h4" Class="mb-4">@ProductsRes.Title</MudText>
 
 <MudButton Variant="Variant.Filled" 
           Color="Color.Success" 
           StartIcon="@Icons.Material.Filled.Add"
           Href="/products/create"
           Class="mb-4">
-    Create New Product
+    @ProductsRes.CreateNewProduct
 </MudButton>
 
 <MudDataGrid T="ProductDto" 
@@ -21,16 +22,16 @@
              SortMode="SortMode.Single"
              Elevation="2">
     <ToolBarContent>
-        <MudText Typo="Typo.h6">Products</MudText>
+        <MudText Typo="Typo.h6">@ProductsRes.Title</MudText>
         <MudSpacer />
-        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="@ProductsRes.Search" Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <Columns>
-        <PropertyColumn Property="x => x.Name" Title="Name" />
-        <PropertyColumn Property="x => x.Description" Title="Description" />
-        <PropertyColumn Property="x => x.Price" Title="Price" Format="C2" />
-        <TemplateColumn Title="Actions" Sortable="false" Filterable="false">
+        <PropertyColumn Property="x => x.Name" Title="@ProductsRes.Name" />
+        <PropertyColumn Property="x => x.Description" Title="@ProductsRes.Description" />
+        <PropertyColumn Property="x => x.Price" Title="@ProductsRes.Price" Format="C2" />
+        <TemplateColumn Title="@ProductsRes.Actions" Sortable="false" Filterable="false">
             <CellTemplate>
                 <MudIconButton Icon="@Icons.Material.Filled.Edit" 
                               Color="Color.Primary" 
@@ -86,7 +87,7 @@
         {
             await ProductService.DeleteAsync(id);
             await dataGrid.ReloadServerData();
-            Snackbar.Add("Product deleted successfully", Severity.Success);
+            Snackbar.Add(ProductsRes.ProductDeletedSuccess, Severity.Success);
         }
         catch (Exception ex)
         {

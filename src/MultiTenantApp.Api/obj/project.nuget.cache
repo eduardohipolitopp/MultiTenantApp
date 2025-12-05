@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "UAThV72uwic=",
+  "dgSpecHash": "rbNt1Wk9wLE=",
   "success": true,
   "projectFilePath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj",
   "expectedPackageFiles": [
@@ -30,6 +30,7 @@
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\10.0.0\\microsoft.extensions.caching.abstractions.10.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.caching.memory\\9.0.11\\microsoft.extensions.caching.memory.9.0.11.nupkg.sha512",
+    "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.caching.stackexchangeredis\\10.0.0\\microsoft.extensions.caching.stackexchangeredis.10.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.configuration\\10.0.0\\microsoft.extensions.configuration.10.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\10.0.0\\microsoft.extensions.configuration.abstractions.10.0.0.nupkg.sha512",
     "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\microsoft.extensions.configuration.binder\\10.0.0\\microsoft.extensions.configuration.binder.10.0.0.nupkg.sha512",

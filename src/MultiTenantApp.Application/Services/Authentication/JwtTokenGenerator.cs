@@ -24,6 +24,7 @@ namespace MultiTenantApp.Application.Services.Authentication
         {
             var authClaims = new List<Claim>
             {
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("tenant_id", user.TenantId.ToString())

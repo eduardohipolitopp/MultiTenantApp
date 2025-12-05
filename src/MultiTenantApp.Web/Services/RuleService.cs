@@ -21,36 +21,52 @@ namespace MultiTenantApp.Web.Services
             return await _httpClient.GetFromJsonAsync<List<RuleDto>>("api/Rules/list");
         }
 
-        public async Task<PagedResponse<RuleDto>> GetRulesPaged(PagedRequest request)
+        public async Task<RuleDto> GetRuleById(Guid id)
         {
-            var queryString = $"?Page={request.Page}&PageSize={request.PageSize}";
-            
-            if (!string.IsNullOrWhiteSpace(request.SortBy))
-            {
-                queryString += $"&SortBy={request.SortBy}&SortDescending={request.SortDescending}";
-            }
-            
-            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
-            {
-                queryString += $"&SearchTerm={Uri.EscapeDataString(request.SearchTerm)}";
-            }
-
-            return await _httpClient.GetFromJsonAsync<PagedResponse<RuleDto>>($"api/Rules/paged{queryString}");
+            return await _httpClient.GetFromJsonAsync<RuleDto>($"api/Rules/{id}");
         }
 
-        public async Task CreateRule(string roleName)
+        public async Task<RuleDto> CreateRule(CreateRuleDto model)
         {
-            await _httpClient.PostAsJsonAsync("api/Rules", roleName);
+            var response = await _httpClient.PostAsJsonAsync("api/Rules", model);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<RuleDto>();
         }
 
-        public async Task UpdateRule(string id, UpdateRuleDto model)
+        public async Task UpdateRule(Guid id, UpdateRuleDto model)
         {
-            await _httpClient.PutAsJsonAsync($"api/Rules/{id}", model);
+            var response = await _httpClient.PutAsJsonAsync($"api/Rules/{id}", model);
+            response.EnsureSuccessStatusCode();
         }
 
-        public async Task DeleteRule(string id)
+        public async Task DeleteRule(Guid id)
         {
-            await _httpClient.DeleteAsync($"api/Rules/{id}");
+            var response = await _httpClient.DeleteAsync($"api/Rules/{id}");
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task<List<UserRuleDto>> GetUserRules(string userId)
+        {
+            return await _httpClient.GetFromJsonAsync<List<UserRuleDto>>($"api/Rules/user/{userId}");
+        }
+
+        public async Task<UserRuleDto> AssignRuleToUser(AssignRuleDto model)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/Rules/assign", model);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<UserRuleDto>();
+        }
+
+        public async Task RemoveRuleFromUser(string userId, Guid ruleId)
+        {
+            var response = await _httpClient.DeleteAsync($"api/Rules/user/{userId}/rule/{ruleId}");
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task UpdateUserRulePermission(Guid userRuleId, int permissionType)
+        {
+            var response = await _httpClient.PutAsync($"api/Rules/userrule/{userRuleId}/permission/{permissionType}", null);
+            response.EnsureSuccessStatusCode();
         }
     }
 }

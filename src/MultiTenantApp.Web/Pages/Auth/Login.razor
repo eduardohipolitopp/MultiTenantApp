@@ -49,6 +49,15 @@
             </MudButton>
         </MudForm>
 
+        <MudDivider Class="my-3" />
+
+        <MudButton Variant="Variant.Text"
+                   Color="Color.Primary"
+                   FullWidth="true"
+                   Href="/forgot-password">
+            Forgot Password?
+        </MudButton>
+
         @if (!string.IsNullOrEmpty(errorMessage))
         {
             <MudAlert Severity="Severity.Error" Class="mt-3">@errorMessage</MudAlert>

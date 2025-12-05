@@ -1,0 +1,33 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@using MultiTenantApp.Web.Interfaces
+@using MultiTenantApp.Domain.Extensions
+@using System.Globalization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IProfileService ProfileService
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                var profile = await ProfileService.GetMyProfileAsync();
+                if (profile != null)
+                {
+                    var cultureInfo = profile.PreferredLanguage.ToCultureInfo();
+                    
+                    CultureInfo.CurrentCulture = cultureInfo;
+                    CultureInfo.CurrentUICulture = cultureInfo;
+                }
+            }
+        }
+        catch
+        {
+            // Silently fail - use default culture
+        }
+    }
+}

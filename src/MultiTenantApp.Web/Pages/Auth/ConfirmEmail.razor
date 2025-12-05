@@ -1,0 +1,97 @@
+@page "/confirm-email"
+@using MultiTenantApp.Web.Services
+@inject AuthenticatedHttpClient HttpClient
+@inject NavigationManager NavigationManager
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="mt-8">
+    <MudPaper Elevation="3" Class="pa-6">
+        <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true">
+            Email Confirmation
+        </MudText>
+
+        @if (isLoading)
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="mx-auto d-block mt-4" />
+            <MudText Typo="Typo.body1" Align="Align.Center" Class="mt-4">
+                Confirming your email...
+            </MudText>
+        }
+        else if (isSuccess)
+        {
+            <MudAlert Severity="Severity.Success" Class="mt-4">
+                Your email has been confirmed successfully!
+            </MudAlert>
+            <MudText Typo="Typo.body1" Align="Align.Center" Class="mt-4">
+                You can now log in to your account.
+            </MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Class="mt-4" OnClick="GoToLogin">
+                Go to Login
+            </MudButton>
+        }
+        else
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-4">
+                @errorMessage
+            </MudAlert>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" FullWidth="true" Class="mt-4" OnClick="GoToLogin">
+                Back to Login
+            </MudButton>
+        }
+    </MudPaper>
+</MudContainer>
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? UserId { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? Token { get; set; }
+
+    private bool isLoading = true;
+    private bool isSuccess = false;
+    private string errorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrEmpty(UserId) || string.IsNullOrEmpty(Token))
+        {
+            errorMessage = "Invalid confirmation link.";
+            isLoading = false;
+            return;
+        }
+
+        try
+        {
+            var response = await HttpClient.GetAsync($"api/Auth/confirm-email?userId={UserId}&token={Uri.EscapeDataString(Token)}");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                isSuccess = true;
+                Snackbar.Add("Email confirmed successfully!", Severity.Success);
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                errorMessage = "Failed to confirm email. The link may have expired.";
+                Snackbar.Add(errorMessage, Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "An error occurred while confirming your email.";
+            Snackbar.Add(errorMessage, Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void GoToLogin()
+    {
+        NavigationManager.NavigateTo("/login");
+    }
+}

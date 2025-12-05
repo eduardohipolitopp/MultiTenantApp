@@ -70,4 +70,28 @@
   <data name="Loading" xml:space="preserve">
     <value>Loading...</value>
   </data>
+  <data name="RuleDeletedSuccess" xml:space="preserve">
+    <value>Rule deleted successfully</value>
+  </data>
+  <data name="RuleCreatedSuccess" xml:space="preserve">
+    <value>Rule created successfully</value>
+  </data>
+  <data name="RuleUpdatedSuccess" xml:space="preserve">
+    <value>Rule updated successfully</value>
+  </data>
+  <data name="EditRule" xml:space="preserve">
+    <value>Edit Rule</value>
+  </data>
+  <data name="CreateRule" xml:space="preserve">
+    <value>Create Rule</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="LoadError" xml:space="preserve">
+    <value>Failed to load rule</value>
+  </data>
 </root>

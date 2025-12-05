@@ -2,11 +2,12 @@
 @using MultiTenantApp.Application.DTOs
 @using MultiTenantApp.Web.Services
 @using MultiTenantApp.Web.Components.Products
+@using ProductsRes = MultiTenantApp.Web.Resources.Pages.Products
 @inject IProductService ProductService
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 
-<MudText Typo="Typo.h4" Class="mb-4">Edit Product</MudText>
+<MudText Typo="Typo.h4" Class="mb-4">@ProductsRes.EditProduct</MudText>
 
 <MudPaper Class="pa-4">
     @if (model == null)
@@ -15,7 +16,7 @@
     }
     else
     {
-        <ProductForm Model="model" ButtonText="Update" OnValidSubmit="Update" />
+        <ProductForm Model="model" ButtonText="@ProductsRes.Update" OnValidSubmit="Update" />
     }
 </MudPaper>
 
@@ -38,7 +39,7 @@
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"Error loading product: {ex.Message}", Severity.Error);
+            Snackbar.Add(ProductsRes.LoadError, Severity.Error);
             Navigation.NavigateTo("/products");
         }
     }
@@ -55,7 +56,7 @@
             };
 
             await ProductService.UpdateAsync(Id, updateDto);
-            Snackbar.Add("Product updated successfully", Severity.Success);
+            Snackbar.Add(ProductsRes.ProductUpdatedSuccess, Severity.Success);
             Navigation.NavigateTo("/products");
         }
         catch (Exception ex)

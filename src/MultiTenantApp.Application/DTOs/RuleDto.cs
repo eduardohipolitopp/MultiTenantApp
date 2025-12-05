@@ -7,7 +7,10 @@ namespace MultiTenantApp.Application.DTOs
     {
         public string Id { get; set; } = string.Empty;
 
-        [Display(Name = "Role", ResourceType = typeof(SharedResource))]
+        [Display(Name = "Name", ResourceType = typeof(SharedResource))]
         public string Name { get; set; } = string.Empty;
+        
+        [Display(Name = "Description", ResourceType = typeof(SharedResource))]
+        public string Description { get; set; } = string.Empty;
     }
 }

@@ -6,7 +6,8 @@ namespace MultiTenantApp.Application.DTOs
     public class UpdateUserDto
     {
         [Display(Name = "Email", ResourceType = typeof(SharedResource))]
-        [Required]
+        [Required(ErrorMessageResourceType = typeof(SharedResource), ErrorMessageResourceName = "Required")]
+        [EmailAddress(ErrorMessageResourceType = typeof(SharedResource), ErrorMessageResourceName = "EmailAddress")]
         public string Email { get; set; } = string.Empty;
     }
 }

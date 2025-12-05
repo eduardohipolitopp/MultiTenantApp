@@ -1,0 +1,171 @@
+@using MultiTenantApp.Application.DTOs
+@using MultiTenantApp.Web.Services
+@using MultiTenantApp.Web.Resources.Components
+@using UserRulesRes = MultiTenantApp.Web.Resources.Components.UserRulesComponent
+@inject IRuleService RuleService
+@inject ISnackbar Snackbar
+
+<MudCard Class="mt-4">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">@UserRulesRes.UserPermissions</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        @if (userRules == null)
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Small" />
+        }
+        else
+        {
+            <MudTable Items="@userRules" Hover="true" Dense="true">
+                <HeaderContent>
+                    <MudTh>@UserRulesRes.Rule</MudTh>
+                    <MudTh>@UserRulesRes.PermissionType</MudTh>
+                    <MudTh>@Web.Resources.SharedResource.Actions</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="@UserRulesRes.Rule">@context.RuleName</MudTd>
+                    <MudTd DataLabel="@UserRulesRes.PermissionType">
+                        <MudSelect T="string" @bind-Value="@context.PermissionType" 
+                                   Variant="Variant.Outlined" 
+                                   Margin="Margin.Dense"
+                                   OnClose="@(() => UpdatePermission(context))">
+                            <MudSelectItem Value="@("View")">@UserRulesRes.View</MudSelectItem>
+                            <MudSelectItem Value="@("Edit")">@UserRulesRes.Edit</MudSelectItem>
+                        </MudSelect>
+                    </MudTd>
+                    <MudTd DataLabel="@Web.Resources.SharedResource.Actions">
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                                      Color="Color.Error" 
+                                      Size="Size.Small"
+                                      OnClick="@(() => RemoveRule(context))" />
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+
+            <MudDivider Class="my-4" />
+
+            <MudText Typo="Typo.subtitle2" Class="mb-2">@UserRulesRes.AssignNewRule</MudText>
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="Guid?" @bind-Value="selectedRuleId" 
+                               Label="@UserRulesRes.SelectRule" 
+                               Variant="Variant.Outlined"
+                               Margin="Margin.Dense">
+                        @foreach (var rule in availableRules)
+                        {
+                            <MudSelectItem Value="@((Guid?)Guid.Parse(rule.Id))">@rule.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="4">
+                    <MudSelect T="int" @bind-Value="selectedPermissionType" 
+                               Label="@UserRulesRes.PermissionType" 
+                               Variant="Variant.Outlined"
+                               Margin="Margin.Dense">
+                        <MudSelectItem Value="1">@UserRulesRes.View</MudSelectItem>
+                        <MudSelectItem Value="2">@UserRulesRes.Edit</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="2">
+                    <MudButton Variant="Variant.Filled" 
+                              Color="Color.Primary" 
+                              OnClick="AssignRule"
+                              FullWidth="true">
+                        @UserRulesRes.Assign
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
+        }
+    </MudCardContent>
+</MudCard>
+
+@code {
+    [Parameter] public string UserId { get; set; }
+
+    private List<UserRuleDto> userRules;
+    private List<RuleDto> availableRules = new List<RuleDto>();
+    private Guid? selectedRuleId;
+    private int selectedPermissionType = 1; // Default to View
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            userRules = await RuleService.GetUserRules(UserId);
+            var allRules = await RuleService.GetRules();
+            
+            // Filter out rules already assigned to the user
+            var assignedRuleIds = userRules.Select(ur => ur.RuleId).ToList();
+            availableRules = allRules.Where(r => !assignedRuleIds.Contains(Guid.Parse(r.Id))).ToList();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(UserRulesRes.LoadingRulesError, Severity.Error);
+        }
+    }
+
+    private async Task AssignRule()
+    {
+        if (!selectedRuleId.HasValue)
+        {
+            Snackbar.Add(UserRulesRes.PleaseSelectRule, Severity.Warning);
+            return;
+        }
+
+        try
+        {
+            var dto = new AssignRuleDto
+            {
+                UserId = UserId,
+                RuleId = selectedRuleId.Value,
+                PermissionType = selectedPermissionType
+            };
+
+            await RuleService.AssignRuleToUser(dto);
+            Snackbar.Add(UserRulesRes.RuleAssignedSuccess, Severity.Success);
+            
+            selectedRuleId = null;
+            selectedPermissionType = 1;
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task RemoveRule(UserRuleDto userRule)
+    {
+        try
+        {
+            await RuleService.RemoveRuleFromUser(UserId, userRule.RuleId);
+            Snackbar.Add(UserRulesRes.RuleRemovedSuccess, Severity.Success);
+            await LoadData();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task UpdatePermission(UserRuleDto userRule)
+    {
+        try
+        {
+            var permissionType = userRule.PermissionType == "View" ? 1 : 2;
+            await RuleService.UpdateUserRulePermission(userRule.Id, permissionType);
+            Snackbar.Add(UserRulesRes.PermissionUpdatedSuccess, Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+}

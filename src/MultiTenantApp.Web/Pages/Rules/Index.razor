@@ -1,4 +1,5 @@
 @page "/rules"
+@attribute [Authorize]
 @using MultiTenantApp.Web.Services
 @using MultiTenantApp.Web
 @using MultiTenantApp.Web.Resources.Pages
@@ -7,7 +8,6 @@
 
 @inject IRuleService RuleService
 @inject ISnackbar Snackbar
-@attribute [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
 
 <MudText Typo="Typo.h4" Class="mb-4">@RulesRes.RulesManagementTitle</MudText>
 
@@ -27,6 +27,7 @@
              Elevation="2">
     <Columns>
         <PropertyColumn Property="x => x.Name" Title="@SharedResource.Name" />
+        <PropertyColumn Property="x => x.Description" Title="@SharedResource.Description" />
         <TemplateColumn Title="@SharedResource.Actions" Sortable="false" Filterable="false">
             <CellTemplate>
                 <MudIconButton Icon="@Icons.Material.Filled.Edit" 
@@ -36,7 +37,7 @@
                 <MudIconButton Icon="@Icons.Material.Filled.Delete" 
                                Color="Color.Error" 
                                Size="Size.Small"
-                               OnClick="@(() => DeleteRule(context.Item.Id))" />
+                               OnClick="@(() => DeleteRule(Guid.Parse(context.Item.Id)))" />
             </CellTemplate>
         </TemplateColumn>
     </Columns>
@@ -58,13 +59,13 @@
 
 
 
-    private async Task DeleteRule(string id)
+    private async Task DeleteRule(Guid id)
     {
         try
         {
             await RuleService.DeleteRule(id);
             await dataGrid.ReloadServerData();
-            Snackbar.Add("Rule deleted successfully", Severity.Success);
+            Snackbar.Add(RulesRes.RuleDeletedSuccess, Severity.Success);
         }
         catch (Exception ex)
         {

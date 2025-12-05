@@ -1,0 +1,281 @@
+@page "/profile"
+@using MultiTenantApp.Application.DTOs
+@using MultiTenantApp.Domain.Enums
+@using MultiTenantApp.Domain.Extensions
+@using MultiTenantApp.Web.Interfaces
+@using ProfileRes = MultiTenantApp.Web.Resources.Pages.Profile
+@inject IProfileService ProfileService
+@inject ISnackbar Snackbar
+@attribute [Authorize]
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudText Typo="Typo.h4" GutterBottom="true">@ProfileRes.Title</MudText>
+
+    @if (isLoading)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+    else if (profile != null)
+    {
+        <MudGrid>
+            <!-- Avatar Section -->
+            <MudItem xs="12" md="4">
+                <MudPaper Elevation="2" Class="pa-4">
+                    <MudText Typo="Typo.h6" GutterBottom="true">@ProfileRes.ProfilePicture</MudText>
+                    <div class="d-flex flex-column align-center">
+                        <MudAvatar Size="Size.Large" Class="mb-4" Style="width: 150px; height: 150px;">
+                            @if (!string.IsNullOrEmpty(profile.AvatarUrl))
+                            {
+                                <MudImage Src="@profile.AvatarUrl" />
+                            }
+                            else
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Large" />
+                            }
+                        </MudAvatar>
+                        
+                        <InputFile id="fileInput" OnChange="UploadAvatar" hidden accept=".jpg,.jpeg,.png,.gif" />
+                        <MudButton HtmlTag="label"
+                                   Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                   for="fileInput">
+                            @ProfileRes.UploadAvatar
+                        </MudButton>
+                    </div>
+                </MudPaper>
+            </MudItem>
+
+            <!-- Profile Information -->
+            <MudItem xs="12" md="8">
+                <MudPaper Elevation="2" Class="pa-4 mb-4">
+                    <MudText Typo="Typo.h6" GutterBottom="true">@ProfileRes.PersonalInformation</MudText>
+                    <EditForm Model="@updateModel" OnValidSubmit="UpdateProfile">
+                        <DataAnnotationsValidator />
+                        <MudGrid>
+                            <MudItem xs="12" sm="6">
+                                <MudTextField @bind-Value="updateModel.FullName"
+                                              Label="@ProfileRes.FullName"
+                                              Variant="Variant.Outlined"
+                                              Margin="Margin.Dense" />
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudNumericField @bind-Value="updateModel.Age"
+                                                 Label="@ProfileRes.Age"
+                                                 Variant="Variant.Outlined"
+                                                 Margin="Margin.Dense"
+                                                 Min="1"
+                                                 Max="150" />
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudTextField @bind-Value="updateModel.Address"
+                                              Label="@ProfileRes.Address"
+                                              Variant="Variant.Outlined"
+                                              Margin="Margin.Dense"
+                                              Lines="2" />
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudTextField @bind-Value="updateModel.PhoneNumber"
+                                              Label="@ProfileRes.PhoneNumber"
+                                              Variant="Variant.Outlined"
+                                              Margin="Margin.Dense" />
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudSelect @bind-Value="updateModel.PreferredLanguage"
+                                           Label="@ProfileRes.PreferredLanguage"
+                                           Variant="Variant.Outlined"
+                                           Margin="Margin.Dense">
+                                    @foreach (SupportedLanguage lang in Enum.GetValues(typeof(SupportedLanguage)))
+                                    {
+                                        <MudSelectItem Value="@lang">@lang.GetDisplayName()</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudButton ButtonType="ButtonType.Submit"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Primary"
+                                           Disabled="@isSaving">
+                                    @if (isSaving)
+                                    {
+                                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                        <MudText Class="ms-2">@ProfileRes.Saving</MudText>
+                                    }
+                                    else
+                                    {
+                                        <MudText>@ProfileRes.SaveChanges</MudText>
+                                    }
+                                </MudButton>
+                            </MudItem>
+                        </MudGrid>
+                    </EditForm>
+                </MudPaper>
+
+                <!-- Change Password -->
+                <MudPaper Elevation="2" Class="pa-4">
+                    <MudText Typo="Typo.h6" GutterBottom="true">@ProfileRes.ChangePassword</MudText>
+                    <EditForm Model="@passwordModel" OnValidSubmit="ChangePassword">
+                        <DataAnnotationsValidator />
+                        <MudGrid>
+                            <MudItem xs="12">
+                                <MudTextField @bind-Value="passwordModel.CurrentPassword"
+                                              Label="@ProfileRes.CurrentPassword"
+                                              Variant="Variant.Outlined"
+                                              InputType="InputType.Password"
+                                              Margin="Margin.Dense" />
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudTextField @bind-Value="passwordModel.NewPassword"
+                                              Label="@ProfileRes.NewPassword"
+                                              Variant="Variant.Outlined"
+                                              InputType="InputType.Password"
+                                              Margin="Margin.Dense" />
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudTextField @bind-Value="confirmNewPassword"
+                                              Label="@ProfileRes.ConfirmNewPassword"
+                                              Variant="Variant.Outlined"
+                                              InputType="InputType.Password"
+                                              Margin="Margin.Dense" />
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudButton ButtonType="ButtonType.Submit"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Secondary"
+                                           Disabled="@isChangingPassword">
+                                    @if (isChangingPassword)
+                                    {
+                                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                        <MudText Class="ms-2">@ProfileRes.Changing</MudText>
+                                    }
+                                    else
+                                    {
+                                        <MudText>@ProfileRes.ChangePassword</MudText>
+                                    }
+                                </MudButton>
+                            </MudItem>
+                        </MudGrid>
+                    </EditForm>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    }
+</MudContainer>
+
+@code {
+    private UserProfileDto? profile;
+    private UpdateProfileDto updateModel = new();
+    private ChangePasswordDto passwordModel = new();
+    private string confirmNewPassword = string.Empty;
+    
+    private bool isLoading = true;
+    private bool isSaving = false;
+    private bool isChangingPassword = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProfile();
+    }
+
+    private async Task LoadProfile()
+    {
+        try
+        {
+            profile = await ProfileService.GetMyProfileAsync();
+            if (profile != null)
+            {
+                updateModel = new UpdateProfileDto
+                {
+                    FullName = profile.FullName,
+                    Age = profile.Age,
+                    Address = profile.Address,
+                    PhoneNumber = profile.PhoneNumber,
+                    PreferredLanguage = profile.PreferredLanguage
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ProfileRes.ProfileLoadFailed, Severity.Error);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task UpdateProfile()
+    {
+        isSaving = true;
+        try
+        {
+            await ProfileService.UpdateMyProfileAsync(updateModel);
+            Snackbar.Add(ProfileRes.ProfileUpdateSuccess, Severity.Success);
+            await LoadProfile();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ProfileRes.ProfileUpdateFailed, Severity.Error);
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private async Task UploadAvatar(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file == null) return;
+
+        if (file.Size > 2 * 1024 * 1024) // 2MB
+        {
+            Snackbar.Add(ProfileRes.FileSizeTooLarge, Severity.Error);
+            return;
+        }
+
+        try
+        {
+            using var stream = file.OpenReadStream(maxAllowedSize: 2 * 1024 * 1024);
+            var avatarUrl = await ProfileService.UploadAvatarAsync(stream, file.Name);
+            Snackbar.Add(ProfileRes.AvatarUploadSuccess, Severity.Success);
+            await LoadProfile();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ProfileRes.AvatarUploadFailed, Severity.Error);
+        }
+    }
+
+    private async Task ChangePassword()
+    {
+        if (passwordModel.NewPassword != confirmNewPassword)
+        {
+            Snackbar.Add(ProfileRes.PasswordsDoNotMatch, Severity.Error);
+            return;
+        }
+
+        if (passwordModel.NewPassword.Length < 6)
+        {
+            Snackbar.Add(ProfileRes.PasswordTooShort, Severity.Error);
+            return;
+        }
+
+        isChangingPassword = true;
+        try
+        {
+            await ProfileService.ChangePasswordAsync(passwordModel);
+            Snackbar.Add(ProfileRes.PasswordChangeSuccess, Severity.Success);
+            passwordModel = new();
+            confirmNewPassword = string.Empty;
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ProfileRes.PasswordChangeFailed, Severity.Error);
+        }
+        finally
+        {
+            isChangingPassword = false;
+        }
+    }
+}

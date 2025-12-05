@@ -2,19 +2,24 @@ using Microsoft.AspNetCore.Mvc;
 using MultiTenantApp.Api.Attributes;
 using MultiTenantApp.Application.DTOs;
 using MultiTenantApp.Application.Interfaces;
+using MultiTenantApp.Domain.Enums;
+using MultiTenantApp.Domain.Interfaces;
 
 namespace MultiTenantApp.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
+    [Microsoft.AspNetCore.Authorization.Authorize]
+    [RequirePermission("Users", PermissionType.View)]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly ITenantProvider _tenantProvider;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, ITenantProvider tenantProvider)
         {
             _userService = userService;
+            _tenantProvider = tenantProvider;
         }
 
         [HttpPost("list")]
@@ -33,11 +38,14 @@ namespace MultiTenantApp.Api.Controllers
         }
 
         [HttpPost]
+        [RequirePermission("Users", PermissionType.Edit)]
         [InvalidateCache("action:Users:*")]
         public async Task<IActionResult> Create([FromBody] CreateUserDto model)
         {
             try
             {
+                // Tenant validation is handled by the service layer
+                // The service will use the TenantProvider to set the correct tenant
                 var user = await _userService.CreateUserAsync(model);
                 return Ok(user);
             }
@@ -48,6 +56,7 @@ namespace MultiTenantApp.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [RequirePermission("Users", PermissionType.Edit)]
         [InvalidateCache("action:Users:*")]
         public async Task<IActionResult> Update(string id, [FromBody] UpdateUserDto model)
         {
@@ -67,6 +76,7 @@ namespace MultiTenantApp.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [RequirePermission("Users", PermissionType.Edit)]
         [InvalidateCache("action:Users:*")]
         public async Task<IActionResult> Delete(string id)
         {

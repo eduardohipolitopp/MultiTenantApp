@@ -41,5 +41,14 @@ namespace MultiTenantApp.Infrastructure.Services
         {
             _manualTenantId = tenantId;
         }
+
+        public bool IsAdmin()
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null) return false;
+
+            // Check if user has Admin role claim
+            return context.User.IsInRole("Admin");
+        }
     }
 }

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title" xml:space="preserve">
+    <value>Meu Perfil</value>
+  </data>
+  <data name="ProfilePicture" xml:space="preserve">
+    <value>Foto de Perfil</value>
+  </data>
+  <data name="UploadAvatar" xml:space="preserve">
+    <value>Enviar Avatar</value>
+  </data>
+  <data name="PersonalInformation" xml:space="preserve">
+    <value>Informações Pessoais</value>
+  </data>
+  <data name="FullName" xml:space="preserve">
+    <value>Nome Completo</value>
+  </data>
+  <data name="Age" xml:space="preserve">
+    <value>Idade</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Endereço</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Telefone</value>
+  </data>
+  <data name="PreferredLanguage" xml:space="preserve">
+    <value>Idioma Preferido</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>Salvando...</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Salvar Alterações</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Alterar Senha</value>
+  </data>
+  <data name="CurrentPassword" xml:space="preserve">
+    <value>Senha Atual</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Nova Senha</value>
+  </data>
+  <data name="ConfirmNewPassword" xml:space="preserve">
+    <value>Confirmar Nova Senha</value>
+  </data>
+  <data name="Changing" xml:space="preserve">
+    <value>Alterando...</value>
+  </data>
+  <data name="ProfileLoadFailed" xml:space="preserve">
+    <value>Falha ao carregar perfil</value>
+  </data>
+  <data name="ProfileUpdateSuccess" xml:space="preserve">
+    <value>Perfil atualizado com sucesso!</value>
+  </data>
+  <data name="ProfileUpdateFailed" xml:space="preserve">
+    <value>Falha ao atualizar perfil</value>
+  </data>
+  <data name="FileSizeTooLarge" xml:space="preserve">
+    <value>O arquivo deve ter menos de 2MB</value>
+  </data>
+  <data name="AvatarUploadSuccess" xml:space="preserve">
+    <value>Avatar enviado com sucesso!</value>
+  </data>
+  <data name="AvatarUploadFailed" xml:space="preserve">
+    <value>Falha ao enviar avatar</value>
+  </data>
+  <data name="PasswordsDoNotMatch" xml:space="preserve">
+    <value>As senhas não correspondem</value>
+  </data>
+  <data name="PasswordTooShort" xml:space="preserve">
+    <value>A senha deve ter pelo menos 6 caracteres</value>
+  </data>
+  <data name="PasswordChangeSuccess" xml:space="preserve">
+    <value>Senha alterada com sucesso!</value>
+  </data>
+  <data name="PasswordChangeFailed" xml:space="preserve">
+    <value>Falha ao alterar senha. Verifique sua senha atual.</value>
+  </data>
+</root>

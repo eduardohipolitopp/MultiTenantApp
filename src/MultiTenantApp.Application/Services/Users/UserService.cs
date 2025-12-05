@@ -50,19 +50,35 @@ namespace MultiTenantApp.Application.Services.Users
 
         public async Task<List<UserDto>> GetAllUsersAsync()
         {
-            var users = await _userManager.Users.ToListAsync();
+            var users = await _userManager.Users
+                .Include(u => u.UserRules)
+                    .ThenInclude(ur => ur.Rule)
+                .ToListAsync();
+                
             return users.Select(u => new UserDto
             {
                 Id = u.Id,
                 Email = u.Email,
                 UserName = u.UserName,
-                TenantId = u.TenantId.ToString()
+                TenantId = u.TenantId.ToString(),
+                Rules = u.UserRules.Select(ur => new UserRuleDto
+                {
+                    Id = ur.Id,
+                    UserId = ur.UserId,
+                    RuleId = ur.RuleId,
+                    RuleName = ur.Rule?.Name ?? string.Empty,
+                    PermissionType = ur.PermissionType.ToString()
+                }).ToList()
             }).ToList();
         }
 
         public async Task<UserDto> GetUserByIdAsync(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.Users
+                .Include(u => u.UserRules)
+                    .ThenInclude(ur => ur.Rule)
+                .FirstOrDefaultAsync(u => u.Id == id);
+                
             if (user == null) return null;
 
             return new UserDto
@@ -70,7 +86,15 @@ namespace MultiTenantApp.Application.Services.Users
                 Id = user.Id,
                 Email = user.Email,
                 UserName = user.UserName,
-                TenantId = user.TenantId.ToString()
+                TenantId = user.TenantId.ToString(),
+                Rules = user.UserRules.Select(ur => new UserRuleDto
+                {
+                    Id = ur.Id,
+                    UserId = ur.UserId,
+                    RuleId = ur.RuleId,
+                    RuleName = ur.Rule?.Name ?? string.Empty,
+                    PermissionType = ur.PermissionType.ToString()
+                }).ToList()
             };
         }
 

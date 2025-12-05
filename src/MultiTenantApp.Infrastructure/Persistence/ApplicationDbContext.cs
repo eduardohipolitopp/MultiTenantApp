@@ -19,23 +19,56 @@ namespace MultiTenantApp.Infrastructure.Persistence
 
         public DbSet<Product> Products { get; set; }
         public DbSet<Tenant> Tenants { get; set; }
+        public DbSet<Rule> Rules { get; set; }
+        public DbSet<UserRule> UserRules { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            
-            // Query filters - only apply if tenant is set
-            builder.Entity<Product>().HasQueryFilter(e => 
-                _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
-            
-            builder.Entity<ApplicationUser>().HasQueryFilter(e => 
-                _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+
+            // Multi-tenancy query filters - bypass for admins
+            builder.Entity<Product>().HasQueryFilter(e =>
+                _tenantProvider.IsAdmin() || _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+
+            builder.Entity<ApplicationUser>().HasQueryFilter(e =>
+                _tenantProvider.IsAdmin() || _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+
+
+            builder.Entity<UserRule>().HasQueryFilter(e =>
+                _tenantProvider.IsAdmin() || _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+
+            // Configure Rule entity
+            builder.Entity<Rule>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Description).HasMaxLength(500);
+                entity.HasIndex(e => new { e.Name }).IsUnique();
+            });
+
+            // Configure UserRule entity
+            builder.Entity<UserRule>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.HasOne(e => e.User)
+                    .WithMany(u => u.UserRules)
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Rule)
+                    .WithMany(r => r.UserRules)
+                    .HasForeignKey(e => e.RuleId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => new { e.UserId, e.RuleId }).IsUnique();
+            });
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var tenantId = _tenantProvider.GetTenantId();
-            if (tenantId != null && tenantId !=  new Guid())
+            if (tenantId != null && tenantId != new Guid())
             {
                 foreach (var entry in ChangeTracker.Entries<ITenantEntity>())
                 {

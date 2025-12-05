@@ -11,73 +11,121 @@ namespace MultiTenantApp.Infrastructure.Persistence
     {
         public static async Task InitializeAsync(IServiceProvider services)
         {
-            var context = services.GetRequiredService<ApplicationDbContext>();
+            // Cria um scope para resolver serviços scoped corretamente
+            using var scope = services.CreateScope();
+            var provider = scope.ServiceProvider;
+
+            var context = provider.GetRequiredService<ApplicationDbContext>();
             await context.Database.MigrateAsync();
 
-            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = provider.GetRequiredService<UserManager<ApplicationUser>>();
 
-            // Roles
-            if (!await roleManager.RoleExistsAsync("Admin"))
-                await roleManager.CreateAsync(new IdentityRole("Admin"));
-
-            if (!await roleManager.RoleExistsAsync("User"))
-                await roleManager.CreateAsync(new IdentityRole("User"));
-
-            // Tenants
-            if (!await context.Tenants.AnyAsync(t => t.Identifier == "tenant-a"))
+            // TENANTS
+            var tenatnA = await context.Tenants.FirstOrDefaultAsync(t => t.Identifier == "tenant-a");
+            if (tenatnA == null)
             {
-                await context.Tenants.AddAsync(new Tenant
+                tenatnA = new Tenant
                 {
                     Id = Guid.NewGuid(),
                     Name = "Tenant A",
                     Identifier = "tenant-a",
                     CreatedAt = DateTime.UtcNow
-                });
+                };
+                await context.Tenants.AddAsync(tenatnA);
             }
 
-            if (!await context.Tenants.AnyAsync(t => t.Identifier == "tenant-b"))
+            var tenatnB = await context.Tenants.FirstOrDefaultAsync(t => t.Identifier == "tenant-b");
+            if (tenatnB == null)
             {
-                await context.Tenants.AddAsync(new Tenant
+                tenatnB = new Tenant
                 {
                     Id = Guid.NewGuid(),
                     Name = "Tenant B",
                     Identifier = "tenant-b",
                     CreatedAt = DateTime.UtcNow
-                });
+                };
+                await context.Tenants.AddAsync(tenatnB);
             }
 
+            // RULE
+            var adminRule = await context.Rules.FirstOrDefaultAsync(t => t.Name == "Admin");
+            if (adminRule == null)
+            {
+                adminRule = new Rule
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Admin",
+                    Description = "General Administrator",
+                    CreatedAt = DateTime.UtcNow
+                };
+                await context.Rules.AddAsync(adminRule);
+            }
+
+            // Persistir tenants & rule antes de criar usuários (evita dependências entre contextos)
             await context.SaveChangesAsync();
 
-            // Users
-            // Tenant A
-            if (await userManager.FindByEmailAsync("admin@tenant-a.com") == null)
+            // USER A
+            if (await userManager.FindByNameAsync("a.admin@admin.com") == null)
             {
-                var tenantA = await context.Tenants.FirstAsync(t => t.Identifier == "tenant-a");
                 var user = new ApplicationUser
                 {
-                    UserName = "admin@tenant-a.com",
-                    Email = "admin@tenant-a.com",
-                    TenantId = tenantA.Id,
+                    FullName = "Administrator Tenant A",
+                    UserName = "a.admin@admin.com",
+                    Email = "a.admin@admin.com",
+                    TenantId = tenatnA.Id,
                     EmailConfirmed = true
                 };
-                await userManager.CreateAsync(user, "Password123!");
-                await userManager.AddToRoleAsync(user, "Admin");
+
+                var result = await userManager.CreateAsync(user, "123Mudar!");
+                if (!result.Succeeded)
+                {
+                    // logue ou lance exceção — importante para descobrir o motivo
+                    var errors = string.Join("; ", result.Errors);
+                    throw new Exception($"Falha ao criar usuário a.admin@admin.com: {errors}");
+                }
+
+                await context.UserRules.AddAsync(new UserRule
+                {
+                    Id = Guid.NewGuid(),
+                    RuleId = adminRule.Id,
+                    UserId = user.Id,
+                    PermissionType = MultiTenantApp.Domain.Enums.PermissionType.Edit,
+                    TenantId = tenatnA.Id
+                });
+
+                await context.SaveChangesAsync();
             }
 
-            // Tenant B
-            if (await userManager.FindByEmailAsync("admin@tenant-b.com") == null)
+            // USER B
+            if (await userManager.FindByNameAsync("b.admin@admin.com") == null)
             {
-                var tenantB = await context.Tenants.FirstAsync(t => t.Identifier == "tenant-b");
                 var user = new ApplicationUser
                 {
-                    UserName = "admin@tenant-b.com",
-                    Email = "admin@tenant-b.com",
-                    TenantId = tenantB.Id,
+                    FullName = "Administrator Tenant B",
+                    UserName = "b.admin@admin.com",
+                    Email = "b.admin@admin.com",
+                    TenantId = tenatnB.Id,
                     EmailConfirmed = true
                 };
-                await userManager.CreateAsync(user, "Password123!");
-                await userManager.AddToRoleAsync(user, "Admin");
+
+                var result = await userManager.CreateAsync(user, "123Mudar!");
+                if (!result.Succeeded)
+                {
+                    var errors = string.Join("; ", result.Errors);
+                    throw new Exception($"Falha ao criar usuário b.admin@admin.com: {errors}");
+                }
+
+                await context.UserRules.AddAsync(new UserRule
+                {
+                    Id = Guid.NewGuid(),
+                    RuleId = adminRule.Id,
+                    UserId = user.Id,
+                    PermissionType = MultiTenantApp.Domain.Enums.PermissionType.Edit,
+                    // corrigido: TenantId deve ser do tenant B
+                    TenantId = tenatnB.Id
+                });
+
+                await context.SaveChangesAsync();
             }
         }
     }
