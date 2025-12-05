@@ -4,8 +4,12 @@
 @using MultiTenantApp.Domain.Extensions
 @using MultiTenantApp.Web.Interfaces
 @using ProfileRes = MultiTenantApp.Web.Resources.Pages.Profile
+@using Blazored.LocalStorage
 @inject IProfileService ProfileService
+@inject IFileService FileService
 @inject ISnackbar Snackbar
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
 @attribute [Authorize]
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
@@ -24,16 +28,16 @@
                     <MudText Typo="Typo.h6" GutterBottom="true">@ProfileRes.ProfilePicture</MudText>
                     <div class="d-flex flex-column align-center">
                         <MudAvatar Size="Size.Large" Class="mb-4" Style="width: 150px; height: 150px;">
-                            @if (!string.IsNullOrEmpty(profile.AvatarUrl))
+                            @if (!string.IsNullOrEmpty(avatarBase64DataUrl))
                             {
-                                <MudImage Src="@profile.AvatarUrl" />
+                                <MudImage Src="@avatarBase64DataUrl" />
                             }
                             else
                             {
                                 <MudIcon Icon="@Icons.Material.Filled.Person" Size="Size.Large" />
                             }
                         </MudAvatar>
-                        
+
                         <InputFile id="fileInput" OnChange="UploadAvatar" hidden accept=".jpg,.jpeg,.png,.gif" />
                         <MudButton HtmlTag="label"
                                    Variant="Variant.Filled"
@@ -167,7 +171,8 @@
     private UpdateProfileDto updateModel = new();
     private ChangePasswordDto passwordModel = new();
     private string confirmNewPassword = string.Empty;
-    
+    private string? avatarBase64DataUrl;
+
     private bool isLoading = true;
     private bool isSaving = false;
     private bool isChangingPassword = false;
@@ -185,13 +190,19 @@
             if (profile != null)
             {
                 updateModel = new UpdateProfileDto
+                    {
+                        FullName = profile.FullName,
+                        Age = profile.Age,
+                        Address = profile.Address,
+                        PhoneNumber = profile.PhoneNumber,
+                        PreferredLanguage = profile.PreferredLanguage
+                    };
+
+                // Load avatar as base64 data URL
+                if (!string.IsNullOrEmpty(profile.AvatarUrl))
                 {
-                    FullName = profile.FullName,
-                    Age = profile.Age,
-                    Address = profile.Address,
-                    PhoneNumber = profile.PhoneNumber,
-                    PreferredLanguage = profile.PreferredLanguage
-                };
+                    avatarBase64DataUrl = await FileService.GetFileAsBase64Async(profile.AvatarUrl);
+                }
             }
         }
         catch (Exception ex)
@@ -209,9 +220,22 @@
         isSaving = true;
         try
         {
+            var oldLanguage = profile?.PreferredLanguage;
+
             await ProfileService.UpdateMyProfileAsync(updateModel);
             Snackbar.Add(ProfileRes.ProfileUpdateSuccess, Severity.Success);
-            await LoadProfile();
+
+            if (oldLanguage != updateModel.PreferredLanguage)
+            {
+                // Save to local storage and reload
+                var culture = updateModel.PreferredLanguage.ToCultureInfo().Name;
+                await LocalStorage.SetItemAsync("culture", culture);
+                NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+            }
+            else
+            {
+                await LoadProfile();
+            }
         }
         catch (Exception ex)
         {
@@ -236,14 +260,40 @@
 
         try
         {
-            using var stream = file.OpenReadStream(maxAllowedSize: 2 * 1024 * 1024);
-            var avatarUrl = await ProfileService.UploadAvatarAsync(stream, file.Name);
-            Snackbar.Add(ProfileRes.AvatarUploadSuccess, Severity.Success);
-            await LoadProfile();
+            // Create base64 preview
+            var buffer = new byte[file.Size];
+            using (var stream = file.OpenReadStream(maxAllowedSize: 2 * 1024 * 1024))
+            {
+                await stream.ReadAsync(buffer);
+            }
+            var base64 = Convert.ToBase64String(buffer);
+            var previewUrl = $"data:{file.ContentType};base64,{base64}";
+
+            // Update UI immediately with preview
+            avatarBase64DataUrl = previewUrl;
+            StateHasChanged();
+
+            // Upload in background
+            using (var stream = new MemoryStream(buffer))
+            {
+                var avatarUrl = await ProfileService.UploadAvatarAsync(stream, file.Name);
+                Snackbar.Add(ProfileRes.AvatarUploadSuccess, Severity.Success);
+
+                // Update with final URL from server
+                if (profile != null)
+                {
+                    profile.AvatarUrl = avatarUrl;
+                    // Reload avatar from server
+                    avatarBase64DataUrl = await FileService.GetFileAsBase64Async(avatarUrl);
+                }
+            }
+            NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
         }
         catch (Exception ex)
         {
             Snackbar.Add(ProfileRes.AvatarUploadFailed, Severity.Error);
+            // Revert to original if failed (would need to store original, but reloading profile works too)
+            await LoadProfile();
         }
     }
 

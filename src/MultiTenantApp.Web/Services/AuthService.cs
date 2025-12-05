@@ -60,6 +60,7 @@ namespace MultiTenantApp.Web.Services
 
         public async Task Logout()
         {
+            await _tokenProvider.ClearTokenAsync();
             await _localStorage.RemoveItemAsync("authToken");
             await _localStorage.RemoveItemAsync("tenantId");
             await _localStorage.RemoveItemAsync("userPermissions");

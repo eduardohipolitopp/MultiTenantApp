@@ -157,7 +157,7 @@ namespace MultiTenantApp.Infrastructure.Services
         public string GetFileUrl(string fileName, FileCategory category)
         {
             var categoryPath = FileStorageHelper.GetCategoryPath(category);
-            return $"/files/{categoryPath}/{fileName}";
+            return $"/api/files/{categoryPath}/{fileName}";
         }
     }
 }

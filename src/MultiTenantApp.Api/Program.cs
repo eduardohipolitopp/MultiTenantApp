@@ -20,25 +20,46 @@ using MultiTenantApp.Infrastructure.Repositories;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using OpenTelemetry.Logs;
 using StackExchange.Redis;
 using Serilog;
-using Serilog.Sinks.Grafana.Loki;
+using Serilog.Exceptions;
+using OpenTelemetry.Exporter;
+using OpenTelemetry;
+using Serilog.Sinks.OpenTelemetry;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Serilog
+// Serilog with OpenTelemetry
+var otlpEndpointHttp = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]?.Replace("4317", "4318") ?? "http://localhost:4318";
+var appName = "MultiTenantApp.Api";
+var appVersion = "1.0.0";
+var environment = builder.Environment.EnvironmentName;
+
 builder.Host.UseSerilog((context, configuration) =>
 {
     configuration
-        .ReadFrom.Configuration(context.Configuration)
+        .MinimumLevel.Debug()
+        .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Information)
+        .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
+        .Enrich.WithMachineName()
         .Enrich.FromLogContext()
-        .WriteTo.Console();
-
-    var lokiUrl = context.Configuration["Loki:Url"];
-    if (!string.IsNullOrEmpty(lokiUrl))
-    {
-        configuration.WriteTo.GrafanaLoki(lokiUrl);
-    }
+        .Enrich.WithExceptionDetails()
+        .Enrich.WithProperty("service.name", appName)
+        .Enrich.WithProperty("service.version", appVersion)
+        .Enrich.WithProperty("service.environment", environment)
+        .WriteTo.Console()
+        .WriteTo.OpenTelemetry(options =>
+        {
+            options.Endpoint = $"{otlpEndpointHttp}/v1/logs";
+            options.Protocol = OtlpProtocol.HttpProtobuf;
+            options.ResourceAttributes = new Dictionary<string, object>
+            {
+                ["service.name"] = appName,
+                ["service.version"] = appVersion,
+                ["deployment.environment"] = environment
+            };
+        });
 });
 
 builder.Services.AddControllers();
@@ -162,21 +183,61 @@ builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddHttpContextAccessor();
 
 // OpenTelemetry
+var otlpEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"] ?? "http://localhost:4317";
+
 builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource
+        .AddService("MultiTenantApp.Api")
+        .AddAttributes(new Dictionary<string, object>
+        {
+            ["deployment.environment"] = builder.Environment.EnvironmentName
+        }))
     .WithTracing(tracerProviderBuilder =>
     {
         tracerProviderBuilder
-            .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("MultiTenantApp.Api"))
-            .AddAspNetCoreInstrumentation()
-            //.AddEntityFrameworkCoreInstrumentation()
-            .AddOtlpExporter();
+            .AddSource("MultiTenantApp.Api")
+            .AddAspNetCoreInstrumentation(options =>
+            {
+                options.RecordException = true;
+            })
+            .AddHttpClientInstrumentation(options =>
+            {
+                options.RecordException = true;
+            })
+            .AddEntityFrameworkCoreInstrumentation(options =>
+            {
+                options.SetDbStatementForText = true;
+            })
+            .AddSqlClientInstrumentation(options =>
+            {
+                options.SetDbStatementForText = true;
+            })
+            .AddOtlpExporter(options =>
+            {
+                options.Endpoint = new Uri(otlpEndpoint);
+                options.ExportProcessorType = ExportProcessorType.Batch;
+                options.Protocol = OtlpExportProtocol.Grpc;
+            });
     })
     .WithMetrics(metricsProviderBuilder =>
     {
         metricsProviderBuilder
-            .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("MultiTenantApp.Api"))
             .AddAspNetCoreInstrumentation()
-            .AddOtlpExporter();
+            .AddHttpClientInstrumentation()
+            .AddRuntimeInstrumentation()
+            .AddOtlpExporter(options =>
+            {
+                options.Endpoint = new Uri(otlpEndpoint);
+                options.ExportProcessorType = ExportProcessorType.Batch;
+                options.Protocol = OtlpExportProtocol.Grpc;
+            });
+    })
+    .WithLogging(logging =>
+    {
+        logging.AddOtlpExporter(options =>
+        {
+            options.Endpoint = new Uri(otlpEndpoint);
+        });
     });
 
 var app = builder.Build();

@@ -26,16 +26,18 @@ namespace MultiTenantApp.Infrastructure.Persistence
         {
             base.OnModelCreating(builder);
 
-            // Multi-tenancy query filters - bypass for admins
+            // Multi-tenancy query filters
+            // Note: EF Core query filters do not support async methods, so admin bypass must be done explicitly
+            // using IgnoreQueryFilters() when needed for admin operations
             builder.Entity<Product>().HasQueryFilter(e =>
-                _tenantProvider.IsAdmin() || _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+                _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
 
             builder.Entity<ApplicationUser>().HasQueryFilter(e =>
-                _tenantProvider.IsAdmin() || _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+                _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
 
 
             builder.Entity<UserRule>().HasQueryFilter(e =>
-                _tenantProvider.IsAdmin() || _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+                _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
 
             // Configure Rule entity
             builder.Entity<Rule>(entity =>

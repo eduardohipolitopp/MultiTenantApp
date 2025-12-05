@@ -1,4 +1,7 @@
-﻿<MudThemeProvider/>
+﻿@using MultiTenantApp.Web.Services
+@inject ThemeService ThemeService
+
+<MudThemeProvider Theme="@ThemeService.CurrentTheme" IsDarkMode="@ThemeService.IsDarkMode" />
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
@@ -27,3 +30,16 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        ThemeService.OnThemeChanged += StateHasChanged;
+        await ThemeService.InitializeAsync();
+    }
+
+    public void Dispose()
+    {
+        ThemeService.OnThemeChanged -= StateHasChanged;
+    }
+}

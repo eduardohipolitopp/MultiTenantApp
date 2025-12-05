@@ -81,17 +81,16 @@ namespace MultiTenantApp.Application.Services.Profile
 
             // Upload new avatar
             var avatarFileName = await _fileStorageService.UploadAvatarAsync(fileStream, fileName, userId);
-            var avatarUrl = _fileStorageService.GetFileUrl(avatarFileName, FileCategory.Avatar);
 
             // Update user
-            user.AvatarUrl = avatarUrl;
+            user.AvatarUrl = avatarFileName;
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
                 throw new InvalidOperationException($"Failed to update avatar: {string.Join(", ", result.Errors.Select(e => e.Description))}");
             }
 
-            return avatarUrl;
+            return avatarFileName;
         }
 
         public async Task ChangePasswordAsync(string userId, ChangePasswordDto dto)

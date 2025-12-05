@@ -1,7 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @using MultiTenantApp.Web.Resources.Shared
 @using NavMenuRes = MultiTenantApp.Web.Resources.Shared.NavMenu
-@inject IAuthService AuthService
+@using MultiTenantApp.Web.Services
+@inject ThemeService ThemeService
 @inject NavigationManager NavigationManager
 
 <MudLayout>
@@ -11,8 +12,7 @@
         <MudSpacer />
         <AuthorizeView>
             <Authorized>
-                <MudText Typo="Typo.body1" Class="mr-3">@context.User.Identity.Name</MudText>
-                <MudButton Variant="Variant.Text" Color="Color.Inherit" OnClick="Logout">@NavMenuRes.Logout</MudButton>
+                <UserMenu UserName="@context.User.Identity.Name" />
             </Authorized>
             <NotAuthorized>
                 <MudButton Variant="Variant.Text" Color="Color.Inherit" Href="login">@NavMenuRes.Login</MudButton>
@@ -36,14 +36,19 @@
 @code {
     private bool _drawerOpen = true;
 
+    protected override async Task OnInitializedAsync()
+    {
+        ThemeService.OnThemeChanged += StateHasChanged;
+        await ThemeService.InitializeAsync();
+    }
+
+    public void Dispose()
+    {
+        ThemeService.OnThemeChanged -= StateHasChanged;
+    }
+
     private void ToggleDrawer()
     {
         _drawerOpen = !_drawerOpen;
-    }
-
-    private async Task Logout()
-    {
-        await AuthService.Logout();
-        NavigationManager.NavigateTo("/login", true);
     }
 }

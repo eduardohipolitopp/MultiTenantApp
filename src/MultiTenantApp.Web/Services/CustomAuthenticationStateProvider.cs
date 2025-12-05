@@ -78,6 +78,7 @@ namespace MultiTenantApp.Web.Services
 
         public void MarkUserAsLoggedOut()
         {
+            _tokenProvider.ClearTokenAsync(); // Fire and forget or await if possible, but this method is void
             var anonymousUser = new ClaimsPrincipal(new ClaimsIdentity());
             var authState = Task.FromResult(new AuthenticationState(anonymousUser));
             NotifyAuthenticationStateChanged(authState);

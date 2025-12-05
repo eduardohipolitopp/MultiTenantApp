@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using MultiTenantApp.Domain.Interfaces;
 
 namespace MultiTenantApp.Infrastructure.Services
@@ -6,11 +8,13 @@ namespace MultiTenantApp.Infrastructure.Services
     public class TenantProvider : ITenantProvider
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IServiceProvider _serviceProvider;
         private Guid? _manualTenantId;
 
-        public TenantProvider(IHttpContextAccessor httpContextAccessor)
+        public TenantProvider(IHttpContextAccessor httpContextAccessor, IServiceProvider serviceProvider)
         {
             _httpContextAccessor = httpContextAccessor;
+            _serviceProvider = serviceProvider;
         }
 
         public Guid? GetTenantId()
@@ -49,6 +53,27 @@ namespace MultiTenantApp.Infrastructure.Services
 
             // Check if user has Admin role claim
             return context.User.IsInRole("Admin");
+        }
+
+        public async Task<bool> IsAdminAsync()
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null) return false;
+
+            var userId = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId)) return false;
+
+            // Use IServiceProvider to avoid circular dependency
+            // We need to create a scope to get the DbContext
+            using var scope = _serviceProvider.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<Persistence.ApplicationDbContext>();
+            
+            // Check if user has Admin rule
+            var hasAdminRule = await dbContext.UserRules
+                .Include(ur => ur.Rule)
+                .AnyAsync(ur => ur.UserId == userId && ur.Rule!.Name == "Admin");
+
+            return hasAdminRule;
         }
     }
 }

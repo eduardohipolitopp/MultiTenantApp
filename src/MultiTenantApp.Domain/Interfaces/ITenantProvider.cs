@@ -5,5 +5,6 @@ namespace MultiTenantApp.Domain.Interfaces
         Guid? GetTenantId();
         void SetTenantId(Guid tenantId);
         bool IsAdmin();
+        Task<bool> IsAdminAsync();
     }
 }
