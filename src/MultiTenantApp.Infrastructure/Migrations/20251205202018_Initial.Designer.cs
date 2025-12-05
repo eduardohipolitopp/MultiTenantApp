@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MultiTenantApp.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251204230503_Rules")]
-    partial class Rules
+    [Migration("20251205202018_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -290,12 +290,9 @@ namespace MultiTenantApp.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("TenantId", "Name")
+                    b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("Rules");
@@ -420,17 +417,6 @@ namespace MultiTenantApp.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("MultiTenantApp.Domain.Entities.Product", b =>
-                {
-                    b.HasOne("MultiTenantApp.Domain.Entities.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Tenant");
-                });
-
-            modelBuilder.Entity("MultiTenantApp.Domain.Entities.Rule", b =>
                 {
                     b.HasOne("MultiTenantApp.Domain.Entities.Tenant", "Tenant")
                         .WithMany()
