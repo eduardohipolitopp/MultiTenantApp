@@ -186,3 +186,117 @@ $RECYCLE.BIN/
 
 # Application specific
 appsettings.*.local.json
+
+# Build and log files
+build_*.txt
+*_build_*.txt
+*_build_errors.txt
+build_errors.txt
+build_log_*.txt
+build_web.txt
+web_build_errors.txt
+build_output.txt
+msbuild.log
+web_build_errors.log
+build_errors.log
+build_log.txt
+build_log_audit.txt
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Linux
+*~
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Coverage reports
+coverage/
+*.coverage
+*.coveragexml
+coverage.json
+coverage.opencover.xml
+
+# Docker volumes
+data/
+docker/data/
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Certificates and keys
+*.pfx
+*.p12
+*.cer
+*.key
+*.pem
+
+# Environment and secrets
+.env*
+secrets.json
+appsettings.Local.json
+appsettings.*.local.json
+
+# NuGet packages cache
+.nuget/
+packages/
+
+# MSBuild
+*.user
+*.suo
+*.cache
+*.docstates
+*.userprefs
+
+# Project specific build artifacts
+**/bin/
+**/obj/
+**/out/
+**/build/
+**/dist/
+
+# Web project specific
+wwwroot/lib/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Monitoring and observability data
+grafana/data/
+prometheus/data/
+loki/data/
+tempo/data/
+otel-collector/data/
+
+# File browser database
+filebrowser.db
