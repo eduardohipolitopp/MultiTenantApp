@@ -164,8 +164,8 @@ services:
   mailhog:
     image: mailhog/mailhog:latest
     ports:
-      - "1025:1025"    # SMTP server
-      - "8025:8025"    # Web interface
+      - "1025:1025" # SMTP server
+      - "8025:8025" # Web interface
     environment:
       - MH_STORAGE=maildir
       - MH_MAILDIR_PATH=/tmp/mailhog
@@ -174,16 +174,14 @@ services:
 
   filebrowser:
     image: filebrowser/filebrowser:latest
+    container_name: filebrowser
     volumes:
       - ./data/files:/srv
-      - ./filebrowser.db:/database.db
+      - ./filebrowser_data:/database
     ports:
       - "8081:80"
     environment:
-      - FB_DATABASE=/database.db
-      - FB_ROOT=/srv
-    depends_on:
-      - api
+      - FB_DATABASE=/database/filebrowser.db
 
 volumes:
   postgres_data:

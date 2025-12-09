@@ -4,6 +4,7 @@ using MultiTenantApp.Domain.Enums;
 using MultiTenantApp.Domain.Interfaces;
 using MultiTenantApp.Infrastructure.Helpers;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 
 namespace MultiTenantApp.Infrastructure.Services
@@ -26,6 +27,10 @@ namespace MultiTenantApp.Infrastructure.Services
             {
                 BaseAddress = new Uri(_fileBrowserUrl)
             };
+
+            var credentialBytes = Encoding.UTF8.GetBytes($"{_fileBrowserUsername}:{_fileBrowserPassword}");
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Basic", Convert.ToBase64String(credentialBytes));
 
             _logger = logger;
         }

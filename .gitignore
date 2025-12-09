@@ -180,7 +180,6 @@ $RECYCLE.BIN/
 *.p12
 
 # Local development databases
-*.db
 *.sqlite
 *.sqlite3
 
@@ -247,7 +246,6 @@ data/
 docker/data/
 
 # Database files
-*.db
 *.db-shm
 *.db-wal
 *.sqlite
@@ -297,6 +295,3 @@ prometheus/data/
 loki/data/
 tempo/data/
 otel-collector/data/
-
-# File browser database
-filebrowser.db

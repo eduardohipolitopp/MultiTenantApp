@@ -25,6 +25,8 @@ namespace MultiTenantApp.Infrastructure
 
             // Register Guid serializer with Standard representation
             BsonSerializer.RegisterSerializer(typeof(Guid), new GuidSerializer(GuidRepresentation.Standard));
+            BsonSerializer.RegisterSerializer(typeof(Guid?), new NullableSerializer<Guid>(new GuidSerializer(GuidRepresentation.Standard)));
+
 
             // Register custom conventions
             var conventionPack = new ConventionPack
