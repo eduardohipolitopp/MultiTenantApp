@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MultiTenantApp.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b326e4741236be998af37956ff195070f61e9dc0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+83203c6f2e9b4675e047ecdf99c02882a23fb7e6")]
 [assembly: System.Reflection.AssemblyProductAttribute("MultiTenantApp.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MultiTenantApp.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

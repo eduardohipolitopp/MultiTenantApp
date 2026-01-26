@@ -84,6 +84,9 @@ namespace MultiTenantApp.Infrastructure.Persistence
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var tenantId = _tenantProvider.GetTenantId();
+            var now = DateTime.UtcNow;
+
+            // Set tenant ID for new tenant entities
             if (tenantId != null && tenantId != Guid.Empty)
             {
                 foreach (var entry in ChangeTracker.Entries<ITenantEntity>())
@@ -92,6 +95,19 @@ namespace MultiTenantApp.Infrastructure.Persistence
                     {
                         entry.Entity.TenantId = tenantId.Value;
                     }
+                }
+            }
+
+            // Update CreatedAt and UpdatedAt timestamps
+            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.CreatedAt = now;
+                }
+                else if (entry.State == EntityState.Modified)
+                {
+                    entry.Entity.UpdatedAt = now;
                 }
             }
 

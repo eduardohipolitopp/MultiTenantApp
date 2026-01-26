@@ -45,7 +45,7 @@ namespace MultiTenantApp.Infrastructure.Services
                 }
 
                 _logger.LogDebug("Cache hit for key: {Key}", key);
-                return JsonSerializer.Deserialize<T>(value!, _jsonOptions);
+                return JsonSerializer.Deserialize<T>(value.ToString(), _jsonOptions);
             }
             catch (Exception ex)
             {

@@ -16,6 +16,8 @@ namespace MultiTenantApp.Infrastructure.Services
         private readonly string _fileBrowserPassword;
         private readonly HttpClient _httpClient;
         private readonly ILogger<FileBrowserStorageService> _logger;
+        private string? _authToken;
+
 
         public FileBrowserStorageService(IConfiguration configuration, ILogger<FileBrowserStorageService> logger)
         {
@@ -27,12 +29,35 @@ namespace MultiTenantApp.Infrastructure.Services
             {
                 BaseAddress = new Uri(_fileBrowserUrl)
             };
-
-            var credentialBytes = Encoding.UTF8.GetBytes($"{_fileBrowserUsername}:{_fileBrowserPassword}");
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Basic", Convert.ToBase64String(credentialBytes));
+            EnsureAuthenticatedAsync().GetAwaiter().GetResult();
 
             _logger = logger;
+        }
+
+        private async Task EnsureAuthenticatedAsync()
+        {
+            if (!string.IsNullOrEmpty(_authToken))
+                return;
+
+            var loginPayload = new
+            {
+                username = _fileBrowserUsername,
+                password = _fileBrowserPassword
+            };
+
+            var content = new StringContent(JsonSerializer.Serialize(loginPayload), Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync("/api/login", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new InvalidOperationException($"Failed to authenticate with filebrowser: {response.StatusCode} - {error}");
+            }
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            _authToken = responseBody;
+            _httpClient.DefaultRequestHeaders.Add("x-auth", _authToken);
         }
 
         public async Task<string> UploadAvatarAsync(Stream fileStream, string fileName, string userId)
@@ -144,6 +169,8 @@ namespace MultiTenantApp.Infrastructure.Services
             {
                 fileStream.Position = 0;
             }
+
+
 
             var fileContent = new StreamContent(fileStream);
             fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MultiTenantApp.Application.DTOs;
 using MultiTenantApp.Application.Interfaces;
+using MultiTenantApp.Domain.Attributes;
 using MultiTenantApp.Domain.Entities;
 using MultiTenantApp.Domain.Interfaces;
 
@@ -34,7 +35,14 @@ namespace MultiTenantApp.Api.Controllers
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// Authenticates a user and returns a JWT token.
+        /// Request/Response is logged to MongoDB for auditing purposes.
+        /// </summary>
+        /// <param name="model">Login credentials including email, password, and tenant ID</param>
+        /// <returns>JWT token and user information</returns>
         [HttpPost("login")]
+        [LogRequestResponse(LogRequestBody = true, LogResponseBody = false)] // Don't log response body as it contains sensitive token
         public async Task<IActionResult> Login([FromBody] LoginDto model)
         {
             try

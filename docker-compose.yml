@@ -137,6 +137,13 @@ services:
       - AppUrl=http://web:8080
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
       - ASPNETCORE_ENVIRONMENT=Development
+      - FileStorage__S3__AccessKey=minioadmin
+      - FileStorage__S3__SecretKey=minioadmin123
+      - FileStorage__S3__Bucket=uploads
+      - FileStorage__S3__ServiceURL=http://minio:9000
+      - FileStorage__S3__ForcePathStyle=true
+      - FileStorage__S3__UsePresignedUrls=true
+      - FileStorage__S3__PresignedUrlTtlSeconds=3600
     depends_on:
       - postgres
       - redis
@@ -161,6 +168,20 @@ services:
       - api
       - otel-collector
 
+  hangfire:
+    build:
+      context: .
+      dockerfile: src/MultiTenantApp.Hangfire/Dockerfile
+    ports:
+      - "5003:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=multitenantdb;Username=postgres;Password=postgres
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Hangfire__Dashboard__Title=MultiTenantApp - Background Jobs
+      - Hangfire__Server__WorkerCount=5
+    depends_on:
+      - postgres
+
   mailhog:
     image: mailhog/mailhog:latest
     ports:
@@ -172,16 +193,15 @@ services:
     volumes:
       - mailhog_data:/tmp/mailhog
 
-  filebrowser:
-    image: filebrowser/filebrowser:latest
-    container_name: filebrowser
-    volumes:
-      - ./data/files:/srv
-      - ./filebrowser_data:/database
+  minio:
+    image: minio/minio
     ports:
-      - "8081:80"
+      - "9000:9000"
+      - "9001:9001"
     environment:
-      - FB_DATABASE=/database/filebrowser.db
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    command: server /data --console-address ":9001"
 
 volumes:
   postgres_data:

@@ -1,4 +1,6 @@
 using System.Text;
+using System.IO.Compression;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +30,15 @@ using Serilog.Exceptions;
 using OpenTelemetry.Exporter;
 using OpenTelemetry;
 using Serilog.Sinks.OpenTelemetry;
+using MultiTenantApp.Infrastructure.Services.MultiTenantApp.Infrastructure.Services;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using FluentValidation.AspNetCore;
+using MongoDB.Driver;
+using FluentValidation;
+using Npgsql;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using MongoDB.Bson;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,6 +77,38 @@ builder.Host.UseSerilog((context, configuration) =>
         });
 });
 
+// Response Compression
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+    options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[]
+    {
+        "application/json",
+        "application/xml",
+        "text/plain",
+        "text/css",
+        "text/javascript",
+        "application/javascript"
+    });
+});
+
+builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
+{
+    options.Level = CompressionLevel.Optimal;
+});
+
+builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+{
+    options.Level = CompressionLevel.Optimal;
+});
+
+// FluentValidation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssembly(typeof(MultiTenantApp.Application.Validators.CreateProductDtoValidator).Assembly);
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMemoryCache();
@@ -82,6 +125,14 @@ builder.Services.AddCors(options =>
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "MultiTenantApp API", Version = "v1" });
+    
+    // Include XML comments in Swagger
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme.",
@@ -182,12 +233,65 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IRuleService, RuleService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IFileStorageService, FileBrowserStorageService>();
+builder.Services.AddSingleton<IFileStorageService, S3FileStorageService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IAuditRepository, AuditRepository>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<RequestResponseLogService>();
+builder.Services.AddScoped<MultiTenantApp.Infrastructure.Jobs.SampleRecurringJob>();
 builder.Services.AddHttpContextAccessor();
+
+// Hangfire is now in a separate service (MultiTenantApp.Hangfire)
+// See src/MultiTenantApp.Hangfire/ for the Hangfire dashboard and job processing
+
+
+// Health Checks
+builder.Services.AddHealthChecks()
+    .AddAsyncCheck("postgresql", async () =>
+    {
+        try
+        {
+            using var connection = new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection"));
+            await connection.OpenAsync();
+            return HealthCheckResult.Healthy("PostgreSQL connection is healthy");
+        }
+        catch (Exception ex)
+        {
+            return HealthCheckResult.Unhealthy("PostgreSQL connection failed", ex);
+        }
+    })
+    .AddAsyncCheck("mongodb", async () =>
+    {
+        try
+        {
+            var mongoClient = new MongoClient(builder.Configuration.GetConnectionString("MongoDb"));
+            var database = mongoClient.GetDatabase("admin"); // Test database
+            await database.RunCommandAsync((Command<BsonDocument>)"{ping:1}");
+            return HealthCheckResult.Healthy("MongoDB connection is healthy");
+        }
+        catch (Exception ex)
+        {
+            return HealthCheckResult.Unhealthy("MongoDB connection failed", ex);
+        }
+    });
+
+// Add Redis health check if enabled
+if (cacheOptions?.Enabled == true)
+{
+    builder.Services.AddHealthChecks()
+        .AddRedis(cacheOptions.Redis.ConnectionString);
+}
+
+// Health Checks UI (optional, for development)
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddHealthChecksUI(setup =>
+    {
+        setup.SetEvaluationTimeInSeconds(10);
+        setup.MaximumHistoryEntriesPerEndpoint(50);
+    }).AddInMemoryStorage();
+}
 
 // OpenTelemetry
 var otlpEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"] ?? "http://localhost:4317";
@@ -264,6 +368,9 @@ var localizationOptions = new RequestLocalizationOptions()
 
 app.UseRequestLocalization(localizationOptions);
 
+// Response Compression
+app.UseResponseCompression();
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("AllowAll");
@@ -271,11 +378,63 @@ app.UseCors("AllowAll");
 // Culture middleware must be after authentication to access user claims
 app.UseMiddleware<CultureMiddleware>();
 
+// Request/Response Logging Middleware (must be early in pipeline)
+app.UseMiddleware<RequestResponseLoggingMiddleware>();
+
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseMiddleware<RateLimitMiddleware>();
 app.UseMiddleware<TenantMiddleware>();
 
+// Health Checks
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+    Predicate = _ => true
+});
+
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+    Predicate = check => check.Tags.Contains("ready")
+});
+
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+    Predicate = check => check.Tags.Contains("live")
+});
+
+// Health Checks UI (only in Development)
+if (app.Environment.IsDevelopment())
+{
+    app.MapHealthChecksUI(options =>
+    {
+        options.UIPath = "/health-ui";
+        options.ApiPath = "/health-ui-api";
+    });
+}
+
+// Hangfire Dashboard is now in a separate service (MultiTenantApp.Hangfire)
+// Access at: http://localhost:8081/hangfire (when running the Hangfire service)
+
 app.MapControllers();
+
+// Auto-migrate database (only in Development)
+// WARNING: Do not enable this in production! Apply migrations manually.
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    try
+    {
+        dbContext.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating the database.");
+    }
+}
 
 using (var scope = app.Services.CreateScope())
 {
@@ -287,7 +446,7 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred seeding the DB.");
+        logger.LogError(ex, "An error occurred during startup.");
     }
 }
 

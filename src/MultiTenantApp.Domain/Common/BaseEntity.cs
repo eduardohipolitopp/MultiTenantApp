@@ -14,6 +14,19 @@ namespace MultiTenantApp.Domain.Common
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
+        
+        /// <summary>
+        /// Indicates if the entity has been logically deleted.
+        /// Only used when the entity has the LogicalDeleteAttribute.
+        /// </summary>
+        public bool IsDeleted { get; set; } = false;
+        
+        /// <summary>
+        /// Timestamp when the entity was logically deleted.
+        /// Only used when the entity has the LogicalDeleteAttribute.
+        /// </summary>
+        public DateTime? DeletedAt { get; set; }
     }
 
     public abstract class BaseTenantEntity : BaseEntity, ITenantEntity

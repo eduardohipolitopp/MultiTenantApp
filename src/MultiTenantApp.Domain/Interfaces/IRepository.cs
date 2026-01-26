@@ -14,5 +14,15 @@ namespace MultiTenantApp.Domain.Interfaces
         Task<T> AddAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
+        
+        /// <summary>
+        /// Restores a soft-deleted entity. Only works if the entity supports logical delete.
+        /// </summary>
+        Task RestoreAsync(T entity);
+        
+        /// <summary>
+        /// Permanently deletes an entity, even if it supports logical delete.
+        /// </summary>
+        Task HardDeleteAsync(T entity);
     }
 }

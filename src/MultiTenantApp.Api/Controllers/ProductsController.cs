@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using MultiTenantApp.Api.Attributes;
 using MultiTenantApp.Application.DTOs;
 using MultiTenantApp.Application.Interfaces;
+using MultiTenantApp.Domain.Attributes;
 using MultiTenantApp.Domain.Enums;
 
 namespace MultiTenantApp.Api.Controllers
@@ -41,11 +42,17 @@ namespace MultiTenantApp.Api.Controllers
             return Ok(product);
         }
 
-        // POST api/products/create
+        /// <summary>
+        /// Creates a new product.
+        /// Request/Response is logged to MongoDB for auditing purposes.
+        /// </summary>
+        /// <param name="model">Product creation data</param>
+        /// <returns>Created product</returns>
         [HttpPost("create")]
         [RequirePermission("Products", PermissionType.Edit)]
         [Idempotent]
         [InvalidateCache("action:Products:*")]
+        [LogRequestResponse]
         public async Task<IActionResult> Create([FromBody] CreateProductDto model)
         {
             var product = await _productService.CreateAsync(model);

@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using MultiTenantApp.Domain.Attributes;
 using MultiTenantApp.Domain.Common;
 using MultiTenantApp.Domain.Interfaces;
 using MultiTenantApp.Infrastructure.Persistence;
+using System.Linq.Expressions;
 
 namespace MultiTenantApp.Infrastructure.Repositories
 {
@@ -9,6 +11,7 @@ namespace MultiTenantApp.Infrastructure.Repositories
     {
         protected readonly ApplicationDbContext _context;
         protected readonly DbSet<T> _dbSet;
+        private static readonly bool SupportsLogicalDelete = typeof(T).IsDefined(typeof(LogicalDeleteAttribute), false);
 
         public Repository(ApplicationDbContext context)
         {
@@ -18,17 +21,39 @@ namespace MultiTenantApp.Infrastructure.Repositories
 
         public async Task<T?> GetByIdAsync(Guid id)
         {
-            return await _dbSet.FindAsync(id);
+            var query = _dbSet.AsQueryable();
+            
+            // Apply soft delete filter if entity supports it
+            if (SupportsLogicalDelete)
+            {
+                query = query.Where(e => !e.IsDeleted);
+            }
+            
+            return await query.FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<List<T>> GetAllAsync()
         {
-            return await _dbSet.ToListAsync();
+            var query = _dbSet.AsQueryable();
+            
+            // Apply soft delete filter if entity supports it
+            if (SupportsLogicalDelete)
+            {
+                query = query.Where(e => !e.IsDeleted);
+            }
+            
+            return await query.ToListAsync();
         }
 
-        public async Task<(List<T> Items, int TotalCount)> GetPagedAsync(int page, int pageSize, System.Linq.Expressions.Expression<Func<T, bool>>? filter = null)
+        public async Task<(List<T> Items, int TotalCount)> GetPagedAsync(int page, int pageSize, Expression<Func<T, bool>>? filter = null)
         {
             var query = _dbSet.AsQueryable();
+
+            // Apply soft delete filter if entity supports it
+            if (SupportsLogicalDelete)
+            {
+                query = query.Where(e => !e.IsDeleted);
+            }
 
             if (filter != null)
             {
@@ -40,24 +65,73 @@ namespace MultiTenantApp.Infrastructure.Repositories
             return (items, totalCount);
         }
 
-        public async Task<T?> GetAsync(System.Linq.Expressions.Expression<Func<T, bool>> predicate)
+        public async Task<T?> GetAsync(Expression<Func<T, bool>> predicate)
         {
-            return await _dbSet.FirstOrDefaultAsync(predicate);
+            var query = _dbSet.AsQueryable();
+            
+            // Apply soft delete filter if entity supports it
+            if (SupportsLogicalDelete)
+            {
+                query = query.Where(e => !e.IsDeleted);
+            }
+            
+            return await query.FirstOrDefaultAsync(predicate);
         }
 
         public async Task<T> AddAsync(T entity)
         {
+            entity.CreatedAt = DateTime.UtcNow;
             await _dbSet.AddAsync(entity);
             return entity;
         }
 
         public async Task UpdateAsync(T entity)
         {
+            entity.UpdatedAt = DateTime.UtcNow;
             _dbSet.Update(entity);
             await Task.CompletedTask;
         }
 
         public async Task DeleteAsync(T entity)
+        {
+            if (SupportsLogicalDelete)
+            {
+                // Soft delete
+                entity.IsDeleted = true;
+                entity.DeletedAt = DateTime.UtcNow;
+                entity.UpdatedAt = DateTime.UtcNow;
+                _dbSet.Update(entity);
+            }
+            else
+            {
+                // Hard delete
+                _dbSet.Remove(entity);
+            }
+            
+            await Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Restores a soft-deleted entity. Only works if the entity supports logical delete.
+        /// </summary>
+        public async Task RestoreAsync(T entity)
+        {
+            if (!SupportsLogicalDelete)
+            {
+                throw new InvalidOperationException($"Entity {typeof(T).Name} does not support logical delete.");
+            }
+
+            entity.IsDeleted = false;
+            entity.DeletedAt = null;
+            entity.UpdatedAt = DateTime.UtcNow;
+            _dbSet.Update(entity);
+            await Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Permanently deletes an entity, even if it supports logical delete.
+        /// </summary>
+        public async Task HardDeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
             await Task.CompletedTask;
