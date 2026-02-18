@@ -20,16 +20,9 @@ using MultiTenantApp.Domain.Interfaces;
 using MultiTenantApp.Infrastructure;
 using MultiTenantApp.Infrastructure.Persistence;
 using MultiTenantApp.Infrastructure.Repositories;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
-using OpenTelemetry.Logs;
-using StackExchange.Redis;
-using Serilog;
-using Serilog.Exceptions;
-using OpenTelemetry.Exporter;
 using OpenTelemetry;
-using Serilog.Sinks.OpenTelemetry;
+using MultiTenantApp.Observability;
+using StackExchange.Redis;
 using MultiTenantApp.Infrastructure.Services.MultiTenantApp.Infrastructure.Services;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -39,43 +32,31 @@ using FluentValidation;
 using Npgsql;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MongoDB.Bson;
+using MongoDB.Driver.Core.Extensions.DiagnosticSources;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure MongoDB serialization conventions
+// Configure MongoDB serialization conventions
 MongoDbConfiguration.Configure();
 
-// Serilog with OpenTelemetry
-var otlpEndpointHttp = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]?.Replace("4317", "4318") ?? "http://localhost:4318";
-var appName = "MultiTenantApp.Api";
-var appVersion = "1.0.0";
-var environment = builder.Environment.EnvironmentName;
-
-builder.Host.UseSerilog((context, configuration) =>
+// Register MongoDB Client as Singleton
+var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDb");
+builder.Services.AddSingleton<IMongoClient>(sp =>
 {
-    configuration
-        .MinimumLevel.Debug()
-        .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Information)
-        .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
-        .Enrich.WithMachineName()
-        .Enrich.FromLogContext()
-        .Enrich.WithExceptionDetails()
-        .Enrich.WithProperty("service.name", appName)
-        .Enrich.WithProperty("service.version", appVersion)
-        .Enrich.WithProperty("service.environment", environment)
-        .WriteTo.Console()
-        .WriteTo.OpenTelemetry(options =>
-        {
-            options.Endpoint = $"{otlpEndpointHttp}/v1/logs";
-            options.Protocol = OtlpProtocol.HttpProtobuf;
-            options.ResourceAttributes = new Dictionary<string, object>
-            {
-                ["service.name"] = appName,
-                ["service.version"] = appVersion,
-                ["deployment.environment"] = environment
-            };
-        });
+    var settings = MongoClientSettings.FromConnectionString(mongoConnectionString);
+    
+    // Add OpenTelemetry instrumentation
+    settings.ClusterConfigurator = cb => cb.Subscribe(new DiagnosticsActivityEventSubscriber());
+    
+    return new MongoClient(settings);
 });
+
+// Register MongoDB Initializer
+builder.Services.AddSingleton<MongoDbInitializer>();
+
+// Serilog with OpenTelemetry
+builder.Host.UseSerilogObservability();
 
 // Response Compression
 builder.Services.AddResponseCompression(options =>
@@ -242,10 +223,6 @@ builder.Services.AddScoped<RequestResponseLogService>();
 builder.Services.AddScoped<MultiTenantApp.Infrastructure.Jobs.SampleRecurringJob>();
 builder.Services.AddHttpContextAccessor();
 
-// Hangfire is now in a separate service (MultiTenantApp.Hangfire)
-// See src/MultiTenantApp.Hangfire/ for the Hangfire dashboard and job processing
-
-
 // Health Checks
 builder.Services.AddHealthChecks()
     .AddAsyncCheck("postgresql", async () =>
@@ -294,64 +271,14 @@ if (builder.Environment.IsDevelopment())
 }
 
 // OpenTelemetry
-var otlpEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"] ?? "http://localhost:4317";
+builder.Services.AddOpenTelemetryObservability(builder.Configuration);
 
-builder.Services.AddOpenTelemetry()
-    .ConfigureResource(resource => resource
-        .AddService("MultiTenantApp.Api")
-        .AddAttributes(new Dictionary<string, object>
-        {
-            ["deployment.environment"] = builder.Environment.EnvironmentName
-        }))
-    .WithTracing(tracerProviderBuilder =>
-    {
-        tracerProviderBuilder
-            .AddSource("MultiTenantApp.Api")
-            .AddAspNetCoreInstrumentation(options =>
-            {
-                options.RecordException = true;
-            })
-            .AddHttpClientInstrumentation(options =>
-            {
-                options.RecordException = true;
-            })
-            .AddEntityFrameworkCoreInstrumentation(options =>
-            {
-                options.SetDbStatementForText = true;
-            })
-            .AddSqlClientInstrumentation(options =>
-            {
-                options.SetDbStatementForText = true;
-            })
-            .AddOtlpExporter(options =>
-            {
-                options.Endpoint = new Uri(otlpEndpoint);
-                options.ExportProcessorType = ExportProcessorType.Batch;
-                options.Protocol = OtlpExportProtocol.Grpc;
-            });
-    })
-    .WithMetrics(metricsProviderBuilder =>
-    {
-        metricsProviderBuilder
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddRuntimeInstrumentation()
-            .AddOtlpExporter(options =>
-            {
-                options.Endpoint = new Uri(otlpEndpoint);
-                options.ExportProcessorType = ExportProcessorType.Batch;
-                options.Protocol = OtlpExportProtocol.Grpc;
-            });
-    })
-    .WithLogging(logging =>
-    {
-        logging.AddOtlpExporter(options =>
-        {
-            options.Endpoint = new Uri(otlpEndpoint);
-        });
-    });
 
 var app = builder.Build();
+
+// Test Observability
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("Observability integrated successfully in MultiTenantApp.Api at {Time}", DateTime.UtcNow);
 
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment()) // Always show swagger for demo
@@ -431,7 +358,6 @@ if (app.Environment.IsDevelopment())
     }
     catch (Exception ex)
     {
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "An error occurred while migrating the database.");
     }
 }
@@ -442,10 +368,13 @@ using (var scope = app.Services.CreateScope())
     try
     {
         await DbInitializer.InitializeAsync(services);
+        
+        // Initialize MongoDB Indexes
+        var mongoInitializer = services.GetRequiredService<MongoDbInitializer>();
+        await mongoInitializer.InitializeAsync();
     }
     catch (Exception ex)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "An error occurred during startup.");
     }
 }

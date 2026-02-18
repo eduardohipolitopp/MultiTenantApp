@@ -2,6 +2,7 @@ apiVersion: 1
 
 datasources:
   - name: Prometheus
+    uid: prometheus
     type: prometheus
     access: proxy
     url: http://prometheus:9090
@@ -9,19 +10,21 @@ datasources:
     editable: false
 
   - name: Tempo
+    uid: tempo
     type: tempo
     access: proxy
     url: http://tempo:3200
     editable: false
     jsonData:
       tracesToLogsV2:
-        datasourceUid: 'loki'
+        datasourceUid: loki
       tracesToMetrics:
-        datasourceUid: 'prometheus'
+        datasourceUid: prometheus
       serviceMap:
-        datasourceUid: 'prometheus'
+        datasourceUid: prometheus
 
   - name: Loki
+    uid: loki
     type: loki
     access: proxy
     url: http://loki:3100

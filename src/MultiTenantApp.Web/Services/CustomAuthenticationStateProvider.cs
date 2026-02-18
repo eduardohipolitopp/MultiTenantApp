@@ -88,15 +88,33 @@ namespace MultiTenantApp.Web.Services
         {
             var claims = new List<Claim>();
             var payload = jwt.Split('.')[1];
-            var jsonBytes = ParseBase64WithoutPadding(payload);
-            var keyValuePairs = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
-
-            if (keyValuePairs != null)
+            try
             {
-                foreach (var kvp in keyValuePairs)
+                var jsonBytes = ParseBase64WithoutPadding(payload);
+                if (jsonBytes == null || jsonBytes.Length == 0)
                 {
-                    claims.Add(new Claim(kvp.Key, kvp.Value.ToString() ?? ""));
+                    return claims;
                 }
+
+                var keyValuePairs = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
+
+                if (keyValuePairs != null)
+                {
+                    foreach (var kvp in keyValuePairs)
+                    {
+                        claims.Add(new Claim(kvp.Key, kvp.Value?.ToString() ?? string.Empty));
+                    }
+                }
+            }
+            catch (System.FormatException)
+            {
+                // Token payload is not valid Base64 - treat as no claims instead of throwing
+                return claims;
+            }
+            catch (System.Text.Json.JsonException)
+            {
+                // Token payload is not valid JSON - treat as no claims instead of throwing
+                return claims;
             }
 
             return claims;

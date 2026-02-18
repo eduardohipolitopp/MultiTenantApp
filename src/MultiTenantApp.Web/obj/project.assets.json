@@ -13,61 +13,16 @@
           "lib/net8.0/Blazored.LocalStorage.dll": {}
         }
       },
-      "Google.Protobuf/3.26.1": {
+      "DnsClient/1.6.1": {
         "type": "package",
         "compile": {
-          "lib/net5.0/Google.Protobuf.dll": {
-            "related": ".pdb;.xml"
+          "lib/net5.0/DnsClient.dll": {
+            "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net5.0/Google.Protobuf.dll": {
-            "related": ".pdb;.xml"
-          }
-        }
-      },
-      "Grpc.Core.Api/2.62.0": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.1/Grpc.Core.Api.dll": {
-            "related": ".pdb;.xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.1/Grpc.Core.Api.dll": {
-            "related": ".pdb;.xml"
-          }
-        }
-      },
-      "Grpc.Net.Client/2.62.0": {
-        "type": "package",
-        "dependencies": {
-          "Grpc.Net.Common": "2.62.0"
-        },
-        "compile": {
-          "lib/net8.0/Grpc.Net.Client.dll": {
-            "related": ".pdb;.xml"
-          }
-        },
-        "runtime": {
-          "lib/net8.0/Grpc.Net.Client.dll": {
-            "related": ".pdb;.xml"
-          }
-        }
-      },
-      "Grpc.Net.Common/2.62.0": {
-        "type": "package",
-        "dependencies": {
-          "Grpc.Core.Api": "2.62.0"
-        },
-        "compile": {
-          "lib/net8.0/Grpc.Net.Common.dll": {
-            "related": ".pdb;.xml"
-          }
-        },
-        "runtime": {
-          "lib/net8.0/Grpc.Net.Common.dll": {
-            "related": ".pdb;.xml"
+          "lib/net5.0/DnsClient.dll": {
+            "related": ".xml"
           }
         }
       },
@@ -129,6 +84,51 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
+      "MongoDB.Bson/3.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/MongoDB.Bson.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/MongoDB.Bson.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "MongoDB.Driver/3.0.0": {
+        "type": "package",
+        "dependencies": {
+          "DnsClient": "1.6.1",
+          "MongoDB.Bson": "3.0.0",
+          "SharpCompress": "0.30.1",
+          "Snappier": "1.0.0",
+          "ZstdSharp.Port": "0.7.3"
+        },
+        "compile": {
+          "lib/net6.0/MongoDB.Driver.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/MongoDB.Driver.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "MongoDB.Driver.Core.Extensions.DiagnosticSources/2.0.0": {
+        "type": "package",
+        "dependencies": {
+          "MongoDB.Driver": "3.0.0"
+        },
+        "compile": {
+          "lib/net6.0/MongoDB.Driver.Core.Extensions.DiagnosticSources.dll": {}
+        },
+        "runtime": {
+          "lib/net6.0/MongoDB.Driver.Core.Extensions.DiagnosticSources.dll": {}
+        }
+      },
       "MudBlazor/6.11.0": {
         "type": "package",
         "compile": {
@@ -148,95 +148,95 @@
           "buildMultiTargeting/MudBlazor.props": {}
         }
       },
-      "OpenTelemetry/1.14.0": {
+      "OpenTelemetry/1.11.0": {
         "type": "package",
         "dependencies": {
-          "OpenTelemetry.Api.ProviderBuilderExtensions": "1.14.0"
+          "OpenTelemetry.Api.ProviderBuilderExtensions": "1.11.0"
         },
         "compile": {
-          "lib/net10.0/OpenTelemetry.dll": {
-            "related": ".dll.sigstore.json;.xml"
+          "lib/net9.0/OpenTelemetry.dll": {
+            "related": ".dll-keyless.pem;.dll-keyless.sig;.xml"
           }
         },
         "runtime": {
-          "lib/net10.0/OpenTelemetry.dll": {
-            "related": ".dll.sigstore.json;.xml"
+          "lib/net9.0/OpenTelemetry.dll": {
+            "related": ".dll-keyless.pem;.dll-keyless.sig;.xml"
           }
         }
       },
-      "OpenTelemetry.Api/1.14.0": {
+      "OpenTelemetry.Api/1.11.1": {
         "type": "package",
         "compile": {
-          "lib/net10.0/OpenTelemetry.Api.dll": {
-            "related": ".dll.sigstore.json;.xml"
+          "lib/net9.0/OpenTelemetry.Api.dll": {
+            "related": ".dll-keyless.pem;.dll-keyless.sig;.xml"
           }
         },
         "runtime": {
-          "lib/net10.0/OpenTelemetry.Api.dll": {
-            "related": ".dll.sigstore.json;.xml"
+          "lib/net9.0/OpenTelemetry.Api.dll": {
+            "related": ".dll-keyless.pem;.dll-keyless.sig;.xml"
           }
         }
       },
-      "OpenTelemetry.Api.ProviderBuilderExtensions/1.14.0": {
+      "OpenTelemetry.Api.ProviderBuilderExtensions/1.11.1": {
         "type": "package",
         "dependencies": {
-          "OpenTelemetry.Api": "1.14.0"
+          "OpenTelemetry.Api": "1.11.1"
         },
         "compile": {
-          "lib/net10.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll": {
-            "related": ".dll.sigstore.json;.xml"
+          "lib/net9.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll": {
+            "related": ".dll-keyless.pem;.dll-keyless.sig;.xml"
           }
         },
         "runtime": {
-          "lib/net10.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll": {
-            "related": ".dll.sigstore.json;.xml"
+          "lib/net9.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll": {
+            "related": ".dll-keyless.pem;.dll-keyless.sig;.xml"
           }
         }
       },
-      "OpenTelemetry.Exporter.OpenTelemetryProtocol/1.14.0": {
+      "OpenTelemetry.Exporter.OpenTelemetryProtocol/1.11.0": {
         "type": "package",
         "dependencies": {
-          "OpenTelemetry": "1.14.0"
+          "OpenTelemetry": "1.11.0"
         },
         "compile": {
-          "lib/net10.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll": {
-            "related": ".dll.sigstore.json;.xml"
+          "lib/net9.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll": {
+            "related": ".dll-keyless.pem;.dll-keyless.sig;.xml"
           }
         },
         "runtime": {
-          "lib/net10.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll": {
-            "related": ".dll.sigstore.json;.xml"
+          "lib/net9.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll": {
+            "related": ".dll-keyless.pem;.dll-keyless.sig;.xml"
           }
         }
       },
-      "OpenTelemetry.Extensions.Hosting/1.14.0": {
+      "OpenTelemetry.Extensions.Hosting/1.11.0": {
         "type": "package",
         "dependencies": {
-          "OpenTelemetry": "1.14.0"
+          "OpenTelemetry": "1.11.0"
         },
         "compile": {
-          "lib/net10.0/OpenTelemetry.Extensions.Hosting.dll": {
-            "related": ".dll.sigstore.json;.xml"
+          "lib/net9.0/OpenTelemetry.Extensions.Hosting.dll": {
+            "related": ".dll-keyless.pem;.dll-keyless.sig;.xml"
           }
         },
         "runtime": {
-          "lib/net10.0/OpenTelemetry.Extensions.Hosting.dll": {
-            "related": ".dll.sigstore.json;.xml"
+          "lib/net9.0/OpenTelemetry.Extensions.Hosting.dll": {
+            "related": ".dll-keyless.pem;.dll-keyless.sig;.xml"
           }
         }
       },
-      "OpenTelemetry.Instrumentation.AspNetCore/1.14.0": {
+      "OpenTelemetry.Instrumentation.AspNetCore/1.11.0": {
         "type": "package",
         "dependencies": {
-          "OpenTelemetry.Api.ProviderBuilderExtensions": "[1.14.0, 2.0.0)"
+          "OpenTelemetry.Api.ProviderBuilderExtensions": "[1.11.1, 2.0.0)"
         },
         "compile": {
-          "lib/net10.0/OpenTelemetry.Instrumentation.AspNetCore.dll": {
+          "lib/net8.0/OpenTelemetry.Instrumentation.AspNetCore.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net10.0/OpenTelemetry.Instrumentation.AspNetCore.dll": {
+          "lib/net8.0/OpenTelemetry.Instrumentation.AspNetCore.dll": {
             "related": ".xml"
           }
         },
@@ -244,34 +244,83 @@
           "Microsoft.AspNetCore.App"
         ]
       },
-      "OpenTelemetry.Instrumentation.Http/1.14.0": {
+      "OpenTelemetry.Instrumentation.EntityFrameworkCore/1.11.0-beta.1": {
         "type": "package",
         "dependencies": {
-          "OpenTelemetry.Api.ProviderBuilderExtensions": "[1.14.0, 2.0.0)"
+          "OpenTelemetry.Api.ProviderBuilderExtensions": "[1.11.1, 2.0.0)"
         },
         "compile": {
-          "lib/net10.0/OpenTelemetry.Instrumentation.Http.dll": {
+          "lib/netstandard2.0/OpenTelemetry.Instrumentation.EntityFrameworkCore.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net10.0/OpenTelemetry.Instrumentation.Http.dll": {
+          "lib/netstandard2.0/OpenTelemetry.Instrumentation.EntityFrameworkCore.dll": {
             "related": ".xml"
           }
         }
       },
-      "OpenTelemetry.Instrumentation.Runtime/1.14.0": {
+      "OpenTelemetry.Instrumentation.Http/1.11.0": {
         "type": "package",
         "dependencies": {
-          "OpenTelemetry.Api": "[1.14.0, 2.0.0)"
+          "OpenTelemetry.Api.ProviderBuilderExtensions": "[1.11.1, 2.0.0)"
         },
         "compile": {
-          "lib/net10.0/OpenTelemetry.Instrumentation.Runtime.dll": {
+          "lib/net8.0/OpenTelemetry.Instrumentation.Http.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net10.0/OpenTelemetry.Instrumentation.Runtime.dll": {
+          "lib/net8.0/OpenTelemetry.Instrumentation.Http.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "OpenTelemetry.Instrumentation.Runtime/1.11.0": {
+        "type": "package",
+        "dependencies": {
+          "OpenTelemetry.Api": "[1.11.1, 2.0.0)"
+        },
+        "compile": {
+          "lib/net8.0/OpenTelemetry.Instrumentation.Runtime.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/OpenTelemetry.Instrumentation.Runtime.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "OpenTelemetry.Instrumentation.SqlClient/1.11.0-beta.1": {
+        "type": "package",
+        "dependencies": {
+          "OpenTelemetry.Api.ProviderBuilderExtensions": "[1.11.1, 2.0.0)"
+        },
+        "compile": {
+          "lib/net8.0/OpenTelemetry.Instrumentation.SqlClient.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/OpenTelemetry.Instrumentation.SqlClient.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "OpenTelemetry.Instrumentation.StackExchangeRedis/1.11.0-beta.1": {
+        "type": "package",
+        "dependencies": {
+          "OpenTelemetry.Api.ProviderBuilderExtensions": "[1.11.1, 2.0.0)",
+          "StackExchange.Redis": "[2.6.122, 3.0.0)"
+        },
+        "compile": {
+          "lib/net8.0/OpenTelemetry.Instrumentation.StackExchangeRedis.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/OpenTelemetry.Instrumentation.StackExchangeRedis.dll": {
             "related": ".xml"
           }
         }
@@ -330,16 +379,32 @@
           "Microsoft.AspNetCore.App"
         ]
       },
-      "Serilog.Enrichers.Environment/2.3.0": {
+      "Serilog.Enrichers.Environment/3.0.1": {
         "type": "package",
         "dependencies": {
-          "Serilog": "2.3.0"
+          "Serilog": "4.0.0"
         },
         "compile": {
-          "lib/netstandard2.0/Serilog.Enrichers.Environment.dll": {}
+          "lib/net8.0/Serilog.Enrichers.Environment.dll": {
+            "related": ".xml"
+          }
         },
         "runtime": {
-          "lib/netstandard2.0/Serilog.Enrichers.Environment.dll": {}
+          "lib/net8.0/Serilog.Enrichers.Environment.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Serilog.Enrichers.Process/3.0.0": {
+        "type": "package",
+        "dependencies": {
+          "Serilog": "4.0.0"
+        },
+        "compile": {
+          "lib/net8.0/Serilog.Enrichers.Process.dll": {}
+        },
+        "runtime": {
+          "lib/net8.0/Serilog.Enrichers.Process.dll": {}
         }
       },
       "Serilog.Exceptions/8.4.0": {
@@ -473,20 +538,24 @@
           }
         }
       },
-      "Serilog.Sinks.OpenTelemetry/4.1.0": {
+      "SharpCompress/0.30.1": {
         "type": "package",
-        "dependencies": {
-          "Google.Protobuf": "3.26.1",
-          "Grpc.Net.Client": "2.62.0",
-          "Serilog": "4.0.0"
-        },
         "compile": {
-          "lib/net8.0/Serilog.Sinks.OpenTelemetry.dll": {
+          "lib/net5.0/SharpCompress.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/SharpCompress.dll": {}
+        }
+      },
+      "Snappier/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/Snappier.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net8.0/Serilog.Sinks.OpenTelemetry.dll": {
+          "lib/net5.0/Snappier.dll": {
             "related": ".xml"
           }
         }
@@ -515,6 +584,41 @@
         "runtime": {
           "lib/netcoreapp2.0/_._": {}
         }
+      },
+      "ZstdSharp.Port/0.7.3": {
+        "type": "package",
+        "compile": {
+          "lib/net7.0/ZstdSharp.dll": {}
+        },
+        "runtime": {
+          "lib/net7.0/ZstdSharp.dll": {}
+        }
+      },
+      "MultiTenantApp.Observability/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "MongoDB.Driver.Core.Extensions.DiagnosticSources": "2.0.0",
+          "OpenTelemetry.Exporter.OpenTelemetryProtocol": "1.11.0",
+          "OpenTelemetry.Extensions.Hosting": "1.11.0",
+          "OpenTelemetry.Instrumentation.AspNetCore": "1.11.0",
+          "OpenTelemetry.Instrumentation.EntityFrameworkCore": "1.11.0-beta.1",
+          "OpenTelemetry.Instrumentation.Http": "1.11.0",
+          "OpenTelemetry.Instrumentation.Runtime": "1.11.0",
+          "OpenTelemetry.Instrumentation.SqlClient": "1.11.0-beta.1",
+          "OpenTelemetry.Instrumentation.StackExchangeRedis": "1.11.0-beta.1",
+          "Serilog.AspNetCore": "10.0.0",
+          "Serilog.Enrichers.Environment": "3.0.1",
+          "Serilog.Enrichers.Process": "3.0.0",
+          "Serilog.Exceptions": "8.4.0",
+          "Serilog.Sinks.Console": "6.1.1"
+        },
+        "compile": {
+          "bin/placeholder/MultiTenantApp.Observability.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MultiTenantApp.Observability.dll": {}
+        }
       }
     }
   },
@@ -535,107 +639,28 @@
         "lib/net8.0/Blazored.LocalStorage.dll"
       ]
     },
-    "Google.Protobuf/3.26.1": {
-      "sha512": "CHZX8zXqhF/fdUtd+AYzew8T2HFkAoe5c7lbGxZY/qryAlQXckDvM5BfOJjXlMS7kyICqQTMszj4w1bX5uBJ/w==",
+    "DnsClient/1.6.1": {
+      "sha512": "4H/f2uYJOZ+YObZjpY9ABrKZI+JNw3uizp6oMzTXwDw6F+2qIPhpRl/1t68O/6e98+vqNiYGu+lswmwdYUy3gg==",
       "type": "package",
-      "path": "google.protobuf/3.26.1",
+      "path": "dnsclient/1.6.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "google.protobuf.3.26.1.nupkg.sha512",
-        "google.protobuf.nuspec",
-        "lib/net45/Google.Protobuf.dll",
-        "lib/net45/Google.Protobuf.pdb",
-        "lib/net45/Google.Protobuf.xml",
-        "lib/net5.0/Google.Protobuf.dll",
-        "lib/net5.0/Google.Protobuf.pdb",
-        "lib/net5.0/Google.Protobuf.xml",
-        "lib/netstandard1.1/Google.Protobuf.dll",
-        "lib/netstandard1.1/Google.Protobuf.pdb",
-        "lib/netstandard1.1/Google.Protobuf.xml",
-        "lib/netstandard2.0/Google.Protobuf.dll",
-        "lib/netstandard2.0/Google.Protobuf.pdb",
-        "lib/netstandard2.0/Google.Protobuf.xml"
-      ]
-    },
-    "Grpc.Core.Api/2.62.0": {
-      "sha512": "q4Jj6bRZHNnE4CMLqgjiBUCKLit+tRr0simZsS2W6U++akd7CzXByeKy2tddqT68hFzP2XzceXA2YtBTfWtixA==",
-      "type": "package",
-      "path": "grpc.core.api/2.62.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "README.md",
-        "grpc.core.api.2.62.0.nupkg.sha512",
-        "grpc.core.api.nuspec",
-        "lib/net462/Grpc.Core.Api.dll",
-        "lib/net462/Grpc.Core.Api.pdb",
-        "lib/net462/Grpc.Core.Api.xml",
-        "lib/netstandard2.0/Grpc.Core.Api.dll",
-        "lib/netstandard2.0/Grpc.Core.Api.pdb",
-        "lib/netstandard2.0/Grpc.Core.Api.xml",
-        "lib/netstandard2.1/Grpc.Core.Api.dll",
-        "lib/netstandard2.1/Grpc.Core.Api.pdb",
-        "lib/netstandard2.1/Grpc.Core.Api.xml",
-        "packageIcon.png"
-      ]
-    },
-    "Grpc.Net.Client/2.62.0": {
-      "sha512": "C7HxLt+wWPTpPFORRHkxxtDLL+K/jXSmZBaPLhFM8AEkN0bYjklIfCwnzajn1gcbRcEETBb0WnRgHJdVzpwbCg==",
-      "type": "package",
-      "path": "grpc.net.client/2.62.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "README.md",
-        "grpc.net.client.2.62.0.nupkg.sha512",
-        "grpc.net.client.nuspec",
-        "lib/net462/Grpc.Net.Client.dll",
-        "lib/net462/Grpc.Net.Client.pdb",
-        "lib/net462/Grpc.Net.Client.xml",
-        "lib/net6.0/Grpc.Net.Client.dll",
-        "lib/net6.0/Grpc.Net.Client.pdb",
-        "lib/net6.0/Grpc.Net.Client.xml",
-        "lib/net7.0/Grpc.Net.Client.dll",
-        "lib/net7.0/Grpc.Net.Client.pdb",
-        "lib/net7.0/Grpc.Net.Client.xml",
-        "lib/net8.0/Grpc.Net.Client.dll",
-        "lib/net8.0/Grpc.Net.Client.pdb",
-        "lib/net8.0/Grpc.Net.Client.xml",
-        "lib/netstandard2.0/Grpc.Net.Client.dll",
-        "lib/netstandard2.0/Grpc.Net.Client.pdb",
-        "lib/netstandard2.0/Grpc.Net.Client.xml",
-        "lib/netstandard2.1/Grpc.Net.Client.dll",
-        "lib/netstandard2.1/Grpc.Net.Client.pdb",
-        "lib/netstandard2.1/Grpc.Net.Client.xml",
-        "packageIcon.png"
-      ]
-    },
-    "Grpc.Net.Common/2.62.0": {
-      "sha512": "eBv5I4RPWfdezGXqooU5hs3+XcfVMLk5XDlA4G/Nd9TMX78ZGrFl/lM1Ad187zgBLmH7WPAgfjKRWLBwaa1Wbw==",
-      "type": "package",
-      "path": "grpc.net.common/2.62.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "grpc.net.common.2.62.0.nupkg.sha512",
-        "grpc.net.common.nuspec",
-        "lib/net6.0/Grpc.Net.Common.dll",
-        "lib/net6.0/Grpc.Net.Common.pdb",
-        "lib/net6.0/Grpc.Net.Common.xml",
-        "lib/net7.0/Grpc.Net.Common.dll",
-        "lib/net7.0/Grpc.Net.Common.pdb",
-        "lib/net7.0/Grpc.Net.Common.xml",
-        "lib/net8.0/Grpc.Net.Common.dll",
-        "lib/net8.0/Grpc.Net.Common.pdb",
-        "lib/net8.0/Grpc.Net.Common.xml",
-        "lib/netstandard2.0/Grpc.Net.Common.dll",
-        "lib/netstandard2.0/Grpc.Net.Common.pdb",
-        "lib/netstandard2.0/Grpc.Net.Common.xml",
-        "lib/netstandard2.1/Grpc.Net.Common.dll",
-        "lib/netstandard2.1/Grpc.Net.Common.pdb",
-        "lib/netstandard2.1/Grpc.Net.Common.xml",
-        "packageIcon.png"
+        "dnsclient.1.6.1.nupkg.sha512",
+        "dnsclient.nuspec",
+        "icon.png",
+        "lib/net45/DnsClient.dll",
+        "lib/net45/DnsClient.xml",
+        "lib/net471/DnsClient.dll",
+        "lib/net471/DnsClient.xml",
+        "lib/net5.0/DnsClient.dll",
+        "lib/net5.0/DnsClient.xml",
+        "lib/netstandard1.3/DnsClient.dll",
+        "lib/netstandard1.3/DnsClient.xml",
+        "lib/netstandard2.0/DnsClient.dll",
+        "lib/netstandard2.0/DnsClient.xml",
+        "lib/netstandard2.1/DnsClient.dll",
+        "lib/netstandard2.1/DnsClient.xml"
       ]
     },
     "Microsoft.AspNetCore.App.Internal.Assets/10.0.2": {
@@ -730,6 +755,58 @@
         "useSharedDesignerContext.txt"
       ]
     },
+    "MongoDB.Bson/3.0.0": {
+      "sha512": "qnPRJ58HXDh7C4oxTf6YB7BJhlCGJIa6TMXhzImw6zk44lrAomQXTB6AtoQ5lNJbkyrgQcT7+smsKFMnXmLXhw==",
+      "type": "package",
+      "path": "mongodb.bson/3.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net472/MongoDB.Bson.dll",
+        "lib/net472/MongoDB.Bson.xml",
+        "lib/net6.0/MongoDB.Bson.dll",
+        "lib/net6.0/MongoDB.Bson.xml",
+        "lib/netstandard2.1/MongoDB.Bson.dll",
+        "lib/netstandard2.1/MongoDB.Bson.xml",
+        "mongodb.bson.3.0.0.nupkg.sha512",
+        "mongodb.bson.nuspec",
+        "packageIcon.png"
+      ]
+    },
+    "MongoDB.Driver/3.0.0": {
+      "sha512": "udcP8rOhyuhLDn3sGVdNUgQSXfKGPaIP4w09XVKf4xdy66YSXinhkIuQSuOeZVHdTFsG2PpUbRx2wyFm7E0EMg==",
+      "type": "package",
+      "path": "mongodb.driver/3.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net472/MongoDB.Driver.dll",
+        "lib/net472/MongoDB.Driver.xml",
+        "lib/net6.0/MongoDB.Driver.dll",
+        "lib/net6.0/MongoDB.Driver.xml",
+        "lib/netstandard2.1/MongoDB.Driver.dll",
+        "lib/netstandard2.1/MongoDB.Driver.xml",
+        "mongodb.driver.3.0.0.nupkg.sha512",
+        "mongodb.driver.nuspec",
+        "packageIcon.png"
+      ]
+    },
+    "MongoDB.Driver.Core.Extensions.DiagnosticSources/2.0.0": {
+      "sha512": "fk1luDLroK9dgs1jr9f6yl54jxo28OgJYIWPnlG0zXV6gOThyc7XzaAGmRko8z51ZEdojD6PRjszNPVHQoVkyw==",
+      "type": "package",
+      "path": "mongodb.driver.core.extensions.diagnosticsources/2.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net472/MongoDB.Driver.Core.Extensions.DiagnosticSources.dll",
+        "lib/net6.0/MongoDB.Driver.Core.Extensions.DiagnosticSources.dll",
+        "lib/netstandard2.1/MongoDB.Driver.Core.Extensions.DiagnosticSources.dll",
+        "mongodb.driver.core.extensions.diagnosticsources.2.0.0.nupkg.sha512",
+        "mongodb.driver.core.extensions.diagnosticsources.nuspec"
+      ]
+    },
     "MudBlazor/6.11.0": {
       "sha512": "gP97w+oP0G0slw2P+EKfHfhN126GBHJpL61haQJy3iAo9JSWMkzlcEQ1yFlHSWJQeI9jOZ6pb1IK9XggFOI7lA==",
       "type": "package",
@@ -753,193 +830,209 @@
         "staticwebassets/MudBlazor.min.js"
       ]
     },
-    "OpenTelemetry/1.14.0": {
-      "sha512": "aiPBAr1+0dPDItH++MQQr5UgMf4xiybruzNlAoYYMYN3UUk+mGRcoKuZy4Z4rhhWUZIpK2Xhe7wUUXSTM32duQ==",
+    "OpenTelemetry/1.11.0": {
+      "sha512": "WVdOobTllpePASPpuyraV1k+rozdGL6bYPujDpla4MZtRH71m4sfZPbo+3pgqYiskDaK+M2cpGMvCvL6OIPOoQ==",
       "type": "package",
-      "path": "opentelemetry/1.14.0",
+      "path": "opentelemetry/1.11.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.TXT",
         "README.md",
         "THIRD-PARTY-NOTICES.TXT",
-        "lib/net10.0/OpenTelemetry.dll",
-        "lib/net10.0/OpenTelemetry.dll.sigstore.json",
-        "lib/net10.0/OpenTelemetry.xml",
         "lib/net462/OpenTelemetry.dll",
-        "lib/net462/OpenTelemetry.dll.sigstore.json",
+        "lib/net462/OpenTelemetry.dll-keyless.pem",
+        "lib/net462/OpenTelemetry.dll-keyless.sig",
         "lib/net462/OpenTelemetry.xml",
         "lib/net8.0/OpenTelemetry.dll",
-        "lib/net8.0/OpenTelemetry.dll.sigstore.json",
+        "lib/net8.0/OpenTelemetry.dll-keyless.pem",
+        "lib/net8.0/OpenTelemetry.dll-keyless.sig",
         "lib/net8.0/OpenTelemetry.xml",
         "lib/net9.0/OpenTelemetry.dll",
-        "lib/net9.0/OpenTelemetry.dll.sigstore.json",
+        "lib/net9.0/OpenTelemetry.dll-keyless.pem",
+        "lib/net9.0/OpenTelemetry.dll-keyless.sig",
         "lib/net9.0/OpenTelemetry.xml",
         "lib/netstandard2.0/OpenTelemetry.dll",
-        "lib/netstandard2.0/OpenTelemetry.dll.sigstore.json",
+        "lib/netstandard2.0/OpenTelemetry.dll-keyless.pem",
+        "lib/netstandard2.0/OpenTelemetry.dll-keyless.sig",
         "lib/netstandard2.0/OpenTelemetry.xml",
         "lib/netstandard2.1/OpenTelemetry.dll",
-        "lib/netstandard2.1/OpenTelemetry.dll.sigstore.json",
+        "lib/netstandard2.1/OpenTelemetry.dll-keyless.pem",
+        "lib/netstandard2.1/OpenTelemetry.dll-keyless.sig",
         "lib/netstandard2.1/OpenTelemetry.xml",
         "opentelemetry-icon-color.png",
-        "opentelemetry.1.14.0.nupkg.sha512",
+        "opentelemetry.1.11.0.nupkg.sha512",
         "opentelemetry.nuspec"
       ]
     },
-    "OpenTelemetry.Api/1.14.0": {
-      "sha512": "foHci6viUw1f3gUB8qzz3Rk02xZIWMo299X0rxK0MoOWok/3dUVru+KKdY7WIoSHwRGpxGKkmAz9jIk2RFNbsQ==",
+    "OpenTelemetry.Api/1.11.1": {
+      "sha512": "KaBjGMqrqQv41mIkvPUvmAG7yxDlI6qchKhjXlOF3ZwsdcRRLrdrkiDLIJ90iZgUoKVdP8fE1fCri9nc+ug0Cg==",
       "type": "package",
-      "path": "opentelemetry.api/1.14.0",
+      "path": "opentelemetry.api/1.11.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.TXT",
         "README.md",
         "THIRD-PARTY-NOTICES.TXT",
-        "lib/net10.0/OpenTelemetry.Api.dll",
-        "lib/net10.0/OpenTelemetry.Api.dll.sigstore.json",
-        "lib/net10.0/OpenTelemetry.Api.xml",
         "lib/net462/OpenTelemetry.Api.dll",
-        "lib/net462/OpenTelemetry.Api.dll.sigstore.json",
+        "lib/net462/OpenTelemetry.Api.dll-keyless.pem",
+        "lib/net462/OpenTelemetry.Api.dll-keyless.sig",
         "lib/net462/OpenTelemetry.Api.xml",
         "lib/net8.0/OpenTelemetry.Api.dll",
-        "lib/net8.0/OpenTelemetry.Api.dll.sigstore.json",
+        "lib/net8.0/OpenTelemetry.Api.dll-keyless.pem",
+        "lib/net8.0/OpenTelemetry.Api.dll-keyless.sig",
         "lib/net8.0/OpenTelemetry.Api.xml",
         "lib/net9.0/OpenTelemetry.Api.dll",
-        "lib/net9.0/OpenTelemetry.Api.dll.sigstore.json",
+        "lib/net9.0/OpenTelemetry.Api.dll-keyless.pem",
+        "lib/net9.0/OpenTelemetry.Api.dll-keyless.sig",
         "lib/net9.0/OpenTelemetry.Api.xml",
         "lib/netstandard2.0/OpenTelemetry.Api.dll",
-        "lib/netstandard2.0/OpenTelemetry.Api.dll.sigstore.json",
+        "lib/netstandard2.0/OpenTelemetry.Api.dll-keyless.pem",
+        "lib/netstandard2.0/OpenTelemetry.Api.dll-keyless.sig",
         "lib/netstandard2.0/OpenTelemetry.Api.xml",
         "opentelemetry-icon-color.png",
-        "opentelemetry.api.1.14.0.nupkg.sha512",
+        "opentelemetry.api.1.11.1.nupkg.sha512",
         "opentelemetry.api.nuspec"
       ]
     },
-    "OpenTelemetry.Api.ProviderBuilderExtensions/1.14.0": {
-      "sha512": "i/lxOM92v+zU5I0rGl5tXAGz6EJtxk2MvzZ0VN6F6L5pMqT6s6RCXnGWXg6fW+vtZJsllBlQaf/VLPTzgefJpg==",
+    "OpenTelemetry.Api.ProviderBuilderExtensions/1.11.1": {
+      "sha512": "vMdNMQeW55jXIa/Kybec/br6jC+rWybniTi6DCW5lz1kGghKso+J+FC3uBgiq0/pTqusfeDbO5PEHGM/r5z8Ow==",
       "type": "package",
-      "path": "opentelemetry.api.providerbuilderextensions/1.14.0",
+      "path": "opentelemetry.api.providerbuilderextensions/1.11.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.TXT",
         "README.md",
         "THIRD-PARTY-NOTICES.TXT",
-        "lib/net10.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll",
-        "lib/net10.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll.sigstore.json",
-        "lib/net10.0/OpenTelemetry.Api.ProviderBuilderExtensions.xml",
         "lib/net462/OpenTelemetry.Api.ProviderBuilderExtensions.dll",
-        "lib/net462/OpenTelemetry.Api.ProviderBuilderExtensions.dll.sigstore.json",
+        "lib/net462/OpenTelemetry.Api.ProviderBuilderExtensions.dll-keyless.pem",
+        "lib/net462/OpenTelemetry.Api.ProviderBuilderExtensions.dll-keyless.sig",
         "lib/net462/OpenTelemetry.Api.ProviderBuilderExtensions.xml",
         "lib/net8.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll",
-        "lib/net8.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll.sigstore.json",
+        "lib/net8.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll-keyless.pem",
+        "lib/net8.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll-keyless.sig",
         "lib/net8.0/OpenTelemetry.Api.ProviderBuilderExtensions.xml",
         "lib/net9.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll",
-        "lib/net9.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll.sigstore.json",
+        "lib/net9.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll-keyless.pem",
+        "lib/net9.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll-keyless.sig",
         "lib/net9.0/OpenTelemetry.Api.ProviderBuilderExtensions.xml",
         "lib/netstandard2.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll",
-        "lib/netstandard2.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll.sigstore.json",
+        "lib/netstandard2.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll-keyless.pem",
+        "lib/netstandard2.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll-keyless.sig",
         "lib/netstandard2.0/OpenTelemetry.Api.ProviderBuilderExtensions.xml",
         "opentelemetry-icon-color.png",
-        "opentelemetry.api.providerbuilderextensions.1.14.0.nupkg.sha512",
+        "opentelemetry.api.providerbuilderextensions.1.11.1.nupkg.sha512",
         "opentelemetry.api.providerbuilderextensions.nuspec"
       ]
     },
-    "OpenTelemetry.Exporter.OpenTelemetryProtocol/1.14.0": {
-      "sha512": "7ELExeje+T/KOywHuHwZBGQNtYlepUaYRFXWgoEaT1iKpFJVwOlE1Y2+uqHI2QQmah0Ue+XgRmDy924vWHfJ6Q==",
+    "OpenTelemetry.Exporter.OpenTelemetryProtocol/1.11.0": {
+      "sha512": "owMYXg0WwbRKXgAZSQ7yoKwiOaz6j2bDozvm+p632fyUcIPr02yRqiRilO5uzTBvb2V6sUQppZ4I7mDRspwoYQ==",
       "type": "package",
-      "path": "opentelemetry.exporter.opentelemetryprotocol/1.14.0",
+      "path": "opentelemetry.exporter.opentelemetryprotocol/1.11.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.TXT",
         "README.md",
         "THIRD-PARTY-NOTICES.TXT",
-        "lib/net10.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll",
-        "lib/net10.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll.sigstore.json",
-        "lib/net10.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.xml",
         "lib/net462/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll",
-        "lib/net462/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll.sigstore.json",
+        "lib/net462/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll-keyless.pem",
+        "lib/net462/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll-keyless.sig",
         "lib/net462/OpenTelemetry.Exporter.OpenTelemetryProtocol.xml",
         "lib/net8.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll",
-        "lib/net8.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll.sigstore.json",
+        "lib/net8.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll-keyless.pem",
+        "lib/net8.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll-keyless.sig",
         "lib/net8.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.xml",
         "lib/net9.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll",
-        "lib/net9.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll.sigstore.json",
+        "lib/net9.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll-keyless.pem",
+        "lib/net9.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll-keyless.sig",
         "lib/net9.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.xml",
         "lib/netstandard2.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll",
-        "lib/netstandard2.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll.sigstore.json",
+        "lib/netstandard2.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll-keyless.pem",
+        "lib/netstandard2.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll-keyless.sig",
         "lib/netstandard2.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.xml",
         "lib/netstandard2.1/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll",
-        "lib/netstandard2.1/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll.sigstore.json",
+        "lib/netstandard2.1/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll-keyless.pem",
+        "lib/netstandard2.1/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll-keyless.sig",
         "lib/netstandard2.1/OpenTelemetry.Exporter.OpenTelemetryProtocol.xml",
         "opentelemetry-icon-color.png",
-        "opentelemetry.exporter.opentelemetryprotocol.1.14.0.nupkg.sha512",
+        "opentelemetry.exporter.opentelemetryprotocol.1.11.0.nupkg.sha512",
         "opentelemetry.exporter.opentelemetryprotocol.nuspec"
       ]
     },
-    "OpenTelemetry.Extensions.Hosting/1.14.0": {
-      "sha512": "ZAxkCIa3Q3YWZ1sGrolXfkhPqn2PFSz2Cel74em/fATZgY5ixlw6MQp2icmqKCz4C7M1W2G0b92K3rX8mOtFRg==",
+    "OpenTelemetry.Extensions.Hosting/1.11.0": {
+      "sha512": "OuMjhxgIHPNvfZS44XXgNF3g6h460YR5c13duGgBHpsVknxV7d/rHyNi7E0C4sPzadBG6LaIxkVeAYRdqWjNvA==",
       "type": "package",
-      "path": "opentelemetry.extensions.hosting/1.14.0",
+      "path": "opentelemetry.extensions.hosting/1.11.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.TXT",
         "README.md",
         "THIRD-PARTY-NOTICES.TXT",
-        "lib/net10.0/OpenTelemetry.Extensions.Hosting.dll",
-        "lib/net10.0/OpenTelemetry.Extensions.Hosting.dll.sigstore.json",
-        "lib/net10.0/OpenTelemetry.Extensions.Hosting.xml",
         "lib/net462/OpenTelemetry.Extensions.Hosting.dll",
-        "lib/net462/OpenTelemetry.Extensions.Hosting.dll.sigstore.json",
+        "lib/net462/OpenTelemetry.Extensions.Hosting.dll-keyless.pem",
+        "lib/net462/OpenTelemetry.Extensions.Hosting.dll-keyless.sig",
         "lib/net462/OpenTelemetry.Extensions.Hosting.xml",
         "lib/net8.0/OpenTelemetry.Extensions.Hosting.dll",
-        "lib/net8.0/OpenTelemetry.Extensions.Hosting.dll.sigstore.json",
+        "lib/net8.0/OpenTelemetry.Extensions.Hosting.dll-keyless.pem",
+        "lib/net8.0/OpenTelemetry.Extensions.Hosting.dll-keyless.sig",
         "lib/net8.0/OpenTelemetry.Extensions.Hosting.xml",
         "lib/net9.0/OpenTelemetry.Extensions.Hosting.dll",
-        "lib/net9.0/OpenTelemetry.Extensions.Hosting.dll.sigstore.json",
+        "lib/net9.0/OpenTelemetry.Extensions.Hosting.dll-keyless.pem",
+        "lib/net9.0/OpenTelemetry.Extensions.Hosting.dll-keyless.sig",
         "lib/net9.0/OpenTelemetry.Extensions.Hosting.xml",
         "lib/netstandard2.0/OpenTelemetry.Extensions.Hosting.dll",
-        "lib/netstandard2.0/OpenTelemetry.Extensions.Hosting.dll.sigstore.json",
+        "lib/netstandard2.0/OpenTelemetry.Extensions.Hosting.dll-keyless.pem",
+        "lib/netstandard2.0/OpenTelemetry.Extensions.Hosting.dll-keyless.sig",
         "lib/netstandard2.0/OpenTelemetry.Extensions.Hosting.xml",
         "opentelemetry-icon-color.png",
-        "opentelemetry.extensions.hosting.1.14.0.nupkg.sha512",
+        "opentelemetry.extensions.hosting.1.11.0.nupkg.sha512",
         "opentelemetry.extensions.hosting.nuspec"
       ]
     },
-    "OpenTelemetry.Instrumentation.AspNetCore/1.14.0": {
-      "sha512": "NQAQpFa3a4ofPUYwxcwtNPGpuRNwwx1HM7MnLEESYjYkhfhER+PqqGywW65rWd7bJEc1/IaL+xbmHH99pYDE0A==",
+    "OpenTelemetry.Instrumentation.AspNetCore/1.11.0": {
+      "sha512": "pBTdlyIGZVfYyB9yizO393RyQgJk+4ViGt+vQb9JI3Qwk9LW6mXreL1oUfVqHCbbSJp2vyMacYxXVBSvtZiBXg==",
       "type": "package",
-      "path": "opentelemetry.instrumentation.aspnetcore/1.14.0",
+      "path": "opentelemetry.instrumentation.aspnetcore/1.11.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.TXT",
-        "README.md",
-        "lib/net10.0/OpenTelemetry.Instrumentation.AspNetCore.dll",
-        "lib/net10.0/OpenTelemetry.Instrumentation.AspNetCore.xml",
         "lib/net8.0/OpenTelemetry.Instrumentation.AspNetCore.dll",
         "lib/net8.0/OpenTelemetry.Instrumentation.AspNetCore.xml",
         "lib/netstandard2.0/OpenTelemetry.Instrumentation.AspNetCore.dll",
         "lib/netstandard2.0/OpenTelemetry.Instrumentation.AspNetCore.xml",
         "opentelemetry-icon-color.png",
-        "opentelemetry.instrumentation.aspnetcore.1.14.0.nupkg.sha512",
+        "opentelemetry.instrumentation.aspnetcore.1.11.0.nupkg.sha512",
         "opentelemetry.instrumentation.aspnetcore.nuspec"
       ]
     },
-    "OpenTelemetry.Instrumentation.Http/1.14.0": {
-      "sha512": "uH8X1fYnywrgaUrSbemKvFiFkBwY7ZbBU7Wh4A/ORQmdpF3G/5STidY4PlK4xYuIv9KkdMXH/vkpvzQcayW70g==",
+    "OpenTelemetry.Instrumentation.EntityFrameworkCore/1.11.0-beta.1": {
+      "sha512": "s+yUZ9JYp8jeibEEraXw31YBW4JtWkDVwE+hZ7JDRObVuyAyfjCq2IwZ3nxa2CNXOvR3zld9S7o307A3QpRd9w==",
       "type": "package",
-      "path": "opentelemetry.instrumentation.http/1.14.0",
+      "path": "opentelemetry.instrumentation.entityframeworkcore/1.11.0-beta.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.TXT",
-        "README.md",
-        "lib/net10.0/OpenTelemetry.Instrumentation.Http.dll",
-        "lib/net10.0/OpenTelemetry.Instrumentation.Http.xml",
+        "lib/netstandard2.0/OpenTelemetry.Instrumentation.EntityFrameworkCore.dll",
+        "lib/netstandard2.0/OpenTelemetry.Instrumentation.EntityFrameworkCore.xml",
+        "opentelemetry-icon-color.png",
+        "opentelemetry.instrumentation.entityframeworkcore.1.11.0-beta.1.nupkg.sha512",
+        "opentelemetry.instrumentation.entityframeworkcore.nuspec"
+      ]
+    },
+    "OpenTelemetry.Instrumentation.Http/1.11.0": {
+      "sha512": "1ncYPNmMaYNPX664uo3FlmSVGETBKQbBvarbGgB5ZynERTFmCsZ7UqefvVe3vnPYOIAGOjbMAbprYF2BfMielg==",
+      "type": "package",
+      "path": "opentelemetry.instrumentation.http/1.11.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
         "lib/net462/OpenTelemetry.Instrumentation.Http.dll",
         "lib/net462/OpenTelemetry.Instrumentation.Http.xml",
         "lib/net8.0/OpenTelemetry.Instrumentation.Http.dll",
@@ -947,21 +1040,18 @@
         "lib/netstandard2.0/OpenTelemetry.Instrumentation.Http.dll",
         "lib/netstandard2.0/OpenTelemetry.Instrumentation.Http.xml",
         "opentelemetry-icon-color.png",
-        "opentelemetry.instrumentation.http.1.14.0.nupkg.sha512",
+        "opentelemetry.instrumentation.http.1.11.0.nupkg.sha512",
         "opentelemetry.instrumentation.http.nuspec"
       ]
     },
-    "OpenTelemetry.Instrumentation.Runtime/1.14.0": {
-      "sha512": "Z6o4JDOQaKv6bInAYZxuyxxfMKr6hFpwLnKEgQ+q+oBNA9Fm1sysjFCOzRzk7U0WD86LsRPXX+chv1vJIg7cfg==",
+    "OpenTelemetry.Instrumentation.Runtime/1.11.0": {
+      "sha512": "M8OgwhCQ9EWxM/JAHtxgiEIrCgR+HJWwA3aqrYHAL/HjbGdHkgs4XWbVLTqgOVCY/4W8Tau7FCWm7WEOzsU1cg==",
       "type": "package",
-      "path": "opentelemetry.instrumentation.runtime/1.14.0",
+      "path": "opentelemetry.instrumentation.runtime/1.11.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.TXT",
-        "README.md",
-        "lib/net10.0/OpenTelemetry.Instrumentation.Runtime.dll",
-        "lib/net10.0/OpenTelemetry.Instrumentation.Runtime.xml",
         "lib/net462/OpenTelemetry.Instrumentation.Runtime.dll",
         "lib/net462/OpenTelemetry.Instrumentation.Runtime.xml",
         "lib/net8.0/OpenTelemetry.Instrumentation.Runtime.dll",
@@ -969,8 +1059,46 @@
         "lib/netstandard2.0/OpenTelemetry.Instrumentation.Runtime.dll",
         "lib/netstandard2.0/OpenTelemetry.Instrumentation.Runtime.xml",
         "opentelemetry-icon-color.png",
-        "opentelemetry.instrumentation.runtime.1.14.0.nupkg.sha512",
+        "opentelemetry.instrumentation.runtime.1.11.0.nupkg.sha512",
         "opentelemetry.instrumentation.runtime.nuspec"
+      ]
+    },
+    "OpenTelemetry.Instrumentation.SqlClient/1.11.0-beta.1": {
+      "sha512": "WXncig8s94ijxn+ECU5mRCclTvavnyRHxyMu79tm2Gyz/RtlgNfzaBTM1aKWjyBlJlTNA8b3DAYOJETatFN4Dw==",
+      "type": "package",
+      "path": "opentelemetry.instrumentation.sqlclient/1.11.0-beta.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "lib/net462/OpenTelemetry.Instrumentation.SqlClient.dll",
+        "lib/net462/OpenTelemetry.Instrumentation.SqlClient.xml",
+        "lib/net8.0/OpenTelemetry.Instrumentation.SqlClient.dll",
+        "lib/net8.0/OpenTelemetry.Instrumentation.SqlClient.xml",
+        "lib/netstandard2.0/OpenTelemetry.Instrumentation.SqlClient.dll",
+        "lib/netstandard2.0/OpenTelemetry.Instrumentation.SqlClient.xml",
+        "opentelemetry-icon-color.png",
+        "opentelemetry.instrumentation.sqlclient.1.11.0-beta.1.nupkg.sha512",
+        "opentelemetry.instrumentation.sqlclient.nuspec"
+      ]
+    },
+    "OpenTelemetry.Instrumentation.StackExchangeRedis/1.11.0-beta.1": {
+      "sha512": "E7n9zzkmY8LoaHvGX1hS6gaXlmT2iX6QzWPurAQPkOm00ci5rIwKe0zOKHsKHhDUaALLn5qHQVs1BbhhU6O/5w==",
+      "type": "package",
+      "path": "opentelemetry.instrumentation.stackexchangeredis/1.11.0-beta.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "lib/net462/OpenTelemetry.Instrumentation.StackExchangeRedis.dll",
+        "lib/net462/OpenTelemetry.Instrumentation.StackExchangeRedis.xml",
+        "lib/net8.0/OpenTelemetry.Instrumentation.StackExchangeRedis.dll",
+        "lib/net8.0/OpenTelemetry.Instrumentation.StackExchangeRedis.xml",
+        "lib/netstandard2.0/OpenTelemetry.Instrumentation.StackExchangeRedis.dll",
+        "lib/netstandard2.0/OpenTelemetry.Instrumentation.StackExchangeRedis.xml",
+        "opentelemetry-icon-color.png",
+        "opentelemetry.instrumentation.stackexchangeredis.1.11.0-beta.1.nupkg.sha512",
+        "opentelemetry.instrumentation.stackexchangeredis.nuspec"
       ]
     },
     "Pipelines.Sockets.Unofficial/2.2.8": {
@@ -1047,19 +1175,45 @@
         "serilog.aspnetcore.nuspec"
       ]
     },
-    "Serilog.Enrichers.Environment/2.3.0": {
-      "sha512": "AdZXURQ0dQCCjst3Jn3lwFtGicWjGE4wov9E5BPc4N5cruGmd2y9wprCYEjFteU84QMbxk35fpeTuHs6M4VGYw==",
+    "Serilog.Enrichers.Environment/3.0.1": {
+      "sha512": "9BqCE4C9FF+/rJb/CsQwe7oVf44xqkOvMwX//CUxvUR25lFL4tSS6iuxE5eW07quby1BAyAEP+vM6TWsnT3iqw==",
       "type": "package",
-      "path": "serilog.enrichers.environment/2.3.0",
+      "path": "serilog.enrichers.environment/3.0.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "lib/net45/Serilog.Enrichers.Environment.dll",
-        "lib/netstandard1.3/Serilog.Enrichers.Environment.dll",
-        "lib/netstandard1.5/Serilog.Enrichers.Environment.dll",
+        "README.md",
+        "lib/net462/Serilog.Enrichers.Environment.dll",
+        "lib/net462/Serilog.Enrichers.Environment.xml",
+        "lib/net471/Serilog.Enrichers.Environment.dll",
+        "lib/net471/Serilog.Enrichers.Environment.xml",
+        "lib/net6.0/Serilog.Enrichers.Environment.dll",
+        "lib/net6.0/Serilog.Enrichers.Environment.xml",
+        "lib/net8.0/Serilog.Enrichers.Environment.dll",
+        "lib/net8.0/Serilog.Enrichers.Environment.xml",
         "lib/netstandard2.0/Serilog.Enrichers.Environment.dll",
-        "serilog.enrichers.environment.2.3.0.nupkg.sha512",
+        "lib/netstandard2.0/Serilog.Enrichers.Environment.xml",
+        "serilog-enricher-nuget.png",
+        "serilog.enrichers.environment.3.0.1.nupkg.sha512",
         "serilog.enrichers.environment.nuspec"
+      ]
+    },
+    "Serilog.Enrichers.Process/3.0.0": {
+      "sha512": "/wPYz2PDCJGSHNI+Z0PAacZvrgZgrGduWqLXeC2wvW6pgGM/Bi45JrKy887MRcRPHIZVU0LAlkmJ7TkByC0boQ==",
+      "type": "package",
+      "path": "serilog.enrichers.process/3.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net462/Serilog.Enrichers.Process.dll",
+        "lib/net471/Serilog.Enrichers.Process.dll",
+        "lib/net6.0/Serilog.Enrichers.Process.dll",
+        "lib/net8.0/Serilog.Enrichers.Process.dll",
+        "lib/netstandard2.0/Serilog.Enrichers.Process.dll",
+        "serilog-enricher-nuget.png",
+        "serilog.enrichers.process.3.0.0.nupkg.sha512",
+        "serilog.enrichers.process.nuspec"
       ]
     },
     "Serilog.Exceptions/8.4.0": {
@@ -1263,27 +1417,40 @@
         "serilog.sinks.file.nuspec"
       ]
     },
-    "Serilog.Sinks.OpenTelemetry/4.1.0": {
-      "sha512": "zYKe2TIeWZE4sFUlbGAk94Ae46xgp20dsiw52m2KnRe34zBRQmb+GjYvcpciqMR3nskWebWODjJe2yRTDR3q8g==",
+    "SharpCompress/0.30.1": {
+      "sha512": "XqD4TpfyYGa7QTPzaGlMVbcecKnXy4YmYLDWrU+JIj7IuRNl7DH2END+Ll7ekWIY8o3dAMWLFDE1xdhfIWD1nw==",
       "type": "package",
-      "path": "serilog.sinks.opentelemetry/4.1.0",
+      "path": "sharpcompress/0.30.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "README.md",
-        "lib/net462/Serilog.Sinks.OpenTelemetry.dll",
-        "lib/net462/Serilog.Sinks.OpenTelemetry.xml",
-        "lib/net471/Serilog.Sinks.OpenTelemetry.dll",
-        "lib/net471/Serilog.Sinks.OpenTelemetry.xml",
-        "lib/net6.0/Serilog.Sinks.OpenTelemetry.dll",
-        "lib/net6.0/Serilog.Sinks.OpenTelemetry.xml",
-        "lib/net8.0/Serilog.Sinks.OpenTelemetry.dll",
-        "lib/net8.0/Serilog.Sinks.OpenTelemetry.xml",
-        "lib/netstandard2.0/Serilog.Sinks.OpenTelemetry.dll",
-        "lib/netstandard2.0/Serilog.Sinks.OpenTelemetry.xml",
-        "serilog-sink-nuget.png",
-        "serilog.sinks.opentelemetry.4.1.0.nupkg.sha512",
-        "serilog.sinks.opentelemetry.nuspec"
+        "lib/net461/SharpCompress.dll",
+        "lib/net5.0/SharpCompress.dll",
+        "lib/netcoreapp3.1/SharpCompress.dll",
+        "lib/netstandard2.0/SharpCompress.dll",
+        "lib/netstandard2.1/SharpCompress.dll",
+        "sharpcompress.0.30.1.nupkg.sha512",
+        "sharpcompress.nuspec"
+      ]
+    },
+    "Snappier/1.0.0": {
+      "sha512": "rFtK2KEI9hIe8gtx3a0YDXdHOpedIf9wYCEYtBEmtlyiWVX3XlCNV03JrmmAi/Cdfn7dxK+k0sjjcLv4fpHnqA==",
+      "type": "package",
+      "path": "snappier/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "COPYING.txt",
+        "lib/net5.0/Snappier.dll",
+        "lib/net5.0/Snappier.xml",
+        "lib/netcoreapp3.0/Snappier.dll",
+        "lib/netcoreapp3.0/Snappier.xml",
+        "lib/netstandard2.0/Snappier.dll",
+        "lib/netstandard2.0/Snappier.xml",
+        "lib/netstandard2.1/Snappier.dll",
+        "lib/netstandard2.1/Snappier.xml",
+        "snappier.1.0.0.nupkg.sha512",
+        "snappier.nuspec"
       ]
     },
     "StackExchange.Redis/2.7.27": {
@@ -1379,6 +1546,29 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "ZstdSharp.Port/0.7.3": {
+      "sha512": "U9Ix4l4cl58Kzz1rJzj5hoVTjmbx1qGMwzAcbv1j/d3NzrFaESIurQyg+ow4mivCgkE3S413y+U9k4WdnEIkRA==",
+      "type": "package",
+      "path": "zstdsharp.port/0.7.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net461/ZstdSharp.dll",
+        "lib/net5.0/ZstdSharp.dll",
+        "lib/net6.0/ZstdSharp.dll",
+        "lib/net7.0/ZstdSharp.dll",
+        "lib/netcoreapp3.1/ZstdSharp.dll",
+        "lib/netstandard2.0/ZstdSharp.dll",
+        "lib/netstandard2.1/ZstdSharp.dll",
+        "zstdsharp.port.0.7.3.nupkg.sha512",
+        "zstdsharp.port.nuspec"
+      ]
+    },
+    "MultiTenantApp.Observability/1.0.0": {
+      "type": "project",
+      "path": "../MultiTenantApp.Observability/MultiTenantApp.Observability.csproj",
+      "msbuildProject": "../MultiTenantApp.Observability/MultiTenantApp.Observability.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -1388,35 +1578,27 @@
       "Microsoft.AspNetCore.DataProtection.StackExchangeRedis >= 10.0.0",
       "Microsoft.Extensions.Caching.StackExchangeRedis >= 10.0.0",
       "MudBlazor >= 6.11.0",
-      "OpenTelemetry.Exporter.OpenTelemetryProtocol >= 1.14.0",
-      "OpenTelemetry.Extensions.Hosting >= 1.14.0",
-      "OpenTelemetry.Instrumentation.AspNetCore >= 1.14.0",
-      "OpenTelemetry.Instrumentation.Http >= 1.14.0",
-      "OpenTelemetry.Instrumentation.Runtime >= 1.14.0",
-      "Serilog.AspNetCore >= 10.0.0",
-      "Serilog.Enrichers.Environment >= 2.3.0",
-      "Serilog.Exceptions >= 8.4.0",
-      "Serilog.Sinks.OpenTelemetry >= 4.1.0"
+      "MultiTenantApp.Observability >= 1.0.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\": {},
+    "C:\\Users\\user\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Web\\MultiTenantApp.Web.csproj",
+      "projectUniqueName": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Web\\MultiTenantApp.Web.csproj",
       "projectName": "MultiTenantApp.Web",
-      "projectPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Web\\MultiTenantApp.Web.csproj",
-      "packagesPath": "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Web\\obj\\",
+      "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Web\\MultiTenantApp.Web.csproj",
+      "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+      "outputPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Web\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\eduardo.hipolito\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -1425,13 +1607,16 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://api.nuget.org/v3/index.json": {},
-        "https://nuget.pkg.github.com/GoGipsy/index.json": {}
+        "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\MultiTenantApp.Observability.csproj": {
+              "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\MultiTenantApp.Observability.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -1471,42 +1656,6 @@
           "MudBlazor": {
             "target": "Package",
             "version": "[6.11.0, )"
-          },
-          "OpenTelemetry.Exporter.OpenTelemetryProtocol": {
-            "target": "Package",
-            "version": "[1.14.0, )"
-          },
-          "OpenTelemetry.Extensions.Hosting": {
-            "target": "Package",
-            "version": "[1.14.0, )"
-          },
-          "OpenTelemetry.Instrumentation.AspNetCore": {
-            "target": "Package",
-            "version": "[1.14.0, )"
-          },
-          "OpenTelemetry.Instrumentation.Http": {
-            "target": "Package",
-            "version": "[1.14.0, )"
-          },
-          "OpenTelemetry.Instrumentation.Runtime": {
-            "target": "Package",
-            "version": "[1.14.0, )"
-          },
-          "Serilog.AspNetCore": {
-            "target": "Package",
-            "version": "[10.0.0, )"
-          },
-          "Serilog.Enrichers.Environment": {
-            "target": "Package",
-            "version": "[2.3.0, )"
-          },
-          "Serilog.Exceptions": {
-            "target": "Package",
-            "version": "[8.4.0, )"
-          },
-          "Serilog.Sinks.OpenTelemetry": {
-            "target": "Package",
-            "version": "[4.1.0, )"
           }
         },
         "imports": [
@@ -1945,5 +2094,17 @@
         }
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1902",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'OpenTelemetry.Api' 1.11.1 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-8785-wc3w-h8q6",
+      "libraryId": "OpenTelemetry.Api",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
 }

@@ -585,23 +585,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\": {},
+    "C:\\Users\\user\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
+      "projectUniqueName": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
       "projectName": "MultiTenantApp.Domain",
-      "projectPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
-      "packagesPath": "C:\\Users\\eduardo.hipolito\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\eduardo.hipolito\\Documents\\MyProjects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\obj\\",
+      "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
+      "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+      "outputPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\eduardo.hipolito\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -610,8 +610,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://api.nuget.org/v3/index.json": {},
-        "https://nuget.pkg.github.com/GoGipsy/index.json": {}
+        "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net10.0": {

@@ -28,73 +28,6 @@ services:
     volumes:
       - mongodb_data:/data/db
 
-  otel-collector:
-    image: otel/opentelemetry-collector-contrib:latest
-    command: [ "--config=/etc/otel-collector-config.yaml" ]
-    volumes:
-      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
-    ports:
-      - "4317:4317" # OTLP gRPC
-      - "4318:4318" # OTLP HTTP
-      - "8888:8888" # Collector metrics
-      - "8889:8889" # Prometheus exporter
-    depends_on:
-      - tempo
-      - loki
-      - prometheus
-
-  prometheus:
-    image: prom/prometheus:latest
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
-    ports:
-      - "9090:9090"
-
-  tempo:
-    image: grafana/tempo:latest
-    command: [ "-config.file=/etc/tempo.yaml" ]
-    volumes:
-      - ./tempo.yaml:/etc/tempo.yaml
-      - tempo_data:/tmp/tempo
-      - tempo_data:/tmp/tempo/blocks
-      - tempo_data:/tmp/tempo/wal
-    ports:
-      - "3200:3200" # Tempo HTTP
-      - "4317" # OTLP gRPC (internal)
-      - "4318" # OTLP HTTP (internal)
-
-  loki:
-    image: grafana/loki:latest
-    user: root
-    ports:
-      - "3100:3100"
-    volumes:
-      - loki_data:/loki
-
-  grafana:
-    image: grafana/grafana:latest
-    environment:
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_SECURITY_ADMIN_USER=admin
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./grafana/provisioning:/etc/grafana/provisioning
-      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
-    ports:
-      - "3000:3000"
-    depends_on:
-      - prometheus
-      - tempo
-      - loki
-
   api:
     build:
       context: .
@@ -135,7 +68,7 @@ services:
       - FileStorage__FileBrowserUsername=admin
       - FileStorage__FileBrowserPassword=admin
       - AppUrl=http://web:8080
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - Observability__OtlpEndpoint=http://host.docker.internal:4317
       - ASPNETCORE_ENVIRONMENT=Development
       - FileStorage__S3__AccessKey=minioadmin
       - FileStorage__S3__SecretKey=minioadmin123
@@ -148,7 +81,6 @@ services:
       - postgres
       - redis
       - mongodb
-      - otel-collector
 
   web:
     build:
@@ -158,7 +90,7 @@ services:
       - "5002:8080"
     environment:
       - ApiBaseUrl=http://api:8080
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - Observability__OtlpEndpoint=http://host.docker.internal:4317
       - ASPNETCORE_ENVIRONMENT=Development
       - Cache__Enabled=true
       - Cache__Redis__ConnectionString=redis:6379
@@ -166,7 +98,6 @@ services:
       - Cache__Defaults__DefaultExpirationMinutes=60
     depends_on:
       - api
-      - otel-collector
 
   hangfire:
     build:
@@ -179,6 +110,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - Hangfire__Dashboard__Title=MultiTenantApp - Background Jobs
       - Hangfire__Server__WorkerCount=5
+      - Observability__OtlpEndpoint=http://host.docker.internal:4317
     depends_on:
       - postgres
 
@@ -207,8 +139,5 @@ volumes:
   postgres_data:
   redis_data:
   mongodb_data:
-  prometheus_data:
-  tempo_data:
-  loki_data:
-  grafana_data:
   mailhog_data:
+

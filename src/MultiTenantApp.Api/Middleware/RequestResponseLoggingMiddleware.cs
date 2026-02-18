@@ -126,6 +126,9 @@ namespace MultiTenantApp.Api.Middleware
                 }
                 else
                 {
+                    // Even when we don't log the body, we must rewind the stream
+                    // so that the actual response content is sent to the client.
+                    responseBody.Seek(0, SeekOrigin.Begin);
                     await responseBody.CopyToAsync(originalBodyStream);
                 }
 

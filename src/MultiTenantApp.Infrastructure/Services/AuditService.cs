@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using MultiTenantApp.Domain.Entities;
 using MultiTenantApp.Domain.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MultiTenantApp.Infrastructure.Services
@@ -11,27 +12,10 @@ namespace MultiTenantApp.Infrastructure.Services
     {
         private readonly IMongoCollection<AuditLog> _auditLogs;
 
-        public AuditService(IConfiguration configuration)
+        public AuditService(IMongoClient mongoClient)
         {
-            var connectionString = configuration.GetConnectionString("MongoDb");
-            var mongoClient = MongoDbConfiguration.CreateClient(connectionString);
             var mongoDatabase = mongoClient.GetDatabase("MultiTenantAuditDb");
             _auditLogs = mongoDatabase.GetCollection<AuditLog>("AuditLogs");
-
-            // Ensure indexes for performance
-            CreateIndexes();
-        }
-
-        private void CreateIndexes()
-        {
-            var indexKeysDefinition = Builders<AuditLog>.IndexKeys
-                .Ascending(x => x.TenantId)
-                .Ascending(x => x.EntityId)
-                .Ascending(x => x.EntityType)
-                .Descending(x => x.Timestamp);
-
-            var indexModel = new CreateIndexModel<AuditLog>(indexKeysDefinition);
-            _auditLogs.Indexes.CreateOne(indexModel);
         }
 
         public async Task CreateAuditLogAsync(AuditLog auditLog)

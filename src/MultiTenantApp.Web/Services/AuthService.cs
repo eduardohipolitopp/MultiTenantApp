@@ -30,13 +30,44 @@ namespace MultiTenantApp.Web.Services
         {
             var response = await _httpClient.PostAsJsonAsync("api/Auth/login", loginModel);
 
+            // Read raw content once so we can both inspect and deserialize
+            var rawContent = await response.Content.ReadAsStringAsync();
+
             if (!response.IsSuccessStatusCode)
             {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new System.Exception(error);
+                // If API returned a structured error JSON, keep it; otherwise wrap in a friendly message
+                var message = string.IsNullOrWhiteSpace(rawContent)
+                    ? $"Login failed with status code {(int)response.StatusCode} ({response.StatusCode})."
+                    : rawContent;
+
+                throw new System.Exception(message);
             }
 
-            var loginResult = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
+            if (string.IsNullOrWhiteSpace(rawContent))
+            {
+                throw new System.Exception("Login API returned success but with an empty response body. Expected a JSON with token information.");
+            }
+
+            LoginResponseDto? loginResult;
+            try
+            {
+                loginResult = System.Text.Json.JsonSerializer.Deserialize<LoginResponseDto>(
+                    rawContent,
+                    new System.Text.Json.JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+            }
+            catch (System.Text.Json.JsonException ex)
+            {
+                throw new System.Exception($"Failed to parse login response as JSON. Raw response: {rawContent}", ex);
+            }
+
+            if (loginResult == null || string.IsNullOrWhiteSpace(loginResult.Token))
+            {
+                throw new System.Exception($"Login API returned an invalid response. Raw response: {rawContent}");
+            }
+
             await _tokenProvider.SetTokenAsync(loginResult.Token);
             await _localStorage.SetItemAsync("authToken", loginResult.Token);
             await _localStorage.SetItemAsync("tenantId", loginModel.TenantId); // Store tenant for future requests if needed

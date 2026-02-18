@@ -1,7 +1,8 @@
 using Hangfire;
 using Hangfire.PostgreSql;
 using Hangfire.MemoryStorage;
-using Serilog;
+using OpenTelemetry;
+using MultiTenantApp.Observability;
 using MultiTenantApp.Infrastructure.Jobs;
 using MultiTenantApp.Application.Interfaces;
 using MultiTenantApp.Application.Services;
@@ -10,19 +11,14 @@ using MultiTenantApp.Infrastructure.Services;
 using MultiTenantApp.Infrastructure.Persistence;
 using MultiTenantApp.Hangfire;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
+using MongoDB.Driver.Core.Extensions.DiagnosticSources;
+using MultiTenantApp.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Serilog Configuration
-builder.Host.UseSerilog((context, configuration) =>
-{
-    configuration
-        .MinimumLevel.Debug()
-        .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Information)
-        .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
-        .Enrich.FromLogContext()
-        .WriteTo.Console();
-});
+// Serilog with OpenTelemetry
+builder.Host.UseSerilogObservability();
 
 // Database Context (needed for Hangfire PostgreSQL storage)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -44,19 +40,43 @@ builder.Services.AddHangfireServer(options =>
     options.WorkerCount = builder.Configuration.GetValue<int>("Hangfire:Server:WorkerCount", Environment.ProcessorCount * 5);
 });
 
+// Configure MongoDB serialization conventions
+MongoDbConfiguration.Configure();
+
+// Register MongoDB Client as Singleton
+var mongoConnectionString = builder.Configuration.GetConnectionString("MongoDb");
+builder.Services.AddSingleton<IMongoClient>(sp =>
+{
+    var settings = MongoClientSettings.FromConnectionString(mongoConnectionString);
+    
+    // Add OpenTelemetry instrumentation
+    settings.ClusterConfigurator = cb => cb.Subscribe(new DiagnosticsActivityEventSubscriber());
+    
+    return new MongoClient(settings);
+});
+
 // Dependency Injection for Multi-tenancy and Infrastructure
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITenantProvider, MultiTenantApp.Infrastructure.Services.TenantProvider>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(MultiTenantApp.Infrastructure.Repositories.Repository<>));
 builder.Services.AddScoped<IUnitOfWork, MultiTenantApp.Infrastructure.Repositories.UnitOfWork>();
+builder.Services.AddScoped<IAuditService, MultiTenantApp.Infrastructure.Services.AuditService>();
+builder.Services.AddScoped<ICurrentUserService, MultiTenantApp.Infrastructure.Services.CurrentUserService>();
 
 // Dependency Injection for Jobs
 builder.Services.AddScoped<SampleRecurringJob>();
+
+// OpenTelemetry
+builder.Services.AddOpenTelemetryObservability(builder.Configuration);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
+// Test Observability
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("Observability integrated successfully in MultiTenantApp.Hangfire at {Time}", DateTime.UtcNow);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -70,15 +90,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Hangfire Dashboard (only in Development for security)
-if (app.Environment.IsDevelopment())
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
-    app.UseHangfireDashboard("/hangfire", new DashboardOptions
-    {
-        Authorization = new[] { new HangfireAuthorizationFilter() },
-        DashboardTitle = builder.Configuration["Hangfire:Dashboard:Title"] ?? "MultiTenantApp - Background Jobs"
-    });
-}
+    Authorization = new[] { new HangfireAuthorizationFilter() },
+    DashboardTitle = builder.Configuration["Hangfire:Dashboard:Title"] ?? "MultiTenantApp - Background Jobs"
+});
 
 app.UseAuthorization();
 
@@ -99,7 +115,6 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "An error occurred during Hangfire startup.");
     }
 }
