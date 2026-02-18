@@ -1885,6 +1885,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
         "dependencies": {
+          "Hangfire.Core": "1.8.17",
           "MongoDB.Driver.Core.Extensions.DiagnosticSources": "2.0.0",
           "OpenTelemetry.Exporter.OpenTelemetryProtocol": "1.11.0",
           "OpenTelemetry.Extensions.Hosting": "1.11.0",
@@ -1905,7 +1906,10 @@
         },
         "runtime": {
           "bin/placeholder/MultiTenantApp.Observability.dll": {}
-        }
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
       }
     }
   },
@@ -5231,45 +5235,38 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\user\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\EduardoHipolito\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj",
+      "projectUniqueName": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj",
       "projectName": "MultiTenantApp.Api",
-      "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj",
-      "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\obj\\",
+      "projectPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj",
+      "packagesPath": "C:\\Users\\EduardoHipolito\\.nuget\\packages\\",
+      "outputPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\EduardoHipolito\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
           "projectReferences": {
-            "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj": {
-              "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj"
+            "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj": {
+              "projectPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj"
             },
-            "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj": {
-              "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj"
+            "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj": {
+              "projectPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj"
             },
-            "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\MultiTenantApp.Observability.csproj": {
-              "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\MultiTenantApp.Observability.csproj"
+            "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\MultiTenantApp.Observability.csproj": {
+              "projectPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\MultiTenantApp.Observability.csproj"
             }
           }
         }
@@ -5374,7 +5371,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -5797,7 +5794,7 @@
       "code": "NU1510",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "PackageReference Microsoft.AspNetCore.ResponseCompression will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "message": "PackageReference Microsoft.AspNetCore.ResponseCompression não será podado. Considere remover este pacote das dependências, pois ele provavelmente é desnecessário.",
       "libraryId": "Microsoft.AspNetCore.ResponseCompression",
       "targetGraphs": [
         "net10.0"
@@ -5807,7 +5804,7 @@
       "code": "NU1603",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "MultiTenantApp.Api depends on Microsoft.AspNetCore.ResponseCompression (>= 2.2.2) but Microsoft.AspNetCore.ResponseCompression 2.2.2 was not found. Microsoft.AspNetCore.ResponseCompression 2.3.0 was resolved instead.",
+      "message": "MultiTenantApp.Api depende de Microsoft.AspNetCore.ResponseCompression (>= 2.2.2), mas Microsoft.AspNetCore.ResponseCompression 2.2.2 não foi encontrado. Microsoft.AspNetCore.ResponseCompression 2.3.0 foi resolvido em vez disso.",
       "libraryId": "Microsoft.AspNetCore.ResponseCompression",
       "targetGraphs": [
         "net10.0"
@@ -5817,7 +5814,7 @@
       "code": "NU1902",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'KubernetesClient' 15.0.1 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-w7r3-mgwf-4mqq",
+      "message": "O pacote 'KubernetesClient' 15.0.1 tem uma moderado vulnerabilidade de gravidade conhecida, https://github.com/advisories/GHSA-w7r3-mgwf-4mqq",
       "libraryId": "KubernetesClient",
       "targetGraphs": [
         "net10.0"
@@ -5827,7 +5824,7 @@
       "code": "NU1902",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Package 'OpenTelemetry.Api' 1.11.1 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-8785-wc3w-h8q6",
+      "message": "O pacote 'OpenTelemetry.Api' 1.11.1 tem uma moderado vulnerabilidade de gravidade conhecida, https://github.com/advisories/GHSA-8785-wc3w-h8q6",
       "libraryId": "OpenTelemetry.Api",
       "targetGraphs": [
         "net10.0"

@@ -312,6 +312,9 @@ app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseMiddleware<RateLimitMiddleware>();
 app.UseMiddleware<TenantMiddleware>();
 
+// Observability: log all exceptions (innermost so it catches first, then rethrows for GlobalExceptionHandler)
+app.UseExceptionLogging();
+
 // Health Checks
 app.MapHealthChecks("/health", new HealthCheckOptions
 {
@@ -345,6 +348,8 @@ if (app.Environment.IsDevelopment())
 // Access at: http://localhost:8081/hangfire (when running the Hangfire service)
 
 app.MapControllers();
+// Endpoint para validar logs de exceção (Observability)
+app.MapGet("/api/diagnostics/throw", (HttpContext _) => throw new InvalidOperationException("Test exception for observability logs."));
 
 // Auto-migrate database (only in Development)
 // WARNING: Do not enable this in production! Apply migrations manually.

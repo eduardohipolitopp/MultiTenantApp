@@ -90,6 +90,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// Observability: log all HTTP and Hangfire job exceptions
+app.UseExceptionLogging();
+app.UseHangfireExceptionLogging();
+
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
     Authorization = new[] { new HangfireAuthorizationFilter() },

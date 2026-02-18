@@ -1,4 +1,4 @@
-﻿using Blazored.LocalStorage;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -118,6 +118,9 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 app.UseRouting();
 app.UseRequestLocalization(localizationOptions);
+
+// Observability: log all exceptions before they are handled
+app.UseExceptionLogging();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");

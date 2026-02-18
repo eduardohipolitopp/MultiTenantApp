@@ -1,7 +1,10 @@
+using Hangfire;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MultiTenantApp.Observability.Middleware;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -130,6 +133,26 @@ public static class ObservabilityExtensions
         }
 
         return services;
+    }
+
+    /// <summary>
+    /// Adds the exception logging middleware to the pipeline. Place it as the innermost middleware
+    /// (just before MapControllers/MapRazorPages/MapBlazorHub) so all request exceptions are logged before being handled.
+    /// </summary>
+    public static IApplicationBuilder UseExceptionLogging(this IApplicationBuilder app)
+    {
+        return app.UseMiddleware<ExceptionLoggingMiddleware>();
+    }
+
+    /// <summary>
+    /// Registers the Hangfire exception logging filter so all job failures are logged.
+    /// Call after AddHangfire and before app.Run() when using Hangfire.
+    /// </summary>
+    public static IApplicationBuilder UseHangfireExceptionLogging(this IApplicationBuilder app)
+    {
+        var logger = app.ApplicationServices.GetRequiredService<ILogger<Hangfire.HangfireExceptionLoggingFilter>>();
+        GlobalJobFilters.Filters.Add(new Hangfire.HangfireExceptionLoggingFilter(logger));
+        return app;
     }
 
     private static ObservabilityOptions GetOptions(IConfiguration configuration, Action<ObservabilityOptions>? configureOptions)
