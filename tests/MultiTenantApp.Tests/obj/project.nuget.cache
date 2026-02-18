@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "NNNhw8ZAGRM=",
+  "dgSpecHash": "Z/pVuYb0wd4=",
   "success": true,
-  "projectFilePath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\tests\\MultiTenantApp.Tests\\MultiTenantApp.Tests.csproj",
+  "projectFilePath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\tests\\MultiTenantApp.Tests\\MultiTenantApp.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\EduardoHipolito\\.nuget\\packages\\aspnetcore.healthchecks.mongodb\\9.0.0\\aspnetcore.healthchecks.mongodb.9.0.0.nupkg.sha512",
     "C:\\Users\\EduardoHipolito\\.nuget\\packages\\aspnetcore.healthchecks.npgsql\\9.0.0\\aspnetcore.healthchecks.npgsql.9.0.0.nupkg.sha512",
@@ -168,9 +168,9 @@
       "code": "NU1902",
       "level": "Warning",
       "message": "O pacote 'KubernetesClient' 15.0.1 tem uma moderado vulnerabilidade de gravidade conhecida, https://github.com/advisories/GHSA-w7r3-mgwf-4mqq",
-      "projectPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\tests\\MultiTenantApp.Tests\\MultiTenantApp.Tests.csproj",
+      "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\tests\\MultiTenantApp.Tests\\MultiTenantApp.Tests.csproj",
       "warningLevel": 1,
-      "filePath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\tests\\MultiTenantApp.Tests\\MultiTenantApp.Tests.csproj",
+      "filePath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\tests\\MultiTenantApp.Tests\\MultiTenantApp.Tests.csproj",
       "libraryId": "KubernetesClient",
       "targetGraphs": [
         "net10.0"
@@ -180,9 +180,9 @@
       "code": "NU1902",
       "level": "Warning",
       "message": "O pacote 'OpenTelemetry.Api' 1.11.1 tem uma moderado vulnerabilidade de gravidade conhecida, https://github.com/advisories/GHSA-8785-wc3w-h8q6",
-      "projectPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\tests\\MultiTenantApp.Tests\\MultiTenantApp.Tests.csproj",
+      "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\tests\\MultiTenantApp.Tests\\MultiTenantApp.Tests.csproj",
       "warningLevel": 1,
-      "filePath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\tests\\MultiTenantApp.Tests\\MultiTenantApp.Tests.csproj",
+      "filePath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\tests\\MultiTenantApp.Tests\\MultiTenantApp.Tests.csproj",
       "libraryId": "OpenTelemetry.Api",
       "targetGraphs": [
         "net10.0"

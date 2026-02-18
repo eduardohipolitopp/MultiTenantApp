@@ -90,6 +90,21 @@ A stack de observabilidade agora está separada em seu próprio arquivo `docker-
 -   **tempo**: Armazenamento de traces.
 -   **grafana**: Visualização (http://localhost:3000).
 
+### Logs no Loki / Grafana
+
+Os logs enviados via OTLP são gravados no Loki com o **body em JSON** (uma linha por evento), para que o campo **line** contenha o objeto completo. No Grafana Explore (Loki):
+
+1. Use o parser JSON na query para extrair os campos:
+   ```logql
+   {service_name="MultiTenantApp.Api"} | json
+   ```
+2. Filtre por nível (e outros campos):
+   ```logql
+   {service_name="MultiTenantApp.Api"} | json | @l="Error"
+   ```
+
+Campos principais no JSON: `@l` (level), `@m` (mensagem), `@t` (timestamp), `CategoryName`, além dos atributos do log.
+
 ---
 
 ## Estrutura de Arquivos

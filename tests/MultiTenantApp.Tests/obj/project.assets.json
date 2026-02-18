@@ -3242,6 +3242,7 @@
           "Serilog.Enrichers.Environment": "3.0.1",
           "Serilog.Enrichers.Process": "3.0.0",
           "Serilog.Exceptions": "8.4.0",
+          "Serilog.Formatting.Compact": "3.0.0",
           "Serilog.Sinks.Console": "6.1.1"
         },
         "compile": {
@@ -8263,11 +8264,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\tests\\MultiTenantApp.Tests\\MultiTenantApp.Tests.csproj",
+      "projectUniqueName": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\tests\\MultiTenantApp.Tests\\MultiTenantApp.Tests.csproj",
       "projectName": "MultiTenantApp.Tests",
-      "projectPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\tests\\MultiTenantApp.Tests\\MultiTenantApp.Tests.csproj",
+      "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\tests\\MultiTenantApp.Tests\\MultiTenantApp.Tests.csproj",
       "packagesPath": "C:\\Users\\EduardoHipolito\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\tests\\MultiTenantApp.Tests\\obj\\",
+      "outputPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\tests\\MultiTenantApp.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\EduardoHipolito\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -8282,14 +8283,14 @@
         "net10.0": {
           "targetAlias": "net10.0",
           "projectReferences": {
-            "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj": {
-              "projectPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj"
+            "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj": {
+              "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj"
             },
-            "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj": {
-              "projectPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj"
+            "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj": {
+              "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj"
             },
-            "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
-              "projectPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj"
+            "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
+              "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj"
             }
           }
         }

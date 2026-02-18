@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "fVo2ObFI+ic=",
+  "dgSpecHash": "BCJI46tY2+0=",
   "success": true,
-  "projectFilePath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Web\\MultiTenantApp.Web.csproj",
+  "projectFilePath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Web\\MultiTenantApp.Web.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\EduardoHipolito\\.nuget\\packages\\blazored.localstorage\\4.5.0\\blazored.localstorage.4.5.0.nupkg.sha512",
     "C:\\Users\\EduardoHipolito\\.nuget\\packages\\dnsclient\\1.6.1\\dnsclient.1.6.1.nupkg.sha512",
@@ -51,9 +51,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "O pacote 'Newtonsoft.Json' 11.0.1 tem uma alta vulnerabilidade de gravidade conhecida, https://github.com/advisories/GHSA-5crp-9r3c-p9vr",
-      "projectPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Web\\MultiTenantApp.Web.csproj",
+      "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Web\\MultiTenantApp.Web.csproj",
       "warningLevel": 1,
-      "filePath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Web\\MultiTenantApp.Web.csproj",
+      "filePath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Web\\MultiTenantApp.Web.csproj",
       "libraryId": "Newtonsoft.Json",
       "targetGraphs": [
         "net10.0"
@@ -63,9 +63,9 @@
       "code": "NU1902",
       "level": "Warning",
       "message": "O pacote 'OpenTelemetry.Api' 1.11.1 tem uma moderado vulnerabilidade de gravidade conhecida, https://github.com/advisories/GHSA-8785-wc3w-h8q6",
-      "projectPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Web\\MultiTenantApp.Web.csproj",
+      "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Web\\MultiTenantApp.Web.csproj",
       "warningLevel": 1,
-      "filePath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Web\\MultiTenantApp.Web.csproj",
+      "filePath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Web\\MultiTenantApp.Web.csproj",
       "libraryId": "OpenTelemetry.Api",
       "targetGraphs": [
         "net10.0"

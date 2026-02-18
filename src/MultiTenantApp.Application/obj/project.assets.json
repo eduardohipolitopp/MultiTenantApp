@@ -1440,11 +1440,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj",
+      "projectUniqueName": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj",
       "projectName": "MultiTenantApp.Application",
-      "projectPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj",
+      "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj",
       "packagesPath": "C:\\Users\\EduardoHipolito\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\obj\\",
+      "outputPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\EduardoHipolito\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -1459,8 +1459,8 @@
         "net10.0": {
           "targetAlias": "net10.0",
           "projectReferences": {
-            "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
-              "projectPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj"
+            "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
+              "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj"
             }
           }
         }

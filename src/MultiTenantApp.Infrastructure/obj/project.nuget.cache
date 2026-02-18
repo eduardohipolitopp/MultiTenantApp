@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "KW4DjmMRg4Y=",
+  "dgSpecHash": "CX0UJipurVY=",
   "success": true,
-  "projectFilePath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj",
+  "projectFilePath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\EduardoHipolito\\.nuget\\packages\\awssdk.core\\3.7.300.4\\awssdk.core.3.7.300.4.nupkg.sha512",
     "C:\\Users\\EduardoHipolito\\.nuget\\packages\\awssdk.s3\\3.7.300.4\\awssdk.s3.3.7.300.4.nupkg.sha512",
@@ -88,10 +88,10 @@
     {
       "code": "NU1902",
       "level": "Warning",
-      "message": "O pacote 'OpenTelemetry.Api' 1.11.0 tem uma moderado vulnerabilidade de gravidade conhecida, https://github.com/advisories/GHSA-8785-wc3w-h8q6",
-      "projectPath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj",
+      "message": "Package 'OpenTelemetry.Api' 1.11.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-8785-wc3w-h8q6",
+      "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj",
       "warningLevel": 1,
-      "filePath": "c:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj",
+      "filePath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj",
       "libraryId": "OpenTelemetry.Api",
       "targetGraphs": [
         "net10.0"

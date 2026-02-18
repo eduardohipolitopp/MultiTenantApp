@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MultiTenantApp.Observability.Logging;
 using MultiTenantApp.Observability.Middleware;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
@@ -13,6 +14,7 @@ using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
+using Serilog.Formatting.Compact;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -52,7 +54,15 @@ public static class ObservabilityExtensions
 
             if (options.Console.Enabled)
             {
-                loggerConfiguration.WriteTo.Console(outputTemplate: options.Console.OutputTemplate ?? "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
+                // JSON format so Grafana/Loki can parse level, message, and properties (filter by level, etc.)
+                if (options.Console.UseJsonFormat)
+                {
+                    loggerConfiguration.WriteTo.Console(new CompactJsonFormatter());
+                }
+                else
+                {
+                    loggerConfiguration.WriteTo.Console(outputTemplate: options.Console.OutputTemplate ?? "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
+                }
             }
         }, writeToProviders: true);
 
@@ -125,6 +135,8 @@ public static class ObservabilityExtensions
         {
             otelBuilder.WithLogging(logging =>
             {
+                // So Loki "line" is full JSON; use "| json" in LogQL to filter by @l (level), @m (message), etc.
+                logging.AddProcessor(new JsonBodyLogRecordProcessor());
                 logging.AddOtlpExporter(opt =>
                 {
                     opt.Endpoint = new Uri(options.OtlpEndpoint!);

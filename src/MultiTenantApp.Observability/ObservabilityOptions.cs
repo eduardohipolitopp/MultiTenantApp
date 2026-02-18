@@ -22,6 +22,11 @@ public class ObservabilityOptions
     public class ConsoleOptions
     {
         public bool Enabled { get; set; } = true;
+        /// <summary>
+        /// When true, logs are written as JSON (one object per line) so Grafana/Loki can filter by level and other fields.
+        /// When false, uses OutputTemplate for human-readable text.
+        /// </summary>
+        public bool UseJsonFormat { get; set; } = true;
         public string? OutputTemplate { get; set; }
     }
 
