@@ -1,0 +1,39 @@
+@using MultiTenantApp.Web.Models.DTOs
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success">
+            <MudTextField T="string" Label="Name" @bind-Value="Model.Name" Required="true" RequiredError="Name is required!" MaxLength="100" />
+            <MudTextField T="string" Label="Manufacturer" @bind-Value="Model.Manufacturer" MaxLength="100" />
+            <MudNumericField Label="Application Age (Months)" @bind-Value="Model.ApplicationAgeMonths" Min="0" />
+            <MudNumericField Label="Doses" @bind-Value="Model.Doses" Min="1" Required="true" />
+            <MudNumericField Label="Dose Interval (Days)" @bind-Value="Model.DoseIntervalDays" Min="0" />
+            <MudCheckBox Label="Requires Booster" @bind-Checked="Model.RequiresBooster" Color="Color.Primary" />
+            <MudTextField T="string" Label="Notes" @bind-Value="Model.Notes" Lines="3" MaxLength="1000" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit" Disabled="@(!success)">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public CreateVaccineDto Model { get; set; } = new();
+
+    private bool success;
+    private MudForm form;
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private void Submit()
+    {
+        form.Validate();
+        if (success)
+        {
+            MudDialog.Close(DialogResult.Ok(Model));
+        }
+    }
+}

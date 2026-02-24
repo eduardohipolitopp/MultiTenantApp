@@ -7,6 +7,7 @@ using MultiTenantApp.Domain.Entities;
 using MultiTenantApp.Domain.Interfaces;
 using MultiTenantApp.Infrastructure.Services;
 using static MongoDB.Driver.WriteConcern;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Text.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections;
@@ -35,6 +36,17 @@ namespace MultiTenantApp.Infrastructure.Persistence
         public DbSet<Tenant> Tenants { get; set; }
         public DbSet<Rule> Rules { get; set; }
         public DbSet<UserRule> UserRules { get; set; }
+        public DbSet<Patient> Patients { get; set; }
+    public DbSet<Vaccine> Vaccines { get; set; }
+    public DbSet<VaccineBatch> VaccineBatches { get; set; }
+    public DbSet<Appointment> Appointments { get; set; }
+    public DbSet<Message> Messages { get; set; }
+    public DbSet<Finance> Finances { get; set; }
+    public DbSet<VaccineApplication> VaccineApplications { get; set; }
+    public DbSet<CommissionMonthlyClosing> CommissionMonthlyClosings { get; set; }
+    public DbSet<HomeVisitMonthlyClosing> HomeVisitMonthlyClosings { get; set; }
+    public DbSet<DashboardDailySnapshot> DashboardDailySnapshots { get; set; }
+    public DbSet<ClinicSettings> ClinicSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -52,6 +64,39 @@ namespace MultiTenantApp.Infrastructure.Persistence
 
             builder.Entity<UserRule>().HasQueryFilter(e =>
                 _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+
+            builder.Entity<Patient>().HasQueryFilter(e =>
+                _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+
+        builder.Entity<Vaccine>().HasQueryFilter(e =>
+            _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+
+        builder.Entity<VaccineBatch>().HasQueryFilter(e =>
+            _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+
+            builder.Entity<Appointment>().HasQueryFilter(e =>
+                _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+
+            builder.Entity<Message>().HasQueryFilter(e =>
+                _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+
+            builder.Entity<Finance>().HasQueryFilter(e =>
+                _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+
+            builder.Entity<VaccineApplication>().HasQueryFilter(e =>
+            _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+
+        builder.Entity<CommissionMonthlyClosing>().HasQueryFilter(e =>
+            _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+
+        builder.Entity<HomeVisitMonthlyClosing>().HasQueryFilter(e =>
+            _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+
+        builder.Entity<DashboardDailySnapshot>().HasQueryFilter(e =>
+            _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
+
+        builder.Entity<ClinicSettings>().HasQueryFilter(e =>
+            _tenantProvider.GetTenantId() == null || e.TenantId == _tenantProvider.GetTenantId());
 
             // Configure Rule entity
             builder.Entity<Rule>(entity =>
@@ -78,6 +123,73 @@ namespace MultiTenantApp.Infrastructure.Persistence
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasIndex(e => new { e.UserId, e.RuleId }).IsUnique();
+            });
+
+            // Configure Patient entity
+            builder.Entity<Patient>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Phone).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.Email).HasMaxLength(150);
+                entity.Property(e => e.GuardianName).HasMaxLength(100);
+                entity.Property(e => e.Address).HasMaxLength(500);
+                entity.Property(e => e.Notes).HasMaxLength(1000);
+            });
+
+            // Configure Vaccine entity
+            builder.Entity<Vaccine>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(v => v.Name).IsRequired().HasMaxLength(100);
+                entity.Property(v => v.Manufacturer).HasMaxLength(100);
+                entity.Property(v => v.Notes).HasMaxLength(1000);
+            });
+
+            builder.ApplyConfiguration(new VaccineBatchConfiguration());
+            builder.ApplyConfiguration(new AppointmentConfiguration());
+            builder.ApplyConfiguration(new MessageConfiguration());
+            builder.ApplyConfiguration(new FinanceConfiguration());
+            builder.ApplyConfiguration(new VaccineApplicationConfiguration());
+
+        builder.Entity<CommissionMonthlyClosing>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.CommissionAmount).HasPrecision(18, 2);
+            e.HasOne(x => x.Professional).WithMany().HasForeignKey(x => x.ProfessionalId);
+        });
+
+        builder.Entity<HomeVisitMonthlyClosing>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.BonusAmount).HasPrecision(18, 2);
+            e.HasOne(x => x.Professional).WithMany().HasForeignKey(x => x.ProfessionalId);
+        });
+
+        builder.Entity<DashboardDailySnapshot>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.RevenueToday).HasPrecision(18, 2);
+        });
+
+        builder.Entity<ClinicSettings>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.CommissionPercentage).HasPrecision(18, 2);
+            e.Property(x => x.HomeVisitBonus).HasPrecision(18, 2);
+        });
+        // Configure VaccineBatch entity
+            builder.Entity<VaccineBatch>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(v => v.BatchNumber).IsRequired().HasMaxLength(50);
+                entity.Property(v => v.Supplier).HasMaxLength(100);
+                entity.Property(v => v.Notes).HasMaxLength(1000);
+                
+                entity.HasOne(v => v.Vaccine)
+                      .WithMany()
+                      .HasForeignKey(v => v.VaccineId)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
         }
 
@@ -313,6 +425,140 @@ namespace MultiTenantApp.Infrastructure.Persistence
                 return;
 
             await _auditService.CreateAuditLogsBatchAsync(auditEntries);
+        }
+    }
+
+    public class VaccineBatchConfiguration : IEntityTypeConfiguration<VaccineBatch>
+    {
+        public void Configure(EntityTypeBuilder<VaccineBatch> builder)
+        {
+            builder.HasKey(v => v.Id);
+            builder.Property(v => v.BatchNumber).IsRequired().HasMaxLength(50);
+            builder.Property(v => v.Supplier).HasMaxLength(100);
+            builder.Property(v => v.Notes).HasMaxLength(1000);
+
+            builder.HasOne(v => v.Vaccine)
+                  .WithMany()
+                  .HasForeignKey(v => v.VaccineId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        }
+    }
+
+    public class AppointmentConfiguration : IEntityTypeConfiguration<Appointment>
+    {
+        public void Configure(EntityTypeBuilder<Appointment> builder)
+        {
+            builder.HasKey(a => a.Id);
+
+            builder.HasOne(a => a.Patient)
+                .WithMany()
+                .HasForeignKey(a => a.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(a => a.Vaccine)
+                .WithMany()
+                .HasForeignKey(a => a.VaccineId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(a => a.Professional)
+                .WithMany()
+                .HasForeignKey(a => a.ProfessionalId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(a => a.ScheduledDateTime)
+                .IsRequired();
+
+            builder.Property(a => a.Status)
+                .HasConversion<string>();
+
+            builder.Property(a => a.Type)
+                .HasConversion<string>();
+        }
+    }
+
+    public class MessageConfiguration : IEntityTypeConfiguration<Message>
+    {
+        public void Configure(EntityTypeBuilder<Message> builder)
+        {
+            builder.HasKey(m => m.Id);
+
+            builder.Property(m => m.Recipient)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            builder.Property(m => m.Content)
+                .IsRequired();
+
+            builder.Property(m => m.Channel)
+                .HasConversion<string>();
+
+            builder.Property(m => m.Status)
+                .HasConversion<string>();
+
+            builder.HasOne(m => m.Patient)
+                .WithMany()
+                .HasForeignKey(m => m.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+    }
+    public class FinanceConfiguration : IEntityTypeConfiguration<Finance>
+    {
+        public void Configure(EntityTypeBuilder<Finance> builder)
+        {
+            builder.HasKey(f => f.Id);
+
+            builder.Property(f => f.Amount)
+                .HasPrecision(18, 2);
+
+            builder.Property(f => f.CommissionCalculated)
+                .HasPrecision(18, 2);
+
+            builder.Property(f => f.Type)
+                .HasConversion<string>();
+
+            builder.HasOne(f => f.Patient)
+                .WithMany()
+                .HasForeignKey(f => f.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(f => f.Professional)
+                .WithMany()
+                .HasForeignKey(f => f.ProfessionalId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(f => f.Vaccine)
+                .WithMany()
+                .HasForeignKey(f => f.VaccineId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+    }
+
+    public class VaccineApplicationConfiguration : IEntityTypeConfiguration<VaccineApplication>
+    {
+        public void Configure(EntityTypeBuilder<VaccineApplication> builder)
+        {
+            builder.HasKey(va => va.Id);
+
+            builder.Property(va => va.PaidAmount)
+                .HasPrecision(18, 2);
+
+            builder.Property(va => va.ApplicationType)
+                .HasConversion<string>();
+
+            builder.HasOne(va => va.Patient)
+                .WithMany()
+                .HasForeignKey(va => va.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(va => va.VaccineBatch)
+                .WithMany()
+                .HasForeignKey(va => va.VaccineBatchId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(va => va.Professional)
+                .WithMany()
+                .HasForeignKey(va => va.ProfessionalId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

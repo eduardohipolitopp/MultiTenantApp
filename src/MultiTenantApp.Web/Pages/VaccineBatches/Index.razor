@@ -1,0 +1,160 @@
+@page "/vaccine-batches"
+@attribute [Authorize(Roles = "Admin, Vaccines")]
+@using MultiTenantApp.Web.Models.DTOs
+@using MultiTenantApp.Web.Interfaces
+@inject IVaccineBatchService BatchService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h4" Class="mb-4">Vaccine Stock (Batches)</MudText>
+
+<MudButton Variant="Variant.Filled" 
+           Color="Color.Primary" 
+           StartIcon="@Icons.Material.Filled.Add"
+           OnClick="OpenCreateDialog"
+           Class="mb-4">
+    Add New Batch
+</MudButton>
+
+<MudDataGrid T="VaccineBatchListDto" 
+             ServerData="LoadServerData" 
+             @ref="dataGrid"
+             Filterable="true"
+             SortMode="SortMode.Single"
+             Elevation="2">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Batches</MudText>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search Batches..." Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.VaccineName" Title="Vaccine" />
+        <PropertyColumn Property="x => x.BatchNumber" Title="Batch #" />
+        <PropertyColumn Property="x => x.AvailableQuantity" Title="Stock" />
+        <TemplateColumn Title="Expiration" SortBy="x => x.ExpirationDate">
+            <CellTemplate>
+                <MudText Color="@(context.Item.ExpirationDate < DateTime.Today.AddMonths(3) ? Color.Error : Color.Default)">
+                    @context.Item.ExpirationDate.ToShortDateString()
+                </MudText>
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn Title="Actions" Sortable="false" Filterable="false">
+            <CellTemplate>
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" 
+                               Color="Color.Primary" 
+                               Size="Size.Small"
+                               OnClick="@(() => OpenEditDialog(context.Item.Id))" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                               Color="Color.Error" 
+                               Size="Size.Small"
+                               OnClick="@(() => DeleteBatch(context.Item.Id))" />
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="VaccineBatchListDto" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    private MudDataGrid<VaccineBatchListDto> dataGrid;
+    private string searchString = null;
+
+    private void OnSearch(string text)
+    {
+        searchString = text;
+        dataGrid.ReloadServerData();
+    }
+
+    private async Task<GridData<VaccineBatchListDto>> LoadServerData(GridState<VaccineBatchListDto> state)
+    {
+        var request = new PagedRequest
+        {
+            Page = state.Page + 1,
+            PageSize = state.PageSize,
+            SortBy = state.SortDefinitions.FirstOrDefault()?.SortBy ?? "ExpirationDate",
+            SortDescending = state.SortDefinitions.FirstOrDefault()?.Descending ?? false,
+            SearchTerm = searchString
+        };
+
+        var response = await BatchService.GetAllAsync(request);
+
+        return new GridData<VaccineBatchListDto>
+        {
+            Items = response.Items,
+            TotalItems = response.TotalCount
+        };
+    }
+
+    private async Task OpenCreateDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var dialog = DialogService.Show<VaccineBatchDialog>("Create New Batch", options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            try
+            {
+                await BatchService.CreateAsync((CreateVaccineBatchDto)result.Data);
+                Snackbar.Add("Batch created successfully", Severity.Success);
+                await dataGrid.ReloadServerData();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+    private async Task OpenEditDialog(Guid id)
+    {
+        var batch = await BatchService.GetByIdAsync(id);
+        if (batch == null) return;
+
+        var updateDto = new UpdateVaccineBatchDto
+        {
+            VaccineId = batch.VaccineId,
+            BatchNumber = batch.BatchNumber,
+            TotalQuantity = batch.TotalQuantity,
+            AvailableQuantity = batch.AvailableQuantity,
+            ExpirationDate = batch.ExpirationDate,
+            Supplier = batch.Supplier,
+            Notes = batch.Notes
+        };
+
+        var parameters = new DialogParameters { ["Model"] = updateDto, ["IsEdit"] = true };
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var dialog = DialogService.Show<VaccineBatchDialog>("Edit Batch", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            try
+            {
+                await BatchService.UpdateAsync(id, (UpdateVaccineBatchDto)result.Data);
+                Snackbar.Add("Batch updated successfully", Severity.Success);
+                await dataGrid.ReloadServerData();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+    private async Task DeleteBatch(Guid id)
+    {
+        try
+        {
+            await BatchService.DeleteAsync(id);
+            await dataGrid.ReloadServerData();
+            Snackbar.Add("Batch deleted successfully", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+}

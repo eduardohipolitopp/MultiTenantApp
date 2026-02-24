@@ -4,18 +4,36 @@
 <AuthorizeView>
     <Authorized>
         <MudNavMenu>
+            <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
             <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">@NavMenuRes.Home</MudNavLink>
             
             <AuthorizeView Roles="Admin, Products" Context="productsContext">
                 <MudNavLink Href="products" Icon="@Icons.Material.Filled.Inventory">@NavMenuRes.Products</MudNavLink>
+            </AuthorizeView>
+
+            <AuthorizeView Roles="Admin, Patients" Context="patientsContext">
+                <MudNavLink Href="patients" Icon="@Icons.Material.Filled.Medication">Patients</MudNavLink>
+            </AuthorizeView>
+
+            <AuthorizeView Roles="Admin, Vaccines" Context="vaccinesContext">
+                <MudNavLink Href="vaccines" Icon="@Icons.Material.Filled.Vaccines">Vaccines</MudNavLink>
+                <MudNavLink Href="/vaccine-batches" Icon="@Icons.Material.Filled.Inventory2" Match="NavLinkMatch.Prefix">Vaccine Stock</MudNavLink>
+                <MudNavLink Href="/appointments" Icon="@Icons.Material.Filled.Event" Match="NavLinkMatch.Prefix">Appointments</MudNavLink>
+                <MudNavLink Href="/messages" Icon="@Icons.Material.Filled.Message" Match="NavLinkMatch.Prefix">Messages</MudNavLink>
+                <MudNavLink Href="/finance" Icon="@Icons.Material.Filled.AttachMoney">Finance</MudNavLink>
+                <MudNavLink Href="/vaccineapplications" Icon="@Icons.Material.Filled.HealthAndSafety">Applications</MudNavLink>
             </AuthorizeView>
             
             <AuthorizeView Roles="Admin, Rules" Context="rulesContext">
                 <MudNavLink Href="rules" Icon="@Icons.Material.Filled.Security">@NavMenuRes.Rules</MudNavLink>
             </AuthorizeView>
             
-            <AuthorizeView Roles="Admin, Users" Context="usersContext">
+            <AuthorizeView Policy="User.Manage" Context="usersContext">
                 <MudNavLink Href="users" Icon="@Icons.Material.Filled.People">@NavMenuRes.Users</MudNavLink>
+            </AuthorizeView>
+
+            <AuthorizeView Policy="Settings.Edit" Context="settingsContext">
+                <MudNavLink Href="settings" Icon="@Icons.Material.Filled.Settings">Settings</MudNavLink>
             </AuthorizeView>
             
             <MudDivider Class="my-2" />

@@ -48,5 +48,20 @@ namespace MultiTenantApp.Web.Services
         {
             await _httpClient.DeleteAsync($"api/Users/{id}");
         }
+
+        public async Task<List<string>> GetAvailableRoles()
+        {
+            return await _httpClient.GetFromJsonAsync<List<string>>("api/Users/roles");
+        }
+
+        public async Task UpdateUserRoles(string userId, List<string> roles)
+        {
+            var response = await _httpClient.PostAsJsonAsync($"api/Users/{userId}/roles", roles);
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new System.Exception(error);
+            }
+        }
     }
 }

@@ -3,9 +3,9 @@ using Hangfire.PostgreSql;
 using Hangfire.MemoryStorage;
 using OpenTelemetry;
 using MultiTenantApp.Observability;
-using MultiTenantApp.Infrastructure.Jobs;
+using MultiTenantApp.Hangfire.Jobs;
 using MultiTenantApp.Application.Interfaces;
-using MultiTenantApp.Application.Services;
+using MultiTenantApp.Application.Services; // Added this line
 using MultiTenantApp.Domain.Interfaces;
 using MultiTenantApp.Infrastructure.Services;
 using MultiTenantApp.Infrastructure.Persistence;
@@ -65,6 +65,19 @@ builder.Services.AddScoped<ICurrentUserService, MultiTenantApp.Infrastructure.Se
 
 // Dependency Injection for Jobs
 builder.Services.AddScoped<SampleRecurringJob>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<DoseJobs>();
+builder.Services.AddScoped<InventoryJobs>();
+builder.Services.AddScoped<ClosingJobs>();
+builder.Services.AddScoped<RecommendationJobs>();
+builder.Services.AddScoped<DashboardJobs>();
+
+// Register Redis Cache for snapshots
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration["Cache:Redis:ConnectionString"] ?? "localhost:6379";
+    options.InstanceName = builder.Configuration["Cache:Redis:InstanceName"] ?? "MultiTenantApp:";
+});
 
 // OpenTelemetry
 builder.Services.AddOpenTelemetryObservability(builder.Configuration);
@@ -113,9 +126,14 @@ using (var scope = app.Services.CreateScope())
         var recurringJobManager = services.GetRequiredService<IRecurringJobManager>();
         var sampleJob = services.GetRequiredService<SampleRecurringJob>();
 
-        // Example: Schedule a recurring job (runs every minute)
-        // Uncomment to enable:
-        // RecurringJob.AddOrUpdate("sample-job", () => sampleJob.ProcessSomething(), Cron.Minutely);
+        // Recurring Jobs
+        recurringJobManager.AddOrUpdate<DoseJobs>("dose-reminders", j => j.RunDoseReminders(), "0 2 * * *"); // daily at 02:00
+        recurringJobManager.AddOrUpdate<DoseJobs>("overdue-alerts", j => j.RunOverdueAlerts(), "10 2 * * *"); // daily at 02:10
+        recurringJobManager.AddOrUpdate<RecommendationJobs>("vaccine-recommendations", j => j.RunVaccineByAgeRecommendations(), "20 2 * * *"); // daily at 02:20
+        recurringJobManager.AddOrUpdate<InventoryJobs>("batch-expiration-alerts", j => j.RunBatchExpirationAlerts(), "30 2 * * *"); // daily at 02:30
+        recurringJobManager.AddOrUpdate<InventoryJobs>("expired-batch-alerts", j => j.RunExpiredBatchAlerts(), "40 2 * * *"); // daily at 02:40
+        recurringJobManager.AddOrUpdate<ClosingJobs>("monthly-closing", j => j.RunMonthlyClosing(), Cron.Monthly);
+        recurringJobManager.AddOrUpdate<DashboardJobs>("daily-dashboard-snapshot", j => j.RunDailySnapshot(), "0 3 * * *"); // daily at 03:00
     }
     catch (Exception ex)
     {

@@ -1,0 +1,97 @@
+@using MultiTenantApp.Web.Interfaces
+@using MultiTenantApp.Web.Models.DTOs
+@inject IVaccineApplicationService VaccineApplicationService
+@inject IVaccineService VaccineService
+@inject IPatientService PatientService
+@inject IUserService UserService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="_form" @bind-IsValid="@_success">
+            <MudAutocomplete T="PatientListDto" Label="Patient" @bind-Value="_selectedPatient"
+                             SearchFunc="@SearchPatients" ToStringFunc="@(p => p?.Name)"
+                             Required="true" RequiredError="Patient is required" />
+
+            <MudAutocomplete T="VaccineListDto" Label="Vaccine" @bind-Value="_selectedVaccine"
+                             SearchFunc="@SearchVaccines" ToStringFunc="@(v => v?.Name)"
+                             Required="true" RequiredError="Vaccine is required" />
+
+            <MudNumericField T="int" Label="Dose Number" @bind-Value="_model.DoseNumber" Min="1" Max="10" Required="true" />
+
+            <MudAutocomplete T="UserDto" Label="Professional" @bind-Value="_selectedProfessional"
+                             SearchFunc="@SearchProfessionals" ToStringFunc="@(u => u?.UserName)"
+                             Required="true" RequiredError="Professional is required" />
+
+            <MudSelect T="ApplicationType" Label="Type" @bind-Value="_model.ApplicationType" Required="true">
+                @foreach (var type in Enum.GetValues<ApplicationType>())
+                {
+                    <MudSelectItem Value="@type">@type.ToString()</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudNumericField T="decimal" Label="Amount Paid" @bind-Value="_model.PaidAmount" Format="N2" Culture="@System.Globalization.CultureInfo.CurrentCulture" />
+
+            <MudDatePicker Label="Application Date" @bind-Date="_applicationDate" Required="true" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit" Disabled="!_success">Confirm Application</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    private MudForm _form = null!;
+    private bool _success;
+    private CreateVaccineApplicationDto _model = new();
+    private DateTime? _applicationDate = DateTime.Now;
+    
+    private PatientListDto? _selectedPatient;
+    private VaccineListDto? _selectedVaccine;
+    private UserDto? _selectedProfessional;
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private async Task Submit()
+    {
+        await _form.Validate();
+        if (_form.IsValid)
+        {
+            try
+            {
+                _model.PatientId = _selectedPatient!.Id;
+                _model.VaccineId = _selectedVaccine!.Id;
+                _model.ProfessionalId = _selectedProfessional!.Id;
+                _model.ApplicationDate = _applicationDate ?? DateTime.Now;
+
+                await VaccineApplicationService.ApplyVaccine(_model);
+                Snackbar.Add("Vaccine applied successfully", Severity.Success);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+    private async Task<IEnumerable<PatientListDto>> SearchPatients(string value)
+    {
+        var response = await PatientService.GetAllAsync(new PagedRequest { SearchTerm = value, PageSize = 10 });
+        return response.Items;
+    }
+
+    private async Task<IEnumerable<VaccineListDto>> SearchVaccines(string value)
+    {
+        var response = await VaccineService.GetAllAsync(new PagedRequest { SearchTerm = value, PageSize = 10 });
+        return response.Items;
+    }
+
+    private async Task<IEnumerable<UserDto>> SearchProfessionals(string value)
+    {
+        var response = await UserService.GetUsersPaged(new PagedRequest { SearchTerm = value, PageSize = 10 });
+        return response.Items;
+    }
+}

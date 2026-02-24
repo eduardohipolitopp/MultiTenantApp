@@ -1,0 +1,96 @@
+@using MultiTenantApp.Web.Models.DTOs
+@using MultiTenantApp.Web.Interfaces
+
+@inject IUserService UserService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        Manage Roles for @User.FullName
+    </TitleContent>
+    <DialogContent>
+        @if (_availableRoles == null)
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        }
+        else
+        {
+            <MudList T="string">
+                @foreach (var role in _availableRoles)
+                {
+                    <MudListItem>
+                        <MudCheckBox T="bool" 
+                                     Value="@(_selectedRoles.Contains(role))" 
+                                     ValueChanged="@((bool val) => OnRoleToggled(role, val))" 
+                                     Label="@role" 
+                                     Color="Color.Primary" />
+                    </MudListItem>
+                }
+            </MudList>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit" Disabled="@_loading">
+            @if (_loading)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Saving...</MudText>
+            }
+            else
+            {
+                <MudText>Save Roles</MudText>
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public UserDto User { get; set; }
+
+    private List<string> _availableRoles;
+    private HashSet<string> _selectedRoles;
+    private bool _loading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _availableRoles = await UserService.GetAvailableRoles();
+            _selectedRoles = new HashSet<string>(User.Roles);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading roles: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private void OnRoleToggled(string role, bool val)
+    {
+        if (val) _selectedRoles.Add(role);
+        else _selectedRoles.Remove(role);
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private async Task Submit()
+    {
+        _loading = true;
+        try
+        {
+            await UserService.UpdateUserRoles(User.Id, _selectedRoles.ToList());
+            Snackbar.Add("Roles updated successfully", Severity.Success);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}

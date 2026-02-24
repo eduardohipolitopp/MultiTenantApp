@@ -1,0 +1,116 @@
+@page "/settings"
+@attribute [Authorize(Policy = "Settings.Edit")]
+@using MultiTenantApp.Web.Services
+@using MultiTenantApp.Web.Models.DTOs
+@using MultiTenantApp.Web.Resources
+
+@inject ISettingsService SettingsService
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.Medium">
+    <MudText Typo="Typo.h4" Class="mb-4">Clinic Settings</MudText>
+
+    @if (_settings == null)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+    else
+    {
+        <MudPaper Class="pa-6" Elevation="2">
+            <EditForm Model="@_settings" OnValidSubmit="OnValidSubmit">
+                <DataAnnotationsValidator />
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudTextField Label="Clinic Name" 
+                                    @bind-Value="_settings.ClinicName" 
+                                    For="@(() => _settings.ClinicName)"
+                                    Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudNumericField Label="Commission Percentage (%)" 
+                                       @bind-Value="_settings.CommissionPercentage" 
+                                       For="@(() => _settings.CommissionPercentage)"
+                                       Variant="Variant.Outlined" 
+                                       Min="0" Max="100" />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudNumericField Label="Home Visit Bonus" 
+                                       @bind-Value="_settings.HomeVisitBonus" 
+                                       For="@(() => _settings.HomeVisitBonus)"
+                                       Variant="Variant.Outlined" 
+                                       Adornment="Adornment.Start" 
+                                       AdornmentText="$" />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudNumericField Label="Reminder Days Before" 
+                                       @bind-Value="_settings.ReminderDaysBefore" 
+                                       For="@(() => _settings.ReminderDaysBefore)"
+                                       Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudNumericField Label="Expiration Alert Days" 
+                                       @bind-Value="_settings.ExpirationAlertDays" 
+                                       For="@(() => _settings.ExpirationAlertDays)"
+                                       Variant="Variant.Outlined" />
+                    </MudItem>
+
+                    <MudItem xs="12" Class="d-flex justify-end mt-4">
+                        <MudButton ButtonType="ButtonType.Submit" 
+                                  Variant="Variant.Filled" 
+                                  Color="Color.Primary" 
+                                  Disabled="@_loading">
+                            @if (_loading)
+                            {
+                                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                <MudText Class="ms-2">Saving...</MudText>
+                            }
+                            else
+                            {
+                                <MudText>Save Settings</MudText>
+                            }
+                        </MudButton>
+                    </MudItem>
+                </MudGrid>
+            </EditForm>
+        </MudPaper>
+    }
+</MudContainer>
+
+@code {
+    private ClinicSettingsDto _settings;
+    private bool _loading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _settings = await SettingsService.GetSettings();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error loading settings: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task OnValidSubmit()
+    {
+        _loading = true;
+        try
+        {
+            await SettingsService.UpdateSettings(_settings);
+            Snackbar.Add("Settings updated successfully", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}

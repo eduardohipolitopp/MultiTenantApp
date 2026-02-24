@@ -1,0 +1,161 @@
+@page "/patients"
+@attribute [Authorize(Roles = "Admin, Patients")]
+@using MultiTenantApp.Web.Models.DTOs
+@using MultiTenantApp.Web.Interfaces
+@using MultiTenantApp.Web.Models
+@inject IPatientService PatientService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h4" Class="mb-4">Patient Management</MudText>
+
+<MudButton Variant="Variant.Filled" 
+           Color="Color.Primary" 
+           StartIcon="@Icons.Material.Filled.Add"
+           OnClick="OpenCreateDialog"
+           Class="mb-4">
+    Add New Patient
+</MudButton>
+
+<MudDataGrid T="PatientListDto" 
+             ServerData="LoadServerData" 
+             @ref="dataGrid"
+             Filterable="true"
+             SortMode="SortMode.Single"
+             Elevation="2">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Patients</MudText>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search Patients..." Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Title="Name" />
+        <PropertyColumn Property="x => x.BirthDate" Title="Birth Date" Format="d" />
+        <PropertyColumn Property="x => x.Phone" Title="Phone" />
+        <TemplateColumn Title="Actions" Sortable="false" Filterable="false">
+            <CellTemplate>
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" 
+                               Color="Color.Primary" 
+                               Size="Size.Small"
+                               OnClick="@(() => OpenEditDialog(context.Item.Id))" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" 
+                               Color="Color.Error" 
+                               Size="Size.Small"
+                               OnClick="@(() => DeletePatient(context.Item.Id))" />
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="PatientListDto" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    private MudDataGrid<PatientListDto> dataGrid;
+    private string searchString = null;
+
+    private void OnSearch(string text)
+    {
+        searchString = text;
+        dataGrid.ReloadServerData();
+    }
+
+    private async Task<GridData<PatientListDto>> LoadServerData(GridState<PatientListDto> state)
+    {
+        var request = new PagedRequest
+        {
+            Page = state.Page + 1,
+            PageSize = state.PageSize,
+            SortBy = state.SortDefinitions.FirstOrDefault()?.SortBy ?? "Name",
+            SortDescending = state.SortDefinitions.FirstOrDefault()?.Descending ?? false,
+            SearchTerm = searchString
+        };
+
+        var response = await PatientService.GetAllAsync(request);
+
+        return new GridData<PatientListDto>
+        {
+            Items = response.Items,
+            TotalItems = response.TotalCount
+        };
+    }
+
+    private async Task OpenCreateDialog()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var dialog = DialogService.Show<PatientDialog>("Create Patient", options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            try
+            {
+                await PatientService.CreateAsync((CreatePatientDto)result.Data);
+                Snackbar.Add("Patient created successfully", Severity.Success);
+                await dataGrid.ReloadServerData();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+    private async Task OpenEditDialog(Guid id)
+    {
+        var patient = await PatientService.GetByIdAsync(id);
+        if (patient == null) return;
+
+        var updateDto = new UpdatePatientDto
+        {
+            Name = patient.Name,
+            BirthDate = patient.BirthDate,
+            Gender = 1, // Default or map if possible
+            GuardianName = patient.GuardianName,
+            Phone = patient.Phone,
+            Email = patient.Email,
+            Address = patient.Address,
+            Notes = patient.Notes
+        };
+        
+        // Try to map gender enum back to int
+        if (Enum.TryParse<Gender>(patient.Gender, out var genderEnum))
+        {
+            updateDto.Gender = (int)genderEnum;
+        }
+
+        var parameters = new DialogParameters { ["Model"] = updateDto };
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var dialog = DialogService.Show<PatientDialog>("Edit Patient", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            try
+            {
+                await PatientService.UpdateAsync(id, (UpdatePatientDto)result.Data);
+                Snackbar.Add("Patient updated successfully", Severity.Success);
+                await dataGrid.ReloadServerData();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+    private async Task DeletePatient(Guid id)
+    {
+        try
+        {
+            await PatientService.DeleteAsync(id);
+            await dataGrid.ReloadServerData();
+            Snackbar.Add("Patient deleted successfully", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+}

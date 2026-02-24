@@ -168,6 +168,38 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Authorization Policies
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Patient.View", policy => policy.RequireRole("Admin", "Manager", "Nurse", "Receptionist"));
+    options.AddPolicy("Patient.Create", policy => policy.RequireRole("Admin", "Manager", "Receptionist"));
+    options.AddPolicy("Patient.Edit", policy => policy.RequireRole("Admin", "Manager", "Receptionist"));
+    options.AddPolicy("Patient.Delete", policy => policy.RequireRole("Admin", "Receptionist"));
+
+    options.AddPolicy("Vaccine.View", policy => policy.RequireRole("Admin", "Manager", "Nurse", "Receptionist", "Financial"));
+    options.AddPolicy("Vaccine.Create", policy => policy.RequireRole("Admin", "Manager"));
+    options.AddPolicy("Vaccine.Edit", policy => policy.RequireRole("Admin", "Manager"));
+
+    options.AddPolicy("Stock.View", policy => policy.RequireRole("Admin", "Manager", "Nurse", "Financial"));
+    options.AddPolicy("Stock.Create", policy => policy.RequireRole("Admin", "Manager"));
+    options.AddPolicy("Stock.Edit", policy => policy.RequireRole("Admin", "Manager"));
+
+    options.AddPolicy("Appointment.View", policy => policy.RequireRole("Admin", "Manager", "Nurse", "Receptionist"));
+    options.AddPolicy("Appointment.Create", policy => policy.RequireRole("Admin", "Manager", "Receptionist"));
+    options.AddPolicy("Appointment.Edit", policy => policy.RequireRole("Admin", "Manager", "Receptionist"));
+    options.AddPolicy("Appointment.Cancel", policy => policy.RequireRole("Admin", "Manager", "Receptionist"));
+
+    options.AddPolicy("Application.Apply", policy => policy.RequireRole("Admin", "Manager", "Nurse"));
+
+    options.AddPolicy("Finance.View", policy => policy.RequireRole("Admin", "Financial"));
+    options.AddPolicy("Finance.CloseMonth", policy => policy.RequireRole("Admin", "Financial"));
+
+    options.AddPolicy("Dashboard.View", policy => policy.RequireRole("Admin", "Manager", "Financial"));
+
+    options.AddPolicy("Settings.Edit", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("User.Manage", policy => policy.RequireRole("Admin"));
+});
+
 // Configuration Options
 builder.Services.Configure<CacheOptions>(builder.Configuration.GetSection(CacheOptions.SectionName));
 builder.Services.Configure<RateLimitOptions>(builder.Configuration.GetSection(RateLimitOptions.SectionName));
@@ -211,6 +243,16 @@ builder.Services.AddScoped<IUserRegistrationService, UserRegistrationService>();
 builder.Services.AddScoped<ITenantValidationService, TenantValidationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IPatientService, PatientService>();
+builder.Services.AddScoped<IVaccineService, VaccineService>();
+builder.Services.AddScoped<IVaccineBatchService, VaccineBatchService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IFinanceService, FinanceService>();
+        builder.Services.AddScoped<IVaccineApplicationService, VaccineApplicationService>();
+        builder.Services.AddScoped<IDashboardService, DashboardService>();
+        builder.Services.AddScoped<IClinicSettingsService, ClinicSettingsService>();
+        
 builder.Services.AddScoped<IRuleService, RuleService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
@@ -220,7 +262,6 @@ builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IAuditRepository, AuditRepository>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<RequestResponseLogService>();
-builder.Services.AddScoped<MultiTenantApp.Infrastructure.Jobs.SampleRecurringJob>();
 builder.Services.AddHttpContextAccessor();
 
 // Health Checks

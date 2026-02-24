@@ -19,6 +19,19 @@ namespace MultiTenantApp.Infrastructure.Repositories
             _dbSet = context.Set<T>();
         }
 
+        public IQueryable<T> Entities
+        {
+            get
+            {
+                var query = _dbSet.AsQueryable();
+                if (SupportsLogicalDelete)
+                {
+                    query = query.Where(e => !e.IsDeleted);
+                }
+                return query;
+            }
+        }
+
         public async Task<T?> GetByIdAsync(Guid id)
         {
             var query = _dbSet.AsQueryable();

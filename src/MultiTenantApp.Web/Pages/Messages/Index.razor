@@ -1,0 +1,117 @@
+@page "/messages"
+@using MultiTenantApp.Web.Interfaces
+@using MultiTenantApp.Web.Models.DTOs
+@inject IMessageService MessageService
+@inject ISnackbar Snackbar
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-8">
+    <MudText Typo="Typo.h4" GutterBottom="true">Message Logs</MudText>
+
+    <MudTable ServerData="@(new Func<TableState, Task<TableData<MessageListDto>>>(ServerReload))"
+              Hover="true" @ref="_table" Elevation="2">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Communication History</MudText>
+            <MudSpacer />
+            <MudTextField T="string" ValueChanged="@OnSearch" Placeholder="Search by Recipient or Patient" Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortLabel="PatientName" T="MessageListDto">Patient</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortLabel="Recipient" T="MessageListDto">Recipient</MudTableSortLabel></MudTh>
+            <MudTh>Channel</MudTh>
+            <MudTh>Content</MudTh>
+            <MudTh><MudTableSortLabel SortLabel="SentDate" T="MessageListDto">Sent Date</MudTableSortLabel></MudTh>
+            <MudTh>Status</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Patient">@context.PatientName</MudTd>
+            <MudTd DataLabel="Recipient">@context.Recipient</MudTd>
+            <MudTd DataLabel="Channel">
+                <MudChip T="string" Color="@GetChannelColor(context.Channel)" Size="Size.Small">@context.Channel</MudChip>
+            </MudTd>
+            <MudTd DataLabel="Content">
+                <MudTooltip Text="@context.Content">
+                    <div style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        @context.Content
+                    </div>
+                </MudTooltip>
+            </MudTd>
+            <MudTd DataLabel="Sent Date">@(context.SentDate?.ToLocalTime().ToString("g") ?? "N/A")</MudTd>
+            <MudTd DataLabel="Status">
+                <MudChip T="string" Color="@GetStatusColor(context.Status)" Size="Size.Small">@context.Status</MudChip>
+            </MudTd>
+            <MudTd DataLabel="Actions">
+                @if (context.Status == MessageStatus.Failed)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Refresh" Color="Color.Info" OnClick="@(() => OnRetry(context.Id))" />
+                }
+            </MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText>No messages found</MudText>
+        </NoRecordsContent>
+        <LoadingContent>
+            <MudText>Loading...</MudText>
+        </LoadingContent>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+    </MudTable>
+</MudContainer>
+
+@code {
+    private MudTable<MessageListDto> _table;
+    private string _searchString = "";
+
+    private async Task<TableData<MessageListDto>> ServerReload(TableState state)
+    {
+        var request = new PagedRequest
+        {
+            Page = state.Page + 1,
+            PageSize = state.PageSize,
+            SearchTerm = _searchString,
+            SortBy = state.SortLabel ?? "CreatedAt",
+            SortDescending = state.SortDirection == SortDirection.Descending
+        };
+
+        var response = await MessageService.GetAllAsync(request);
+        return new TableData<MessageListDto>() { TotalItems = response.TotalCount, Items = response.Items };
+    }
+
+    private void OnSearch(string text)
+    {
+        _searchString = text;
+        _table.ReloadServerData();
+    }
+
+    private async Task OnRetry(Guid id)
+    {
+        var success = await MessageService.RetryAsync(id);
+        if (success)
+        {
+            Snackbar.Add("Retry triggered successfully", Severity.Success);
+            await _table.ReloadServerData();
+        }
+        else
+        {
+            Snackbar.Add("Error triggering retry", Severity.Error);
+        }
+    }
+
+    private Color GetStatusColor(MessageStatus status) => status switch
+    {
+        MessageStatus.Pending => Color.Default,
+        MessageStatus.Sent => Color.Success,
+        MessageStatus.Failed => Color.Error,
+        _ => Color.Default
+    };
+
+    private Color GetChannelColor(MessageChannel channel) => channel switch
+    {
+        MessageChannel.SMS => Color.Info,
+        MessageChannel.WhatsApp => Color.Success,
+        MessageChannel.Email => Color.Warning,
+        _ => Color.Default
+    };
+}

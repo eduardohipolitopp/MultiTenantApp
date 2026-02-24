@@ -1,5 +1,5 @@
 @page "/users"
-@attribute [Authorize(Roles = "Admin, Users")]
+@attribute [Authorize(Policy = "User.Manage")]
 @using MultiTenantApp.Web.Services
 @using MultiTenantApp.Web.Resources.Pages
 @using MultiTenantApp.Web.Resources
@@ -27,17 +27,30 @@
              Elevation="2">
     <Columns>
         <PropertyColumn Property="x => x.Email" Title="@SharedResource.Email" />
+        <PropertyColumn Property="x => x.FullName" Title="Full Name" />
         <PropertyColumn Property="x => x.TenantId" Title="@SharedResource.TenantId" />
+        <TemplateColumn Title="Roles" Sortable="false">
+            <CellTemplate>
+                @foreach (var role in context.Item.Roles)
+                {
+                    <MudChip Size="Size.Small" Color="Color.Info" Variant="Variant.Text">@role</MudChip>
+                }
+            </CellTemplate>
+        </TemplateColumn>
         <TemplateColumn Title="@SharedResource.Actions" Sortable="false" Filterable="false">
             <CellTemplate>
                 <MudIconButton Icon="@Icons.Material.Filled.Edit" 
-                              Color="Color.Primary" 
-                              Size="Size.Small"
-                              Href="@($"/users/edit/{context.Item.Id}")" />
+                               Color="Color.Primary" 
+                               Size="Size.Small"
+                               Href="@($"/users/edit/{context.Item.Id}")" />
+                <MudIconButton Icon="@Icons.Material.Filled.Security" 
+                               Color="Color.Secondary" 
+                               Size="Size.Small"
+                               OnClick="@(() => ManageRoles(context.Item))" />
                 <MudIconButton Icon="@Icons.Material.Filled.Delete" 
-                              Color="Color.Error" 
-                              Size="Size.Small"
-                              OnClick="@(() => DeleteUser(context.Item.Id))" />
+                               Color="Color.Error" 
+                               Size="Size.Small"
+                               OnClick="@(() => DeleteUser(context.Item.Id.ToString()))" />
             </CellTemplate>
         </TemplateColumn>
     </Columns>
@@ -45,6 +58,8 @@
         <MudDataGridPager T="UserDto" />
     </PagerContent>
 </MudDataGrid>
+
+@inject IDialogService DialogService
 
 @code {
     private MudDataGrid<UserDto> dataGrid;
@@ -70,6 +85,20 @@
     }
 
 
+
+    private async Task ManageRoles(UserDto user)
+    {
+        var parameters = new DialogParameters { ["User"] = user };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        
+        var dialog = DialogService.Show<RoleDialog>("Manage Roles", parameters, options);
+        var result = await dialog.Result;
+        
+        if (!result.Canceled)
+        {
+            await dataGrid.ReloadServerData();
+        }
+    }
 
     private async Task DeleteUser(string id)
     {

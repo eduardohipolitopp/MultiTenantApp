@@ -1,9 +1,117 @@
 @page "/"
+@using MultiTenantApp.Web.Interfaces
+@using MultiTenantApp.Web.Models.DTOs
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@inject IDashboardService DashboardService
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Dashboard</PageTitle>
 
-<h1>Hello, world!</h1>
+<MudText Typo="Typo.h4" GutterBottom="true">Dashboard</MudText>
 
-Welcome to your new app.
+<MudGrid>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Class="pa-4 bg-primary text-white" Elevation="2">
+            <div class="d-flex align-center">
+                <MudIcon Icon="@Icons.Material.Filled.Vaccines" Size="Size.Large" Class="mr-3" />
+                <div>
+                    <MudText Typo="Typo.subtitle2">Applications Today</MudText>
+                    <MudText Typo="Typo.h5">@_snapshot.ApplicationsToday</MudText>
+                </div>
+            </div>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Class="pa-4 bg-success text-white" Elevation="2">
+            <div class="d-flex align-center">
+                <MudIcon Icon="@Icons.Material.Filled.AttachMoney" Size="Size.Large" Class="mr-3" />
+                <div>
+                    <MudText Typo="Typo.subtitle2">Revenue Today</MudText>
+                    <MudText Typo="Typo.h5">@_snapshot.RevenueToday.ToString("C")</MudText>
+                </div>
+            </div>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Class="pa-4 bg-error text-white" Elevation="2">
+            <div class="d-flex align-center">
+                <MudIcon Icon="@Icons.Material.Filled.Warning" Size="Size.Large" Class="mr-3" />
+                <div>
+                    <MudText Typo="Typo.subtitle2">Overdue Doses</MudText>
+                    <MudText Typo="Typo.h5">@_snapshot.OverdueDoses</MudText>
+                </div>
+            </div>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Class="pa-4 bg-warning text-white" Elevation="2">
+            <div class="d-flex align-center">
+                <MudIcon Icon="@Icons.Material.Filled.Inventory" Size="Size.Large" Class="mr-3" />
+                <div>
+                    <MudText Typo="Typo.subtitle2">Expiring Batches</MudText>
+                    <MudText Typo="Typo.h5">@_snapshot.ExpiringBatches</MudText>
+                </div>
+            </div>
+        </MudPaper>
+    </MudItem>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    <MudItem xs="12" md="6">
+        <MudCard Elevation="2" Class="h-100">
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Today's Activity</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudList T="string">
+                    <MudListItem Text="@($"Scheduled for today: {_snapshot.ScheduledToday}")" Icon="@Icons.Material.Filled.Event" />
+                    <MudListItem Text="@($"Home visits this month: {_snapshot.HomeVisitsMonth}")" Icon="@Icons.Material.Filled.Home" />
+                </MudList>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudCard Elevation="2" Class="h-100">
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Quick Actions</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="2">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/vaccineapplications" StartIcon="@Icons.Material.Filled.Add">
+                        Apply Vaccine
+                    </MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" Href="/appointments" StartIcon="@Icons.Material.Filled.Event">
+                        Schedule
+                    </MudButton>
+                </MudStack>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+<style>
+    .bg-primary { background-color: var(--mud-palette-primary) !important; }
+    .bg-success { background-color: var(--mud-palette-success) !important; }
+    .bg-error { background-color: var(--mud-palette-error) !important; }
+    .bg-warning { background-color: var(--mud-palette-warning) !important; }
+</style>
+
+@code {
+    private DashboardDto _snapshot = new();
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _snapshot = await DashboardService.GetSnapshot();
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}

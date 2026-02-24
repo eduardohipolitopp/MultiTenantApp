@@ -1,0 +1,85 @@
+@page "/vaccineapplications"
+@using MultiTenantApp.Web.Interfaces
+@using MultiTenantApp.Web.Models.DTOs
+@using MultiTenantApp.Web.Pages.VaccineApplications.Components
+@inject IVaccineApplicationService VaccineApplicationService
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mb-4">
+    <MudText Typo="Typo.h4">Vaccine Applications</MudText>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OnApplyVaccine" StartIcon="@Icons.Material.Filled.Add">
+        New Application
+    </MudButton>
+</MudStack>
+
+<MudTable ServerData="@(new Func<TableState, Task<TableData<VaccineApplicationListDto>>>(ServerReload))"
+          Dense="true" Hover="true" @ref="_table">
+    <ToolBarContent>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search by Patient or Vaccine" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="PatientName" T="VaccineApplicationListDto">Patient</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="VaccineName" T="VaccineApplicationListDto">Vaccine</MudTableSortLabel></MudTh>
+        <MudTh>Batch</MudTh>
+        <MudTh>Dose</MudTh>
+        <MudTh><MudTableSortLabel SortLabel="ProfessionalName" T="VaccineApplicationListDto">Professional</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="ApplicationDate" T="VaccineApplicationListDto">Date</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Patient">@context.PatientName</MudTd>
+        <MudTd DataLabel="Vaccine">@context.VaccineName</MudTd>
+        <MudTd DataLabel="Batch">@context.BatchNumber</MudTd>
+        <MudTd DataLabel="Dose">@context.DoseNumber</MudTd>
+        <MudTd DataLabel="Professional">@context.ProfessionalName</MudTd>
+        <MudTd DataLabel="Date">@context.ApplicationDate.ToLocalTime().ToString("g")</MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No applications found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private MudTable<VaccineApplicationListDto> _table = null!;
+    private string _searchString = "";
+
+    private async Task<TableData<VaccineApplicationListDto>> ServerReload(TableState state)
+    {
+        var request = new PagedRequest
+        {
+            Page = state.Page + 1,
+            PageSize = state.PageSize,
+            SearchTerm = _searchString,
+            SortBy = state.SortLabel ?? "ApplicationDate",
+            SortDescending = state.SortDirection == SortDirection.Descending
+        };
+
+        var response = await VaccineApplicationService.GetAllAsync(request);
+        return new TableData<VaccineApplicationListDto> { TotalItems = response.TotalCount, Items = response.Items };
+    }
+
+    private void OnSearch(string text)
+    {
+        _searchString = text;
+        _table.ReloadServerData();
+    }
+
+    private async Task OnApplyVaccine()
+    {
+        var dialog = await DialogService.ShowAsync<ApplyVaccineDialog>("Apply Vaccine", new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true });
+        var result = await dialog.Result;
+
+        if (!result!.Canceled)
+        {
+            await _table.ReloadServerData();
+        }
+    }
+}

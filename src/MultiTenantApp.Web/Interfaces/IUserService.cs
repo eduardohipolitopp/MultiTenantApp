@@ -11,5 +11,7 @@ namespace MultiTenantApp.Web.Interfaces
         Task CreateUser(CreateUserDto user);
         Task UpdateUser(string id, UpdateUserDto user);
         Task DeleteUser(string id);
+        Task<List<string>> GetAvailableRoles();
+        Task UpdateUserRoles(string userId, List<string> roles);
     }
 }

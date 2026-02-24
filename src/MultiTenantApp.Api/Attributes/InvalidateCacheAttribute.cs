@@ -3,7 +3,7 @@ using MultiTenantApp.Application.Services;
 
 namespace MultiTenantApp.Api.Attributes
 {
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
     public class InvalidateCacheAttribute : Attribute, IAsyncActionFilter
     {
         private readonly string _pattern;

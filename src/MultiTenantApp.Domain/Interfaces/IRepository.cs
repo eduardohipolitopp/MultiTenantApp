@@ -7,6 +7,7 @@ namespace MultiTenantApp.Domain.Interfaces
 {
     public interface IRepository<T> where T : BaseEntity
     {
+        IQueryable<T> Entities { get; }
         Task<T?> GetByIdAsync(Guid id);
         Task<List<T>> GetAllAsync();
         Task<(List<T> Items, int TotalCount)> GetPagedAsync(int page, int pageSize, System.Linq.Expressions.Expression<Func<T, bool>>? filter = null);

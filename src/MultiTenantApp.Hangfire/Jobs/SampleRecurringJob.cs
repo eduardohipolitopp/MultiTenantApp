@@ -1,7 +1,7 @@
 using Hangfire;
 using Microsoft.Extensions.Logging;
 
-namespace MultiTenantApp.Infrastructure.Jobs
+namespace MultiTenantApp.Hangfire.Jobs
 {
     /// <summary>
     /// Example recurring job using Hangfire.

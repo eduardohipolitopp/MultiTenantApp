@@ -1,0 +1,135 @@
+@using MultiTenantApp.Web.Models.DTOs
+@using MultiTenantApp.Web.Interfaces
+@inject IAppointmentService AppointmentService
+@inject IPatientService PatientService
+@inject IVaccineService VaccineService
+@inject IUserService UserService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@(IsEdit ? Icons.Material.Filled.Edit : Icons.Material.Filled.Add)" Class="mr-3 mb-n1" />
+            @(IsEdit ? "Edit Appointment" : "Schedule New Appointment")
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="_form" @bind-IsValid="@_success">
+            <MudGrid>
+                <MudItem xs="12">
+                    <MudAutocomplete T="Guid" Label="Patient" @bind-Value="Model.PatientId" 
+                                    SearchFunc="@SearchPatients" ToStringFunc="@(id => _patients.FirstOrDefault(p => p.Id == id)?.Name ?? "Select Patient")"
+                                    Required="true" RequiredError="Patient is required" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudAutocomplete T="Guid" Label="Vaccine" @bind-Value="Model.VaccineId"
+                                    SearchFunc="@SearchVaccines" ToStringFunc="@(id => _vaccines.FirstOrDefault(v => v.Id == id)?.Name ?? "Select Vaccine")"
+                                    Required="true" RequiredError="Vaccine is required" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudAutocomplete T="string" Label="Professional" @bind-Value="Model.ProfessionalId"
+                                    SearchFunc="@SearchUsers" ToStringFunc="@(id => _users.FirstOrDefault(u => u.Id == id)?.UserName ?? "Select Professional")"
+                                    Required="true" RequiredError="Professional is required" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudDatePicker Label="Date" @bind-Date="_date" Required="true" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudTimePicker Label="Time" @bind-Time="_time" Required="true" />
+                </MudItem>
+                <MudItem xs="12">
+                    <MudSelect T="AppointmentType" Label="Type" @bind-Value="Model.Type" Required="true">
+                        <MudSelectItem Value="AppointmentType.Clinic">Clinic</MudSelectItem>
+                        <MudSelectItem Value="AppointmentType.HomeVisit">Home Visit</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                @if (IsEdit)
+                {
+                    <MudItem xs="12">
+                        <MudSelect T="AppointmentStatus" Label="Status" @bind-Value="UpdateModel.Status" Required="true">
+                            <MudSelectItem Value="AppointmentStatus.Scheduled">Scheduled</MudSelectItem>
+                            <MudSelectItem Value="AppointmentStatus.Applied">Applied</MudSelectItem>
+                            <MudSelectItem Value="AppointmentStatus.Cancelled">Cancelled</MudSelectItem>
+                        </MudSelect>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit" Disabled="@(!_success)">@(IsEdit ? "Update" : "Schedule")</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public CreateAppointmentDto Model { get; set; } = new();
+    [Parameter] public UpdateAppointmentDto UpdateModel { get; set; } = new();
+    [Parameter] public bool IsEdit { get; set; }
+    [Parameter] public Guid AppointmentId { get; set; }
+
+    private MudForm _form;
+    private bool _success;
+    private DateTime? _date;
+    private TimeSpan? _time;
+
+    private List<PatientListDto> _patients = new();
+    private List<VaccineListDto> _vaccines = new();
+    private List<UserDto> _users = new();
+
+    protected override void OnInitialized()
+    {
+        if (IsEdit)
+        {
+            _date = UpdateModel.ScheduledDateTime.Date;
+            _time = UpdateModel.ScheduledDateTime.TimeOfDay;
+        }
+        else
+        {
+            _date = DateTime.Today;
+            _time = new TimeSpan(9, 0, 0);
+        }
+    }
+
+    private async Task<IEnumerable<Guid>> SearchPatients(string value)
+    {
+        var response = await PatientService.GetAllAsync(new PagedRequest { SearchTerm = value, PageSize = 20 });
+        _patients = response.Items.ToList();
+        return _patients.Select(p => p.Id);
+    }
+
+    private async Task<IEnumerable<Guid>> SearchVaccines(string value)
+    {
+        var response = await VaccineService.GetAllAsync(new PagedRequest { SearchTerm = value, PageSize = 20 });
+        _vaccines = response.Items.ToList();
+        return _vaccines.Select(v => v.Id);
+    }
+
+    private async Task<IEnumerable<string>> SearchUsers(string value)
+    {
+        var response = await UserService.GetUsersPaged(new PagedRequest { SearchTerm = value, PageSize = 20 });
+        _users = response.Items.ToList();
+        return _users.Select(u => u.Id);
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private void Submit()
+    {
+        if (_date.HasValue && _time.HasValue)
+        {
+            var scheduledAt = _date.Value.Add(_time.Value);
+            if (IsEdit)
+            {
+                UpdateModel.ScheduledDateTime = scheduledAt;
+                MudDialog.Close(DialogResult.Ok(UpdateModel));
+            }
+            else
+            {
+                Model.ScheduledDateTime = scheduledAt;
+                MudDialog.Close(DialogResult.Ok(Model));
+            }
+        }
+    }
+}

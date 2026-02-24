@@ -1,0 +1,174 @@
+@page "/appointments"
+@using MultiTenantApp.Web.Interfaces
+@using MultiTenantApp.Web.Models.DTOs
+@inject IAppointmentService AppointmentService
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-8">
+    <MudText Typo="Typo.h4" GutterBottom="true">Vaccine Appointments</MudText>
+
+    <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+        <MudTabPanel Text="Calendar View">
+            <MudPaper Class="pa-4">
+                <MudDatePicker Label="Select Month" @bind-Date="_selectedMonth" OpenTo="OpenTo.Month" DateFormat="MMMM yyyy" Class="mb-4" />
+                
+                @* Custom Calendar implementation as MudCalendar is not a standard MudBlazor component (it's often a separate package or manual implementation) *@
+                @* Assuming MudCalendar is available or using a simple Grid substitute for now if not found in project. Let's check common MudBlazor calendar patterns. *@
+                
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudAlert Severity="Severity.Info">Calendar visualization goes here. We'll use a data grid for the list view below for primary management.</MudAlert>
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudTabPanel>
+        
+        <MudTabPanel Text="List View">
+            <MudTable ServerData="@(new Func<TableState, Task<TableData<AppointmentListDto>>>(ServerReload))"
+                      Hover="true" @ref="_table" Elevation="2">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Queue</MudText>
+                    <MudSpacer />
+                    <MudTextField T="string" ValueChanged="@OnSearch" Placeholder="Search by Patient or Vaccine" Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    <MudButton StartIcon="@Icons.Material.Filled.Add" Variant="Variant.Filled" Color="Color.Primary" OnClick="OnAdd" Class="ml-4">Schedule</MudButton>
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh><MudTableSortLabel SortLabel="PatientName" T="AppointmentListDto">Patient</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel SortLabel="VaccineName" T="AppointmentListDto">Vaccine</MudTableSortLabel></MudTh>
+                    <MudTh><MudTableSortLabel SortLabel="ScheduledDateTime" T="AppointmentListDto">Date/Time</MudTableSortLabel></MudTh>
+                    <MudTh>Type</MudTh>
+                    <MudTh>Status</MudTh>
+                    <MudTh>Actions</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Patient">@context.PatientName</MudTd>
+                    <MudTd DataLabel="Vaccine">@context.VaccineName</MudTd>
+                    <MudTd DataLabel="Date/Time">@context.ScheduledDateTime.ToLocalTime().ToString("g")</MudTd>
+                    <MudTd DataLabel="Type">
+                        <MudChip T="string" Color="@(context.Type == AppointmentType.Clinic ? Color.Info : Color.Warning)" Size="Size.Small">@context.Type</MudChip>
+                    </MudTd>
+                    <MudTd DataLabel="Status">
+                        <MudChip T="string" Color="@GetStatusColor(context.Status)" Size="Size.Small">@context.Status</MudChip>
+                    </MudTd>
+                    <MudTd DataLabel="Actions">
+                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Info" OnClick="@(() => OnEdit(context.Id))" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => OnDelete(context.Id))" />
+                    </MudTd>
+                </RowTemplate>
+                <NoRecordsContent>
+                    <MudText>No appointments found</MudText>
+                </NoRecordsContent>
+                <LoadingContent>
+                    <MudText>Loading...</MudText>
+                </LoadingContent>
+                <PagerContent>
+                    <MudTablePager />
+                </PagerContent>
+            </MudTable>
+        </MudTabPanel>
+    </MudTabs>
+</MudContainer>
+
+@code {
+    private MudTable<AppointmentListDto> _table;
+    private string _searchString = "";
+    private DateTime? _selectedMonth = DateTime.Today;
+
+    private async Task<TableData<AppointmentListDto>> ServerReload(TableState state)
+    {
+        var request = new PagedRequest
+        {
+            Page = state.Page + 1,
+            PageSize = state.PageSize,
+            SearchTerm = _searchString,
+            SortBy = state.SortLabel ?? "ScheduledDateTime",
+            SortDescending = state.SortDirection == SortDirection.Descending
+        };
+
+        var response = await AppointmentService.GetAllAsync(request);
+        return new TableData<AppointmentListDto>() { TotalItems = response.TotalCount, Items = response.Items };
+    }
+
+    private void OnSearch(string text)
+    {
+        _searchString = text;
+        _table.ReloadServerData();
+    }
+
+    private async Task OnAdd()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var dialog = DialogService.Show<AppointmentDialog>("Schedule New Appointment", options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            try
+            {
+                await AppointmentService.CreateAsync((CreateAppointmentDto)result.Data);
+                Snackbar.Add("Appointment scheduled successfully", Severity.Success);
+                await _table.ReloadServerData();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+    private async Task OnEdit(Guid id)
+    {
+        var appointment = await AppointmentService.GetByIdAsync(id);
+        if (appointment == null) return;
+
+        var updateDto = new UpdateAppointmentDto
+        {
+            ScheduledDateTime = appointment.ScheduledDateTime,
+            Status = appointment.Status,
+            Type = appointment.Type
+        };
+
+        var parameters = new DialogParameters { ["UpdateModel"] = updateDto, ["IsEdit"] = true, ["AppointmentId"] = id };
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var dialog = DialogService.Show<AppointmentDialog>("Edit Appointment", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            try
+            {
+                await AppointmentService.UpdateAsync(id, (UpdateAppointmentDto)result.Data);
+                Snackbar.Add("Appointment updated successfully", Severity.Success);
+                await _table.ReloadServerData();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+
+    private async Task OnDelete(Guid id)
+    {
+        var parameters = new DialogParameters { ["ContentText"] = "Are you sure you want to delete this appointment?" };
+        var dialog = DialogService.Show<MudMessageBox>("Confirm Delete", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await AppointmentService.DeleteAsync(id);
+            Snackbar.Add("Appointment deleted successfully", Severity.Success);
+            await _table.ReloadServerData();
+        }
+    }
+
+    private Color GetStatusColor(AppointmentStatus status) => status switch
+    {
+        AppointmentStatus.Scheduled => Color.Primary,
+        AppointmentStatus.Applied => Color.Success,
+        AppointmentStatus.Cancelled => Color.Error,
+        _ => Color.Default
+    };
+}

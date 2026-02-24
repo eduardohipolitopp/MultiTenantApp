@@ -1,98 +1,78 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using MultiTenantApp.Api.Attributes;
+using Microsoft.EntityFrameworkCore;
 using MultiTenantApp.Application.DTOs;
 using MultiTenantApp.Application.Interfaces;
-using MultiTenantApp.Domain.Enums;
-using MultiTenantApp.Domain.Interfaces;
+using MultiTenantApp.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MultiTenantApp.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize(Policy = "User.Manage")]
     [ApiController]
-    [Microsoft.AspNetCore.Authorization.Authorize]
-    [RequirePermission("Users", PermissionType.View)]
+    [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly IUserService _userService;
-        private readonly ITenantProvider _tenantProvider;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UsersController(IUserService userService, ITenantProvider tenantProvider)
+        public UsersController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            _userService = userService;
-            _tenantProvider = tenantProvider;
-        }
-
-        [HttpPost("list")]
-        [Cached(durationMinutes: 10, varyByTenant: true)]
-        public async Task<IActionResult> GetAll([FromBody] PagedRequest request)
-        {
-            var response = await _userService.GetUsersPagedAsync(request);
-            return Ok(response);
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAll()
         {
-            var users = await _userService.GetAllUsersAsync();
-            return Ok(users);
+            var users = await _userManager.Users.ToListAsync();
+            var dtos = new List<UserDto>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                dtos.Add(new UserDto
+                {
+                    Id = Guid.Parse(user.Id),
+                    Email = user.Email ?? "",
+                    FullName = user.FullName ?? "",
+                    Roles = roles.ToList()
+                });
+            }
+
+            return Ok(dtos);
         }
 
-        [HttpPost]
-        [RequirePermission("Users", PermissionType.Edit)]
-        [InvalidateCache("action:Users:*")]
-        public async Task<IActionResult> Create([FromBody] CreateUserDto model)
+        [HttpPost("{userId}/roles")]
+        public async Task<IActionResult> UpdateRoles(string userId, [FromBody] List<string> roles)
         {
-            try
-            {
-                // Tenant validation is handled by the service layer
-                // The service will use the TenantProvider to set the correct tenant
-                var user = await _userService.CreateUserAsync(model);
-                return Ok(user);
-            }
-            catch (System.Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return NotFound();
+
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            await _userManager.AddToRolesAsync(user, roles);
+
+            return NoContent();
         }
 
-        [HttpPut("{id}")]
-        [RequirePermission("Users", PermissionType.Edit)]
-        [InvalidateCache("action:Users:*")]
-        public async Task<IActionResult> Update(string id, [FromBody] UpdateUserDto model)
+        [HttpGet("roles")]
+        public async Task<IActionResult> GetAvailableRoles()
         {
-            try
-            {
-                await _userService.UpdateUserAsync(id, model);
-                return Ok();
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
-            catch (System.Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            var roles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+            return Ok(roles);
         }
+    }
 
-        [HttpDelete("{id}")]
-        [RequirePermission("Users", PermissionType.Edit)]
-        [InvalidateCache("action:Users:*")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            try
-            {
-                await _userService.DeleteUserAsync(id);
-                return Ok();
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
-            catch (System.Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
+    public class UserDto
+    {
+        public Guid Id { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
+        public List<string> Roles { get; set; } = new List<string>();
     }
 }

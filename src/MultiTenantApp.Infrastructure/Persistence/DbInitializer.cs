@@ -11,7 +11,7 @@ namespace MultiTenantApp.Infrastructure.Persistence
     {
         public static async Task InitializeAsync(IServiceProvider services)
         {
-            // Cria um scope para resolver serviÁos scoped corretamente
+            // Cria um scope para resolver servi√ßos scoped corretamente
             using var scope = services.CreateScope();
             var provider = scope.ServiceProvider;
 
@@ -19,6 +19,17 @@ namespace MultiTenantApp.Infrastructure.Persistence
             await context.Database.MigrateAsync();
 
             var userManager = provider.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleManager = provider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            // ROLES
+            string[] roles = { "Admin", "Manager", "Nurse", "Receptionist", "Financial" };
+            foreach (var roleName in roles)
+            {
+                if (!await roleManager.RoleExistsAsync(roleName))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
 
             // TENANTS
             var tenatnA = await context.Tenants.FirstOrDefaultAsync(t => t.Identifier == "tenant-a");
@@ -61,7 +72,32 @@ namespace MultiTenantApp.Infrastructure.Persistence
                 await context.Rules.AddAsync(adminRule);
             }
 
-            // Persistir tenants & rule antes de criar usu·rios (evita dependÍncias entre contextos)
+            // Persistir tenants & rule antes de criar usu√°rios (evita depend√™ncias entre contextos)
+            await context.SaveChangesAsync();
+
+            // SETTINGS
+            if (!await context.ClinicSettings.AnyAsync(s => s.TenantId == tenatnA.Id))
+            {
+                await context.ClinicSettings.AddAsync(new ClinicSettings
+                {
+                    ClinicName = "Tenant A Clinic",
+                    CommissionPercentage = 10,
+                    HomeVisitBonus = 50,
+                    TenantId = tenatnA.Id
+                });
+            }
+
+            if (!await context.ClinicSettings.AnyAsync(s => s.TenantId == tenatnB.Id))
+            {
+                await context.ClinicSettings.AddAsync(new ClinicSettings
+                {
+                    ClinicName = "Tenant B Clinic",
+                    CommissionPercentage = 12,
+                    HomeVisitBonus = 60,
+                    TenantId = tenatnB.Id
+                });
+            }
+
             await context.SaveChangesAsync();
 
             // USER A
@@ -79,10 +115,11 @@ namespace MultiTenantApp.Infrastructure.Persistence
                 var result = await userManager.CreateAsync(user, "123Mudar!");
                 if (!result.Succeeded)
                 {
-                    // logue ou lance exceÁ„o ó importante para descobrir o motivo
                     var errors = string.Join("; ", result.Errors);
-                    throw new Exception($"Falha ao criar usu·rio a.admin@admin.com: {errors}");
+                    throw new Exception($"Falha ao criar usu√°rio a.admin@admin.com: {errors}");
                 }
+
+                await userManager.AddToRoleAsync(user, "Admin");
 
                 await context.UserRules.AddAsync(new UserRule
                 {
@@ -112,8 +149,10 @@ namespace MultiTenantApp.Infrastructure.Persistence
                 if (!result.Succeeded)
                 {
                     var errors = string.Join("; ", result.Errors);
-                    throw new Exception($"Falha ao criar usu·rio b.admin@admin.com: {errors}");
+                    throw new Exception($"Falha ao criar usu√°rio b.admin@admin.com: {errors}");
                 }
+
+                await userManager.AddToRoleAsync(user, "Admin");
 
                 await context.UserRules.AddAsync(new UserRule
                 {
@@ -121,7 +160,6 @@ namespace MultiTenantApp.Infrastructure.Persistence
                     RuleId = adminRule.Id,
                     UserId = user.Id,
                     PermissionType = MultiTenantApp.Domain.Enums.PermissionType.Edit,
-                    // corrigido: TenantId deve ser do tenant B
                     TenantId = tenatnB.Id
                 });
 

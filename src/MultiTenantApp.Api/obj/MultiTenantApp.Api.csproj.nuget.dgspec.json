@@ -1,39 +1,45 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj": {}
+    "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj": {
+    "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj",
+        "projectUniqueName": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj",
         "projectName": "MultiTenantApp.Api",
-        "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj",
-        "packagesPath": "C:\\Users\\EduardoHipolito\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\obj\\",
+        "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\MultiTenantApp.Api.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Api\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\EduardoHipolito\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj": {
-                "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj"
+              "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj": {
+                "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj"
               },
-              "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj": {
-                "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj"
+              "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj": {
+                "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj"
               },
-              "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\MultiTenantApp.Observability.csproj": {
-                "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\MultiTenantApp.Observability.csproj"
+              "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\MultiTenantApp.Observability.csproj": {
+                "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\MultiTenantApp.Observability.csproj"
               }
             }
           }
@@ -138,7 +144,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -556,30 +562,36 @@
         }
       }
     },
-    "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj": {
+    "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj",
+        "projectUniqueName": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj",
         "projectName": "MultiTenantApp.Application",
-        "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj",
-        "packagesPath": "C:\\Users\\EduardoHipolito\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\obj\\",
+        "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\EduardoHipolito\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
-                "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj"
+              "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
+                "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj"
               }
             }
           }
@@ -657,7 +669,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -935,22 +947,28 @@
         }
       }
     },
-    "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
+    "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
+        "projectUniqueName": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
         "projectName": "MultiTenantApp.Domain",
-        "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
-        "packagesPath": "C:\\Users\\EduardoHipolito\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\obj\\",
+        "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\EduardoHipolito\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -1000,7 +1018,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -1278,33 +1296,39 @@
         }
       }
     },
-    "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj": {
+    "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj",
         "projectName": "MultiTenantApp.Infrastructure",
-        "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\EduardoHipolito\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\obj\\",
+        "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\MultiTenantApp.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\EduardoHipolito\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj": {
-                "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj"
+              "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj": {
+                "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Application\\MultiTenantApp.Application.csproj"
               },
-              "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
-                "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj"
+              "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj": {
+                "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Domain\\MultiTenantApp.Domain.csproj"
               }
             }
           }
@@ -1402,7 +1426,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -1680,22 +1704,28 @@
         }
       }
     },
-    "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\MultiTenantApp.Observability.csproj": {
+    "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\MultiTenantApp.Observability.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\MultiTenantApp.Observability.csproj",
+        "projectUniqueName": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\MultiTenantApp.Observability.csproj",
         "projectName": "MultiTenantApp.Observability",
-        "projectPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\MultiTenantApp.Observability.csproj",
-        "packagesPath": "C:\\Users\\EduardoHipolito\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\EduardoHipolito\\Documents\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\obj\\",
+        "projectPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\MultiTenantApp.Observability.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\MultiTenantApp\\src\\MultiTenantApp.Observability\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\EduardoHipolito\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -1804,7 +1834,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

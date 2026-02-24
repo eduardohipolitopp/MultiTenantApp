@@ -1,0 +1,50 @@
+@using MultiTenantApp.Web.Models.DTOs
+@using MultiTenantApp.Web.Models
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success">
+            <MudTextField T="string" Label="Name" @bind-Value="Model.Name" Required="true" RequiredError="Name is required!" MaxLength="100" />
+            <MudDatePicker Label="Birth Date" @bind-Date="BirthDate" Required="true" MaxDate="DateTime.UtcNow" />
+            <MudSelect T="int" Label="Gender" @bind-Value="Model.Gender" Required="true">
+                <MudSelectItem Value="1">Male</MudSelectItem>
+                <MudSelectItem Value="2">Female</MudSelectItem>
+            </MudSelect>
+            <MudTextField T="string" Label="Phone" @bind-Value="Model.Phone" Required="true" RequiredError="Phone is required!" MaxLength="20" />
+            <MudTextField T="string" Label="Email" @bind-Value="Model.Email" MaxLength="150" />
+            <MudTextField T="string" Label="Guardian Name" @bind-Value="Model.GuardianName" MaxLength="100" />
+            <MudTextField T="string" Label="Address" @bind-Value="Model.Address" Lines="3" MaxLength="500" />
+            <MudTextField T="string" Label="Notes" @bind-Value="Model.Notes" Lines="3" MaxLength="1000" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit" Disabled="@(!success)">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public CreatePatientDto Model { get; set; } = new();
+
+    private bool success;
+    private MudForm form;
+
+    private DateTime? BirthDate
+    {
+        get => Model.BirthDate == default ? (DateTime?)null : Model.BirthDate;
+        set => Model.BirthDate = value ?? default;
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private void Submit()
+    {
+        form.Validate();
+        if (success)
+        {
+            MudDialog.Close(DialogResult.Ok(Model));
+        }
+    }
+}

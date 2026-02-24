@@ -1,0 +1,63 @@
+@using MultiTenantApp.Web.Models.DTOs
+@using MultiTenantApp.Web.Interfaces
+@inject IVaccineService VaccineService
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success">
+            <MudSelect T="Guid" Label="Vaccine" @bind-Value="Model.VaccineId" Required="true" AnchorOrigin="Origin.BottomCenter">
+                @foreach (var v in vaccines)
+                {
+                    <MudSelectItem Value="@v.Id">@v.Name</MudSelectItem>
+                }
+            </MudSelect>
+            <MudTextField T="string" Label="Batch Number" @bind-Value="Model.BatchNumber" Required="true" MaxLength="50" />
+            <MudNumericField Label="Total Quantity" @bind-Value="Model.TotalQuantity" Min="0" Required="true" />
+            
+            @if (IsEdit)
+            {
+                <MudNumericField Label="Available Quantity" @bind-Value="((UpdateVaccineBatchDto)Model).AvailableQuantity" Min="0" />
+            }
+            
+            <MudDatePicker Label="Expiration Date" @bind-Date="expirationDate" Required="true" />
+            <MudTextField T="string" Label="Supplier" @bind-Value="Model.Supplier" MaxLength="100" />
+            <MudTextField T="string" Label="Notes" @bind-Value="Model.Notes" Lines="3" MaxLength="1000" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit" Disabled="@(!success)">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public CreateVaccineBatchDto Model { get; set; } = new();
+    [Parameter] public bool IsEdit { get; set; }
+
+    private bool success;
+    private MudForm form;
+    private DateTime? expirationDate;
+    private List<VaccineListDto> vaccines = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        expirationDate = Model.ExpirationDate == default ? DateTime.Today.AddYears(1) : Model.ExpirationDate;
+        
+        var response = await VaccineService.GetAllAsync(new PagedRequest { PageSize = 1000 });
+        vaccines = response.Items;
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private void Submit()
+    {
+        form.Validate();
+        if (success)
+        {
+            Model.ExpirationDate = expirationDate ?? DateTime.Today;
+            MudDialog.Close(DialogResult.Ok(Model));
+        }
+    }
+}

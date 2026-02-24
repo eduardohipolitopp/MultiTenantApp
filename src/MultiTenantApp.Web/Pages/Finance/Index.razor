@@ -1,0 +1,104 @@
+@page "/finance"
+@using MultiTenantApp.Web.Interfaces
+@using MultiTenantApp.Web.Models.DTOs
+@inject IFinanceService FinanceService
+@inject ISnackbar Snackbar
+
+<MudText Typo="Typo.h4" GutterBottom="true">Finance Log</MudText>
+
+<MudGrid Class="mb-4">
+    <MudItem xs="12" sm="4">
+        <MudPaper Class="pa-4" Elevation="1">
+            <MudText Typo="Typo.subtitle2">Total Amount</MudText>
+            <MudText Typo="Typo.h5">@_summary.TotalAmount.ToString("C")</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudPaper Class="pa-4" Elevation="1">
+            <MudText Typo="Typo.subtitle2">Total Commissions</MudText>
+            <MudText Typo="Typo.h5">@_summary.TotalCommissions.ToString("C")</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudPaper Class="pa-4" Elevation="1">
+            <MudText Typo="Typo.subtitle2">Transactions</MudText>
+            <MudText Typo="Typo.h5">@_summary.TransactionCount</MudText>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+<MudTable ServerData="@(new Func<TableState, Task<TableData<FinanceListDto>>>(ServerReload))"
+          Dense="true" Hover="true" @ref="_table">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Payments</MudText>
+        <MudSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search by Patient or Professional" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="PatientName" T="FinanceListDto">Patient</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="ProfessionalName" T="FinanceListDto">Professional</MudTableSortLabel></MudTh>
+        <MudTh>Vaccine</MudTh>
+        <MudTh><MudTableSortLabel SortLabel="Type" T="FinanceListDto">Type</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="Amount" T="FinanceListDto">Amount</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="Commission" T="FinanceListDto">Commission</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="PaymentDate" T="FinanceListDto">Date</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Patient">@context.PatientName</MudTd>
+        <MudTd DataLabel="Professional">@context.ProfessionalName</MudTd>
+        <MudTd DataLabel="Vaccine">@context.VaccineName</MudTd>
+        <MudTd DataLabel="Type">
+            <MudChip T="string" Color="@Color.Info" Size="Size.Small">@context.Type.ToString()</MudChip>
+        </MudTd>
+        <MudTd DataLabel="Amount">@context.Amount.ToString("C")</MudTd>
+        <MudTd DataLabel="Commission">@context.CommissionCalculated.ToString("C")</MudTd>
+        <MudTd DataLabel="Date">@context.PaymentDate.ToLocalTime().ToString("g")</MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No payments found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private MudTable<FinanceListDto> _table = null!;
+    private string _searchString = "";
+    private FinanceSummaryDto _summary = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSummary();
+    }
+
+    private async Task LoadSummary()
+    {
+        _summary = await FinanceService.GetSummary();
+    }
+
+    private async Task<TableData<FinanceListDto>> ServerReload(TableState state)
+    {
+        var request = new PagedRequest
+        {
+            Page = state.Page + 1,
+            PageSize = state.PageSize,
+            SearchTerm = _searchString,
+            SortBy = state.SortLabel ?? "PaymentDate",
+            SortDescending = state.SortDirection == SortDirection.Descending
+        };
+
+        var response = await FinanceService.GetAllAsync(request);
+        return new TableData<FinanceListDto> { TotalItems = response.TotalCount, Items = response.Items };
+    }
+
+    private void OnSearch(string text)
+    {
+        _searchString = text;
+        _table.ReloadServerData();
+    }
+}

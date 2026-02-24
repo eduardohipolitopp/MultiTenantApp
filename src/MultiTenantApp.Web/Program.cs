@@ -82,16 +82,36 @@ builder.Services.AddScoped<AuthenticatedHttpClient>(sp =>
 
 // Seus serviços
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-builder.Services.AddAuthorizationCore();
+builder.Services.AddAuthorizationCore(options =>
+{
+    options.AddPolicy("Patient.View", policy => policy.RequireRole("Admin", "Manager", "Nurse", "Receptionist"));
+    options.AddPolicy("Vaccine.View", policy => policy.RequireRole("Admin", "Manager", "Nurse", "Receptionist", "Financial"));
+    options.AddPolicy("Stock.View", policy => policy.RequireRole("Admin", "Manager", "Nurse", "Financial"));
+    options.AddPolicy("Appointment.View", policy => policy.RequireRole("Admin", "Manager", "Nurse", "Receptionist"));
+    options.AddPolicy("Application.Apply", policy => policy.RequireRole("Admin", "Manager", "Nurse"));
+    options.AddPolicy("Finance.View", policy => policy.RequireRole("Admin", "Financial"));
+    options.AddPolicy("Dashboard.View", policy => policy.RequireRole("Admin", "Manager", "Financial"));
+    options.AddPolicy("Settings.Edit", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("User.Manage", policy => policy.RequireRole("Admin"));
+});
 builder.Services.AddBlazoredLocalStorage();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IPatientService, PatientService>();
+builder.Services.AddScoped<IVaccineService, VaccineService>();
+        builder.Services.AddScoped<IVaccineBatchService, VaccineBatchService>();
+        builder.Services.AddScoped<IAppointmentService, MultiTenantApp.Web.Services.AppointmentService>();
+        builder.Services.AddScoped<IMessageService, MultiTenantApp.Web.Services.MessageService>();
+        builder.Services.AddScoped<IFinanceService, MultiTenantApp.Web.Services.FinanceService>();
+        builder.Services.AddScoped<IVaccineApplicationService, MultiTenantApp.Web.Services.VaccineApplicationService>();
+        builder.Services.AddScoped<IDashboardService, MultiTenantApp.Web.Services.DashboardService>();
 builder.Services.AddScoped<IRuleService, RuleService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IAuditService, AuditService>();
+builder.Services.AddScoped<ISettingsService, SettingsService>();
 builder.Services.AddScoped<ThemeService>();
 
 // OpenTelemetry
